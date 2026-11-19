@@ -63,6 +63,15 @@ class MotionPhysicsTest {
     }
 
     @Test
+    fun `unresist is the inverse of resist`() {
+        listOf(-0.5f, -0.05f, 0f, 0.3f, 1f, 1.02f, 1.3f, 3f).forEach { raw ->
+            val shown = MotionPhysics.resist(raw, 0f, 1f, 0.1f, 0.2f)
+            MotionPhysics.unresist(shown, 0f, 1f, 0.1f, 0.2f) shouldBe (raw plusOrMinus 0.0005f)
+        }
+        MotionPhysics.unRubberBand(MotionPhysics.rubberBand(37f, 100f), 100f) shouldBe (37f plusOrMinus 0.001f)
+    }
+
+    @Test
     fun `resistance is 1 inside the range and smaller further out`() {
         MotionPhysics.resistance(0.5f, 0f, 1f, 0.1f, 0.1f) shouldBe 1f
         val near = MotionPhysics.resistance(1.01f, 0f, 1f, 0.1f, 0.1f)

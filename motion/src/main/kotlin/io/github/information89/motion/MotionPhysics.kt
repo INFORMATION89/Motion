@@ -52,6 +52,24 @@ object MotionPhysics {
     }
 
     /**
+     * The inverse of [rubberBand]: how far the finger is past the limit when the element shows
+     * [shown] past it. Shown distances at or beyond [dimension] can't be reached; they map to a
+     * very large pull.
+     */
+    fun unRubberBand(shown: Float, dimension: Float, coefficient: Float = RUBBER_BAND): Float {
+        if (shown <= 0f || dimension <= 0f) return 0f
+        val f = (shown / dimension).coerceAtMost(0.999f)
+        return shown / (coefficient * (1f - f))
+    }
+
+    /** The inverse of [resist]: the raw finger position that shows as [shown]. */
+    fun unresist(shown: Float, min: Float, max: Float, overMin: Float, overMax: Float): Float = when {
+        shown > max -> max + unRubberBand(shown - max, overMax)
+        shown < min -> min - unRubberBand(min - shown, overMin)
+        else -> shown
+    }
+
+    /**
      * How much of the finger's motion still shows past an edge (1 inside the range, smaller the
      * further out). Release velocity is scaled by this so a release from an over-pull doesn't
      * shoot off.

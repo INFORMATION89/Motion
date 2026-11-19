@@ -79,7 +79,9 @@ class MotionValue internal constructor(
     /** Stops any motion where it is (a touch catching it mid-flight). */
     fun stop() {
         scope.launch(start = CoroutineStart.UNDISPATCHED) { animatable.stop() }
-        raw = animatable.value
+        // Past an end the value is already rubber-banded: go back to the finger position that shows
+        // it, or the next drag would resist it twice and the surface would jump back.
+        raw = MotionPhysics.unresist(animatable.value, min, max, overMin, overMax)
     }
 
     /** Moves by [delta] value units with rubber-banding past the ends. */
@@ -163,6 +165,9 @@ fun Modifier.motionDrag(
         orientation = orientation,
         enabled = enabled,
         reverseDirection = reverseDirection,
+        // While it's moving, a touch catches it at once (no touch slop, so it doesn't keep going
+        // under the finger and then jump).
+        startDragImmediately = value.isRunning,
         onDragStarted = { value.stop() },
         onDragStopped = { velocity -> value.release(velocity / rangePx) }
     )
