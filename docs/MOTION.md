@@ -63,3 +63,8 @@ squished while the container first stretches:
   - Pulling down scrubs it back into the pill, and pulling up past open rubber-bands.
   - The content is choreographed.
 - **Next:** search sheet, postcard window, Places card drag, toolbar.
+
+## Framework
+
+The plan to build these rules once, as a reusable `:motion` module, is in
+[PLAN.md](PLAN.md#motion-framework-proposed-2026-11-19-to-agree-before-building) (proposed 2026-11-19).
