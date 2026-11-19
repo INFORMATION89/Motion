@@ -16,6 +16,12 @@ Motion is interruptible and driven by velocity, not by duration. Use `spring()`,
 | Morphing containers (menus, sheets, pill-style buttons) | `dampingRatio = 0.78f`, `stiffness = 380f` (subtle elasticity) | `SolsticeMotion.container` |
 | Inner content scale-in | `dampingRatio = 0.85f`, `stiffness = 400f` | `SolsticeMotion.content` |
 | Settling after a drag (no bounce) | `dampingRatio = 1f`, `stiffness = Spring.StiffnessMediumLow` | `SolsticeMotion.settle` |
+| Dismissing a container back into its source | `dampingRatio = 1f`, `stiffness = 260f` | `SolsticeMotion.dismiss` |
+| Small controls only (switch thumbs, toggles, icon changes; Material's fast springs) | 0.2 s / 0.9 (`stiffness ≈ 987`) | `Motion.snappy` (added 2026-11-19) |
+
+Values live in the `:motion` module (`io.github.information89.motion.Motion`, written as response +
+damping). Material components get them through `SolsticeMotionScheme` (fast → `snappy`, default →
+`container`, slow → `dismiss`; effects: fast → `snappy`, default → `settle`, slow → `dismiss`).
 
 The exception is a shared transition that's seeked. There, the parts follow the fraction
 linearly, and the spring is in the `Animatable` that sets the fraction, so only one physical

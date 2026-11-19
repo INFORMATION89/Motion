@@ -54,7 +54,8 @@ data class MotionSpring(val response: Float, val damping: Float) {
 }
 
 /**
- * The only springs in the app (agreed 2026-11-19). Anything new becomes a token first.
+ * The only springs in the app (agreed 2026-11-19; `snappy` added the same day for small controls).
+ * Anything new becomes a token first.
  * Values match the ones Solstice used before the framework, written as response + damping.
  */
 object Motion {
@@ -72,4 +73,10 @@ object Motion {
 
     /** Settling after a drag or fling: critically damped. ≈ 0.31 s / 1. */
     val settle = MotionSpring.fromCompose(dampingRatio = 1f, stiffness = 400f)
+
+    /**
+     * Small controls only (switch thumbs, toggles, icon changes, ripples): quick, barely any bounce.
+     * 0.2 s / 0.9. Used for Material's fast springs, so Settings controls stay as quick as Material's.
+     */
+    val snappy = MotionSpring(response = 0.2f, damping = 0.9f)
 }

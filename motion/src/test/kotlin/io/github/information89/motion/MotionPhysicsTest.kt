@@ -38,6 +38,8 @@ class MotionPhysicsTest {
         Motion.control.stiffness shouldBe (400f plusOrMinus 0.01f)
         Motion.content.damping shouldBe 0.85f
         Motion.settle.damping shouldBe 1f
+        Motion.snappy.stiffness shouldBe (986.96f plusOrMinus 0.05f)
+        Motion.snappy.damping shouldBe 0.9f
     }
 
     @Test
