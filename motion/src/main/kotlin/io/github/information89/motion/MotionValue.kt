@@ -21,6 +21,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -157,8 +158,11 @@ fun Modifier.motionDrag(
     val rangePx = with(density) { range.toPx() }.coerceAtLeast(1f)
     val slowPx = with(density) { 250.dp.toPx() }
     val fastPx = with(density) { 1000.dp.toPx() }
-    value.slowFlick = slowPx / rangePx
-    value.fastFlick = fastPx / rangePx
+    // Written after composition, not during it.
+    SideEffect {
+        value.slowFlick = slowPx / rangePx
+        value.fastFlick = fastPx / rangePx
+    }
     val state = rememberDraggableState { delta -> value.drag(delta / rangePx) }
     return draggable(
         state = state,

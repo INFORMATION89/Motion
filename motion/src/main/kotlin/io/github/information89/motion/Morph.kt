@@ -108,8 +108,9 @@ fun Modifier.morphAnchor(key: Any, cornerRadius: Dp = 0.dp): Modifier {
  * overshoot). [content] is laid out once at the target's size and clipped by the moving surface,
  * so it never re-measures during the motion. Reads [value] only in layout and draw.
  *
- * With [reduced] (e.g. "Remove animations"), there's no travel or scaling: the content fades in
- * place at the target.
+ * With [reduced] (e.g. "Remove animations"), there's no travel or scaling: the surface sits at the
+ * target and only its alpha follows [value]. Compose finishes animations instantly at that setting,
+ * so in practice it appears at once (no fade).
  */
 @Composable
 fun Morph(
