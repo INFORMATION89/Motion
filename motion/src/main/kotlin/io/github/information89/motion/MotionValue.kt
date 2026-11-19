@@ -108,10 +108,15 @@ class MotionValue internal constructor(
      */
     fun release(velocity: Float): Float {
         val v = velocity * MotionPhysics.resistance(raw, min, max, overMin, overMax)
-        val from = animatable.value
-        val to = MotionPhysics.chooseTarget(from, v, restPoints, slowFlick, fastFlick, deceleration)
+        val to = targetFor(velocity)
         animateTo(to, v)
         return to
+    }
+
+    /** The rest point [release] would pick for [velocity], without moving. */
+    fun targetFor(velocity: Float): Float {
+        val v = velocity * MotionPhysics.resistance(raw, min, max, overMin, overMax)
+        return MotionPhysics.chooseTarget(animatable.value, v, restPoints, slowFlick, fastFlick, deceleration)
     }
 
     /** Springs to [target], starting with [velocity] (defaults to the current one, so it never jumps). */
