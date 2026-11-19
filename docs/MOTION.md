@@ -36,7 +36,7 @@ curve applies.
 - Pick the target from momentum: project where a fling would come to rest (`SolsticeMotion.project`).
 - Over-dragging rubber-bands, like iOS, and never stops dead (`SolsticeMotion.rubberBand`, coefficient 0.55).
 
-### C. Continuous container morphing (SharedTransitionLayout)
+### C. Continuous container morphing (`:motion` `Morph`; SharedTransitionLayout before M3)
 
 - Buttons, pills and floating buttons morph into the sheets and menus they open, and back. The
   containers don't crossfade.

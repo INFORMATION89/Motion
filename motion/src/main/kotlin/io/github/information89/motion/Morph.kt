@@ -18,7 +18,6 @@ package io.github.information89.motion
 
 import android.provider.Settings
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
@@ -26,16 +25,28 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import kotlin.math.roundToInt
@@ -118,46 +129,146 @@ fun Morph(
     to: Any,
     value: MotionValue,
     modifier: Modifier = Modifier,
+    contentAlignment: Alignment = Alignment.TopStart,
+    shape: ((frame: MorphFrame, p: Float) -> Shape)? = null,
+    surface: Modifier = Modifier,
+    reduced: Boolean = rememberReducedMotion(),
+    content: @Composable () -> Unit,
+) {
+    val registry = LocalMorphRegistry.current ?: return
+    val target = registry[to] ?: return
+    Morph(from, target, value, modifier, contentAlignment, shape, surface, reduced, content)
+}
+
+/**
+ * The same, with the target's geometry given directly (in the host's coordinates) instead of
+ * measured: use it when the target is known before it's laid out (a sheet docked at the bottom), so
+ * the morph draws from its very first frame.
+ */
+@Composable
+fun Morph(
+    from: Any,
+    target: MorphAnchor,
+    value: MotionValue,
+    modifier: Modifier = Modifier,
+    contentAlignment: Alignment = Alignment.TopStart,
+    shape: ((frame: MorphFrame, p: Float) -> Shape)? = null,
+    surface: Modifier = Modifier,
     reduced: Boolean = rememberReducedMotion(),
     content: @Composable () -> Unit,
 ) {
     val registry = LocalMorphRegistry.current ?: return
     val source = registry[from] ?: return
-    val target = registry[to] ?: return
     fun frame() = if (reduced) {
         MorphFrame(target.bounds, target.cornerRadius)
     } else {
         MorphGeometry.frame(source, target, value.value)
     }
-    Box(
-        modifier
-            // 1. Size and place the surface at this frame's geometry, inside the host.
-            .layout { measurable, constraints ->
-                val f = frame()
-                val w = f.bounds.width.roundToInt().coerceAtLeast(0)
-                val h = f.bounds.height.roundToInt().coerceAtLeast(0)
-                val placeable = measurable.measure(Constraints.fixed(w, h))
-                val hostW = if (constraints.hasBoundedWidth) constraints.maxWidth else w
-                val hostH = if (constraints.hasBoundedHeight) constraints.maxHeight else h
-                layout(hostW, hostH) { placeable.place(f.bounds.left.roundToInt(), f.bounds.top.roundToInt()) }
-            }
-            // 2. Clip to the surface's corners at its current size.
-            .graphicsLayer {
-                shape = RoundedCornerShape(frame().cornerRadius)
-                clip = true
-                if (reduced) alpha = value.value.coerceIn(0f, 1f)
-            }
-            // 3. Content keeps the target's size the whole time: measured once, never re-measured.
-            .layout { measurable, constraints ->
-                val placeable = measurable.measure(
-                    Constraints.fixed(
-                        target.bounds.width.roundToInt().coerceAtLeast(0),
-                        target.bounds.height.roundToInt().coerceAtLeast(0)
-                    )
-                )
-                layout(constraints.maxWidth, constraints.maxHeight) { placeable.place(0, 0) }
-            }
-    ) { content() }
+    val scope = remember(target, value) { MorphContentScope(target, value) }
+    // Reuses the shape while the radius doesn't change (no allocation per frame at rest).
+    val roundShape = remember { MorphRoundShapes() }
+    CompositionLocalProvider(LocalMorphContent provides scope) {
+        Box(
+            modifier
+                // 1. Size and place the surface at this frame's geometry, inside the host.
+                .layout { measurable, constraints ->
+                    val f = frame()
+                    val w = f.bounds.width.roundToInt().coerceAtLeast(0)
+                    val h = f.bounds.height.roundToInt().coerceAtLeast(0)
+                    val placeable = measurable.measure(Constraints.fixed(w, h))
+                    val hostW = if (constraints.hasBoundedWidth) constraints.maxWidth else w
+                    val hostH = if (constraints.hasBoundedHeight) constraints.maxHeight else h
+                    layout(hostW, hostH) { placeable.place(f.bounds.left.roundToInt(), f.bounds.top.roundToInt()) }
+                }
+                // 2. Clip to the surface's corners at its current size.
+                .graphicsLayer {
+                    val f = frame()
+                    this.shape = shape?.invoke(f, value.value) ?: roundShape.at(f.cornerRadius)
+                    clip = true
+                    if (reduced) alpha = value.value.coerceIn(0f, 1f)
+                }
+                // The surface's own look (glass, background, edge), at its current size.
+                .then(surface)
+                // 3. Content keeps the target's size the whole time: measured once, never re-measured,
+                // and placed in the moving surface by [contentAlignment].
+                .layout { measurable, constraints ->
+                    val tw = target.bounds.width.roundToInt().coerceAtLeast(0)
+                    val th = target.bounds.height.roundToInt().coerceAtLeast(0)
+                    val placeable = measurable.measure(Constraints.fixed(tw, th))
+                    layout(constraints.maxWidth, constraints.maxHeight) {
+                        val offset = contentAlignment.align(
+                            IntSize(tw, th),
+                            IntSize(constraints.maxWidth, constraints.maxHeight),
+                            layoutDirection
+                        )
+                        placeable.place(offset)
+                    }
+                }
+                .onPlaced { scope.root = it }
+        ) { content() }
+    }
+}
+
+/** What content inside a [Morph] needs to know for [morphFrom]. */
+@Stable
+class MorphContentScope internal constructor(val target: MorphAnchor, val value: MotionValue) {
+    internal var root: LayoutCoordinates? = null
+}
+
+private val LocalMorphContent = staticCompositionLocalOf<MorphContentScope?> { null }
+
+/** A rounded rectangle with a fixed radius. */
+private data class MorphRoundShape(val radius: Float) : Shape {
+    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline =
+        Outline.Rounded(
+            RoundRect(0f, 0f, size.width, size.height, CornerRadius(radius.coerceAtMost(size.minDimension / 2f)))
+        )
+}
+
+/**
+ * Hands out [MorphRoundShape]s, reusing the last one while the radius is the same: a new object when
+ * the radius changes, so the layer always notices (an object changed in place might not be).
+ */
+private class MorphRoundShapes {
+    private var last = MorphRoundShape(0f)
+    fun at(radius: Float): Shape {
+        if (last.radius != radius) last = MorphRoundShape(radius)
+        return last
+    }
+}
+
+/**
+ * Inside a [Morph]'s content: this element travels from anchor [from] (e.g. a button's label) to its
+ * own resting place in the target, scaling with it, as the morph's value goes 0 → 1. Text morphs
+ * (label into heading) use it; the element is laid out once at its final size.
+ */
+@Composable
+fun Modifier.morphFrom(from: Any): Modifier {
+    val registry = LocalMorphRegistry.current ?: return this
+    val scope = LocalMorphContent.current ?: return this
+    val placed = remember { arrayOfNulls<LayoutCoordinates>(1) }
+    return this
+        .onPlaced { placed[0] = it }
+        .graphicsLayer {
+            val source = registry[from] ?: return@graphicsLayer
+            val host = registry.host?.takeIf { it.isAttached } ?: return@graphicsLayer
+            val me = placed[0]?.takeIf { it.isAttached } ?: return@graphicsLayer
+            val root = scope.root?.takeIf { it.isAttached } ?: return@graphicsLayer
+            val p = scope.value.value
+            // Where it sits now (moving with the surface), and where it rests in the target.
+            val now = host.localPositionOf(me, Offset.Zero)
+            val inContent = root.localPositionOf(me, Offset.Zero)
+            val rest = scope.target.bounds.topLeft + inContent
+            val h = me.size.height.toFloat().coerceAtLeast(1f)
+            val left = lerp(source.bounds.left, rest.x, p)
+            val top = lerp(source.bounds.top, rest.y, p)
+            val k = lerp(source.bounds.height / h, 1f, p)
+            transformOrigin = TransformOrigin(0f, 0f)
+            translationX = left - now.x
+            translationY = top - now.y
+            scaleX = k
+            scaleY = k
+        }
 }
 
 /**
