@@ -68,7 +68,8 @@ squished while the container first stretches:
   - It's driven by a gesture `Animatable` with velocity.
   - Pulling down scrubs it back into the pill, and pulling up past open rubber-bands.
   - The content is choreographed.
-- **Next:** search sheet, postcard window, Places card drag, toolbar.
+- **Search sheet** (2026-11-19): `SolsticeSheetState` (presence + detent), see PLAN.md log.
+- **Next:** postcard window, Places card drag, toolbar; the moon card onto `SolsticeSheetState`.
 
 ## Framework
 

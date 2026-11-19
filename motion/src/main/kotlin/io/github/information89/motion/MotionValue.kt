@@ -45,8 +45,7 @@ import kotlinx.coroutines.launch
 class MotionValue internal constructor(
     initial: Float,
     private val scope: CoroutineScope,
-    /** Where a release may come to rest. */
-    val restPoints: List<Float> = listOf(0f, 1f),
+    restPoints: List<Float> = listOf(0f, 1f),
     /** How far past the lowest / highest rest point a pull may travel (in value units). */
     val overMin: Float = 0.1f,
     val overMax: Float = 0.1f,
@@ -60,8 +59,18 @@ class MotionValue internal constructor(
     },
 ) {
     private val animatable = Animatable(initial)
-    private val min = restPoints.min()
-    private val max = restPoints.max()
+
+    /**
+     * Where a release may come to rest. Can change (e.g. a sheet whose tall size follows the
+     * keyboard); a motion already running keeps its target.
+     */
+    var restPoints: List<Float> = restPoints
+        set(value) {
+            require(value.isNotEmpty()) { "restPoints must not be empty" }
+            field = value
+        }
+    private val min get() = restPoints.min()
+    private val max get() = restPoints.max()
 
     /** The finger's position before resistance (only meaningful while dragging). */
     private var raw = initial
@@ -95,13 +104,14 @@ class MotionValue internal constructor(
     /**
      * Lets go with [velocity] (value units per second): picks a rest point from the fling and
      * springs there, keeping the velocity. Past an edge the velocity is scaled down by the
-     * resistance, so a release from an over-pull doesn't shoot off.
+     * resistance, so a release from an over-pull doesn't shoot off. Returns the chosen rest point.
      */
-    fun release(velocity: Float) {
+    fun release(velocity: Float): Float {
         val v = velocity * MotionPhysics.resistance(raw, min, max, overMin, overMax)
         val from = animatable.value
         val to = MotionPhysics.chooseTarget(from, v, restPoints, slowFlick, fastFlick, deceleration)
         animateTo(to, v)
+        return to
     }
 
     /** Springs to [target], starting with [velocity] (defaults to the current one, so it never jumps). */
@@ -138,7 +148,17 @@ fun rememberMotionValue(
     overMax: Float = 0.1f,
 ): MotionValue {
     val scope = rememberCoroutineScope()
-    return remember(scope) { MotionValue(initial, scope, restPoints, overMin, overMax) }
+    val value = remember(scope) { MotionValue(initial, scope, restPoints, overMin, overMax) }
+    // Later changes to the rest points passed here apply too (the other parameters are fixed at
+    // creation). Only when they change, so rest points set directly on the value aren't undone.
+    val passed = remember(value) { arrayOf(restPoints) }
+    SideEffect {
+        if (passed[0] != restPoints) {
+            passed[0] = restPoints
+            value.restPoints = restPoints
+        }
+    }
+    return value
 }
 
 /**
