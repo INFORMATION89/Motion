@@ -75,7 +75,8 @@ squished while the container first stretches:
   and the moon's drift (timed effects / a slow drift, not gestures). The moon card keeps its own
   MotionValue (a full-height sheet whose pull plays the morph backwards).
 - **Motion lab** (M5, 2026-11-19): Settings → Debug → Motion lab; slow motion is `MotionTime.scale`.
-- **Next:** the `:motion` README.
+- **README** (2026-11-19): `motion/README.md` (pieces, tokens, rules, examples).
+- **Next:** refining rounds (CONTINUE.md section 4).
 
 ## Framework
 
