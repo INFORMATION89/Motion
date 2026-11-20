@@ -151,9 +151,14 @@ fun rememberMotionValue(
     restPoints: List<Float> = listOf(0f, 1f),
     overMin: Float = 0.1f,
     overMax: Float = 0.1f,
+    // How a fling is projected: DECELERATION_FAST (short throws, the default) or
+    // DECELERATION_NORMAL (UIKit's scroll and sheet-dismiss feel: a medium flick goes far).
+    deceleration: Float = MotionPhysics.DECELERATION_FAST,
 ): MotionValue {
     val scope = rememberCoroutineScope()
-    val value = remember(scope) { MotionValue(initial, scope, restPoints, overMin, overMax) }
+    val value = remember(scope) {
+        MotionValue(initial, scope, restPoints, overMin, overMax, deceleration = deceleration)
+    }
     // Later changes to the rest points passed here apply too (the other parameters are fixed at
     // creation). Only when they change, so rest points set directly on the value aren't undone.
     val passed = remember(value) { arrayOf(restPoints) }

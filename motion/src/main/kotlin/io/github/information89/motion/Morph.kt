@@ -90,6 +90,10 @@ class MorphRegistry internal constructor() {
 
 private val LocalMorphRegistry = staticCompositionLocalOf<MorphRegistry?> { null }
 
+/** Where anchor [key] is in the current [MorphHost] (null before it's laid out). */
+@Composable
+fun morphAnchorOf(key: Any): MorphAnchor? = LocalMorphRegistry.current?.get(key)
+
 /**
  * The area morphs happen in, usually the whole screen. Anchors and [Morph]s inside it share its
  * coordinates.
