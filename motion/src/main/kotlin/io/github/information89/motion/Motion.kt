@@ -19,6 +19,9 @@ package io.github.information89.motion
 import androidx.compose.animation.core.SpringSpec
 import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.setValue
 import kotlin.math.PI
 import kotlin.math.sqrt
 
@@ -37,8 +40,11 @@ data class MotionSpring(val response: Float, val damping: Float) {
     /** Compose stiffness for this spring (mass 1). */
     val stiffness: Float get() = stiffnessFor(response)
 
-    fun <T> spec(visibilityThreshold: T? = null): SpringSpec<T> =
-        spring(dampingRatio = damping, stiffness = stiffness, visibilityThreshold = visibilityThreshold)
+    fun <T> spec(visibilityThreshold: T? = null): SpringSpec<T> = spring(
+        dampingRatio = damping,
+        stiffness = stiffnessFor(response * MotionTime.scale),
+        visibilityThreshold = visibilityThreshold
+    )
 
     companion object {
         fun stiffnessFor(response: Float): Float {
@@ -51,6 +57,15 @@ data class MotionSpring(val response: Float, val damping: Float) {
         /** The same spring as Compose's `spring(dampingRatio, stiffness)`. */
         fun fromCompose(dampingRatio: Float, stiffness: Float) = MotionSpring(responseFor(stiffness), dampingRatio)
     }
+}
+
+/**
+ * Slow motion for checking animations (a motion lab's switch): every token's spring runs [scale]
+ * times slower. Applies to motions started after it changes (specs a screen already built keep their
+ * speed until it's rebuilt). 1 = normal; never left on in normal use (it isn't saved).
+ */
+object MotionTime {
+    var scale by mutableFloatStateOf(1f)
 }
 
 /**

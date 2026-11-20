@@ -74,7 +74,8 @@ squished while the container first stretches:
 - **Everything else** (2026-11-19): on tokens. Exceptions: the sticker peel, the Forecast develop
   and the moon's drift (timed effects / a slow drift, not gestures). The moon card keeps its own
   MotionValue (a full-height sheet whose pull plays the morph backwards).
-- **Next:** M5, the motion lab and the `:motion` README.
+- **Motion lab** (M5, 2026-11-19): Settings → Debug → Motion lab; slow motion is `MotionTime.scale`.
+- **Next:** the `:motion` README.
 
 ## Framework
 
