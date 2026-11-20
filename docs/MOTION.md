@@ -71,8 +71,10 @@ squished while the container first stretches:
 - **Search sheet** (2026-11-19): `SolsticeSheetState` (presence + detent), see PLAN.md log.
 - **Postcard window, Places drag, toolbar** (2026-11-19): on tokens; the window closes with a swipe
   down. See PLAN.md log.
-- **Next:** the moon card onto `SolsticeSheetState`; small ports (messages, the page jump fades,
-  page fling, postcard press/fold/peel, Forecast develop) to agree.
+- **Everything else** (2026-11-19): on tokens. Exceptions: the sticker peel, the Forecast develop
+  and the moon's drift (timed effects / a slow drift, not gestures). The moon card keeps its own
+  MotionValue (a full-height sheet whose pull plays the morph backwards).
+- **Next:** M5, the motion lab and the `:motion` README.
 
 ## Framework
 

@@ -88,4 +88,7 @@ object Motion {
 
     /** Liquid wobble only (a drop pulling free, a surface absorbing it): several soft swings. ≈ 0.31 s / 0.32. */
     val wobble = MotionSpring.fromCompose(dampingRatio = 0.32f, stiffness = 400f)
+
+    /** Unhurried, no bounce: a page swipe settling on its page (agreed 2026-11-19). ≈ 0.44 s / 1. */
+    val gentle = MotionSpring.fromCompose(dampingRatio = 1f, stiffness = 200f)
 }
