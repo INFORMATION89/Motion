@@ -54,7 +54,7 @@ data class MotionSpring(val response: Float, val damping: Float) {
 }
 
 /**
- * The only springs in the app (agreed 2026-11-19; `snappy` added the same day for small controls).
+ * The only springs in the app (agreed 2026-11-19; `snappy`, `playful` and `wobble` added the same day).
  * Anything new becomes a token first.
  * Values match the ones Solstice used before the framework, written as response + damping.
  */
@@ -79,4 +79,13 @@ object Motion {
      * 0.2 s / 0.9. Used for Material's fast springs, so Settings controls stay as quick as Material's.
      */
     val snappy = MotionSpring(response = 0.2f, damping = 0.9f)
+
+    /**
+     * Expressive, toolbar-like moments only (agreed 2026-11-19): a pop that overshoots and settles,
+     * e.g. a tab lifting under the finger, a press squeeze, a neighbour's landing bump. ≈ 0.31 s / 0.5.
+     */
+    val playful = MotionSpring.fromCompose(dampingRatio = 0.5f, stiffness = 400f)
+
+    /** Liquid wobble only (a drop pulling free, a surface absorbing it): several soft swings. ≈ 0.31 s / 0.32. */
+    val wobble = MotionSpring.fromCompose(dampingRatio = 0.32f, stiffness = 400f)
 }

@@ -69,7 +69,10 @@ squished while the container first stretches:
   - Pulling down scrubs it back into the pill, and pulling up past open rubber-bands.
   - The content is choreographed.
 - **Search sheet** (2026-11-19): `SolsticeSheetState` (presence + detent), see PLAN.md log.
-- **Next:** postcard window, Places card drag, toolbar; the moon card onto `SolsticeSheetState`.
+- **Postcard window, Places drag, toolbar** (2026-11-19): on tokens; the window closes with a swipe
+  down. See PLAN.md log.
+- **Next:** the moon card onto `SolsticeSheetState`; small ports (messages, the page jump fades,
+  page fling, postcard press/fold/peel, Forecast develop) to agree.
 
 ## Framework
 
