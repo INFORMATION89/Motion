@@ -116,12 +116,6 @@ class MotionLabActivity : BreezyActivity() {
     }
 }
 
-/** Switches for measuring (in memory only, reset when the app restarts). */
-object LabFlags {
-    /** The page behind search and the moon card shrinks a little (suspected cause of bug A). */
-    var pageRecede by mutableStateOf(true)
-}
-
 /** Every token, as named in `Motion`. */
 private val tokens: List<Pair<String, MotionSpring>> = listOf(
     "container" to Motion.container,
@@ -213,16 +207,6 @@ private fun Controls() {
                     )
                 }
                 Switch(checked = MotionTime.scale > 1f, onCheckedChange = { MotionTime.scale = if (it) 5f else 1f })
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Text("Page recede", style = MaterialTheme.typography.titleMedium)
-                    Text(
-                        "The page shrinking behind search and the moon card (frame drop test).",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-                Switch(checked = LabFlags.pageRecede, onCheckedChange = { LabFlags.pageRecede = it })
             }
             FrameMeter()
         }
