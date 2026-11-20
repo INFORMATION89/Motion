@@ -181,8 +181,8 @@ fun Modifier.motionDrag(
 ): Modifier {
     val density = LocalDensity.current
     val rangePx = with(density) { range.toPx() }.coerceAtLeast(1f)
-    val slowPx = with(density) { 250.dp.toPx() }
-    val fastPx = with(density) { 1000.dp.toPx() }
+    val slowPx = with(density) { MotionPhysics.SlowFlick.toPx() }
+    val fastPx = with(density) { MotionPhysics.FastFlick.toPx() }
     // Written after composition, not during it.
     SideEffect {
         value.slowFlick = slowPx / rangePx

@@ -16,6 +16,7 @@
 
 package io.github.information89.motion
 
+import androidx.compose.ui.unit.dp
 import kotlin.math.abs
 
 /**
@@ -23,6 +24,12 @@ import kotlin.math.abs
  * functions, no Compose, so they're unit-tested.
  */
 object MotionPhysics {
+    /** UIKit's release rule: slower than this is no flick (a slow lift doesn't throw). Per second. */
+    val SlowFlick = 250.dp
+
+    /** Faster than this, a fling that would land back where it started moves one step. Per second. */
+    val FastFlick = 1000.dp
+
     /** UIKit's resistance coefficient for over-scrolling. */
     const val RUBBER_BAND = 0.55f
 
