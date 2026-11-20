@@ -52,6 +52,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -262,7 +263,9 @@ private fun TokenPlayer() {
                     style = MaterialTheme.typography.labelLarge
                 )
                 Track(Sizes.IconLarge) { width ->
-                    Dot(Modifier.graphicsLayer { translationX = dots[i].value * width })
+                    // The middle 60 % of the track, so overshoot and undershoot show (wobble's
+                    // swings reach about a third past each end).
+                    Dot(Modifier.graphicsLayer { translationX = (0.2f + 0.6f * dots[i].value) * width })
                 }
             }
         }
@@ -355,31 +358,35 @@ private fun MorphDemo() {
                     style = MaterialTheme.typography.labelLarge
                 )
             }
-            Morph(
-                from = "lab-pill",
-                to = "lab-card",
-                value = value,
-                modifier = Modifier.fillMaxSize().motionDrag(
-                    value,
-                    Orientation.Vertical,
-                    200.dp,
-                    reverseDirection = true
-                ),
-                surface = Modifier.background(MaterialTheme.colorScheme.primaryContainer)
-            ) {
-                Column(
-                    Modifier
-                        .fillMaxSize()
-                        .padding(Space.S4)
-                        .graphicsLayer { alpha = value.window(0.35f, 0.7f) }
-                        .clickable { value.animateTo(0f) }
+            // Only while it's out: closed, the morph's surface would sit over the pill.
+            val out by remember { derivedStateOf { value.value > 0.001f || value.isRunning } }
+            if (out) {
+                Morph(
+                    from = "lab-pill",
+                    to = "lab-card",
+                    value = value,
+                    modifier = Modifier.fillMaxSize().motionDrag(
+                        value,
+                        Orientation.Vertical,
+                        200.dp,
+                        reverseDirection = true
+                    ),
+                    surface = Modifier.background(MaterialTheme.colorScheme.primaryContainer)
                 ) {
-                    Text("Grown from the pill", style = MaterialTheme.typography.titleMedium)
-                    Spacer(Modifier.width(Space.S2))
-                    Text(
-                        "Tap to close, or drag down to scrub it back.",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(Space.S4)
+                            .graphicsLayer { alpha = value.window(0.35f, 0.7f) }
+                            .clickable { value.animateTo(0f) }
+                    ) {
+                        Text("Grown from the pill", style = MaterialTheme.typography.titleMedium)
+                        Spacer(Modifier.width(Space.S2))
+                        Text(
+                            "Tap to close, or drag down to scrub it back.",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                 }
             }
         }
