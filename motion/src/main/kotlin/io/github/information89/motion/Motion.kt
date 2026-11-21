@@ -106,4 +106,23 @@ object Motion {
 
     /** Unhurried, no bounce: a page swipe settling on its page (agreed 2026-11-19). ≈ 0.44 s / 1. */
     val gentle = MotionSpring.fromCompose(dampingRatio = 1f, stiffness = 200f)
+
+    /**
+     * Apple's general-purpose spring (WWDC23 "Animate with springs": bounce 0, the most versatile):
+     * no overshoot. For anything closed by a tap or back (WWDC18: Now Playing presented by a tap uses
+     * 100 % damping). docs/MORPH_STUDY.md. 0.4 s (Apple's 0.5 s felt slow on the phone, user 2026-11-21).
+     */
+    val smooth = MotionSpring(response = 0.4f, damping = 1f)
+
+    /**
+     * Opening a container by a tap (user 2026-11-21: "a little bit of bounce" when it finishes opening):
+     * Apple's "a little more brisk" (~15 % bounce).
+     */
+    val brisk = MotionSpring(response = 0.4f, damping = 0.85f)
+
+    /**
+     * A gesture with momentum, let go (WWDC18: Now Playing dismissed by a swipe uses 80 % damping, "a
+     * little bit of bounce and squish"): rewards the flick with a slight overshoot.
+     */
+    val momentum = MotionSpring(response = 0.4f, damping = 0.8f)
 }

@@ -171,6 +171,14 @@ private fun MotionLab(onBack: () -> Unit) {
             }
             item {
                 Section(
+                    "Morph, iOS way (new)",
+                    "The study's proposal (docs/MORPH_STUDY.md): five springs (position, size, corners), " +
+                        "drawn with transforms, content carried, blur hand-over. Tap the pill; tap or drag " +
+                        "the card. Compare with the Morph above."
+                ) { SpringMorphDemo() }
+            }
+            item {
+                Section(
                     "Toolbar",
                     "The app's toolbar on the same navigation as home, and the postcard window's (tap the " +
                         "pin). Every spring and amount below is the app's own (ToolbarMotion): changes apply " +

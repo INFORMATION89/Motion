@@ -108,6 +108,7 @@ internal fun ToolbarDemo() {
                     onTab = { nav.navigate(it) },
                     onInterrupt = { nav.interrupt() },
                     position = { nav.toolbarPosition() },
+                    passing = { nav.isPassing(it) },
                     searchEnabled = true,
                     onSearch = {},
                     onSearchBounds = {}
@@ -170,6 +171,7 @@ private fun WindowToolbar(pinned: Boolean, onPin: () -> Unit) {
             onTab = { nav.navigate(it) },
             onInterrupt = { nav.interrupt() },
             position = { nav.toolbarPosition() },
+            passing = { nav.isPassing(it) },
             searchEnabled = true,
             onSearch = onPin,
             onSearchBounds = {},

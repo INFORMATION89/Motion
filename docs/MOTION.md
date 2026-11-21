@@ -58,6 +58,11 @@ curve applies.
 - Use `SharedTransitionLayout` with `sharedBounds` and a custom `BoundsTransform`. The curve runs
   from critically damped to lightly underdamped.
 - Text that travels (a button's label becoming a heading) shares bounds with scale-to-bounds.
+- **The button itself becomes the card** (agreed 2026-11-21, a style morph): `Morph` takes the
+  source's and target's `MorphStyle` (fill, border, shadow, material amount) and the source's own
+  content. Its first frame is exactly the button, `Modifier.morphSource` hides the real button in that
+  same frame, and every property interpolates to the card's; materials never crossfade. First used
+  by the moon pill.
 
 ### D. Choreographed content reveal
 
