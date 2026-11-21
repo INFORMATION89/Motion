@@ -171,6 +171,14 @@ private fun MotionLab(onBack: () -> Unit) {
             }
             item {
                 Section(
+                    "Toolbar",
+                    "The app's toolbar on the same navigation as home, and the postcard window's (tap the " +
+                        "pin). Every spring and amount below is the app's own (ToolbarMotion): changes apply " +
+                        "in the app too, until it restarts."
+                ) { ToolbarDemo() }
+            }
+            item {
+                Section(
                     "In the app",
                     "Search (SolsticeSheetState): Places → search. Postcard window (swipe down to close): " +
                         "Places → a postcard. Moon card: Forecast → moon. Toolbar bud, tab pop, messages, " +
