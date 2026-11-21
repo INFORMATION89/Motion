@@ -33,6 +33,10 @@ curve applies.
   release velocity becomes the spring's `initialVelocity`. Don't use `animateFloatAsState` for
   gesture-driven motion.
 - Catch things mid-flight: a new drag stops the spring where it is and carries on from there.
+- **Animations never block input** (added by the user 2026-11-21): nothing waits for an animation to
+  finish. A tap on anything (a place card while a tab change plays, a button while a sheet settles)
+  works at once: the animation is retargeted, finished instantly, or keeps running underneath, but the
+  touch is never swallowed. This applies to every animation, through `:motion`.
 - Pick the target from momentum: project where a fling would come to rest (`SolsticeMotion.project`).
 - Over-dragging rubber-bands, like iOS, and never stops dead (`SolsticeMotion.rubberBand`, coefficient 0.55).
 
