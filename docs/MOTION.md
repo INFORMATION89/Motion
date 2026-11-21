@@ -10,6 +10,17 @@ Any new or changed motion is still proposed to the user and agreed before it's b
 
 Motion is interruptible and driven by velocity, not by duration. Use `spring()`, not `tween()`.
 
+**Things morph, they never pop** (the user, 2026-11-21: very important). Nothing new appears out of
+nowhere: a sheet, card, menu or window grows out of the element that caused it, and that element *is*
+what transforms and expands (as iOS buttons do), then folds back into it. No fade-in from nothing, no
+replacing one thing with another.
+
+**Scope of `:motion`** (the user, 2026-11-21): it is the framework for **every interaction in any app**,
+not only Solstice: pressing buttons, opening lists, menus, cards and sheets, page changes, the page
+receding behind a sheet, drags, swipes, long presses and their haptics. The goal is clean, controlled,
+refined interactions like never seen on Android. Anything Solstice needs that moves or responds to touch
+is built as a `:motion` piece first, then used in the app.
+
 | Use | Spring | In code |
 |---|---|---|
 | Responsive controls (buttons, toggles, sliders) | `dampingRatio = Spring.DampingRatioNoBouncy`, `stiffness = Spring.StiffnessMediumLow` | `SolsticeMotion.control` |
