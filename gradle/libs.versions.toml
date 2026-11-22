@@ -1,0 +1,35 @@
+# The same versions as Solstice's catalog (INFORMATION89/Solstice, gradle/libs.versions.toml), so both
+# build Motion the same way. Update them together.
+[versions]
+agp = "9.5.1"
+compose-bom = "2026.09.00"
+junit = "6.1.3"
+kotest-assertions = "6.2.7"
+kotlin = "2.4.21"
+kotlinx-coroutines = "1.11.0"
+ktlint = "1.8.0"
+mockk = "1.14.12"
+spotless = "8.11.0"
+# Android SDKs: Solstice's AndroidConfig.
+sdk-compile = "37"
+sdk-min = "29"
+build-tools = "37.0.0"
+
+[libraries]
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
+compose-animation = { group = "androidx.compose.animation", name = "animation" }
+compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+junit = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit" }
+junit-platform = { group = "org.junit.platform", name = "junit-platform-launcher" }
+kotest-assertions = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest-assertions" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+ktlint-core = { group = "com.pinterest.ktlint", name = "ktlint-cli", version.ref = "ktlint" }
+
+[plugins]
+android-library = { id = "com.android.library", version.ref = "agp" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+
+[bundles]
+test = ["junit", "kotest-assertions", "kotlinx-coroutines-test", "mockk"]

@@ -6,13 +6,13 @@ UIKit's release rule, and surfaces that morph out of the element that opened the
 animations and interaction components for any app: it depends only on Compose (`animation`,
 `foundation`).
 
-Licensed under the Apache License 2.0 (see `LICENSE`), unlike the rest of Solstice (LGPL-3.0).
+Licensed under the Apache License 2.0 (see `LICENSE`).
 
 ## Install
 
-It's a Gradle module, not published yet. Copy `motion/` into your project, add `include(":motion")`
-to `settings.gradle.kts` and `implementation(project(":motion"))` to your app. Package:
-`io.github.information89.motion`.
+Not published: build it from source as a git submodule and a Gradle composite build (see the
+[repo README](../README.md#using-it-in-an-app)). Coordinates `io.github.information89:motion`,
+package `io.github.information89.motion`.
 
 ## The pieces
 

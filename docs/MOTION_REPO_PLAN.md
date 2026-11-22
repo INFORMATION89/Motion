@@ -2,7 +2,7 @@
 
 Plan agreed with the user on 2026-11-21. The repo is
 [INFORMATION89/Motion](https://github.com/INFORMATION89/Motion): public, empty, Apache-2.0 like
-`:motion`. This file moves into that repo in phase 1 and is kept up to date there.
+`:motion`. This file moved into that repo in phase 1 and is kept up to date here.
 
 ## Decisions (user, 2026-11-21)
 
