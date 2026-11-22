@@ -38,6 +38,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -50,6 +51,7 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEvent
@@ -62,6 +64,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.PointerInputModifierNode
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
@@ -410,8 +413,8 @@ fun SpringMorph(
     // Where it grows from when that isn't a registered [morphSource] (e.g. a card that has just closed
     // into this); [from] is then only the key to hide.
     fromBounds: MorphAnchor? = null,
-    // When touches reach the page below while it moves ([MorphTouches]).
-    touches: MorphTouches = MorphTouches.WhileMoving,
+    // How it behaves: touches while it moves, the page it belongs to ([MorphSettings]).
+    settings: MorphSettings = MorphSettings(),
     // Whether a downward drag on the open surface, starting at this point on screen, pulls it (e.g.
     // only from the top of its page, or only from a strip, leaving the page's own pull to refresh).
     canPull: (start: Offset) -> Boolean = { true },
@@ -419,7 +422,13 @@ fun SpringMorph(
     content: @Composable () -> Unit,
 ) {
     val registry = LocalMorphRegistry.current
-    val source = fromBounds ?: registry?.get(from) ?: return
+    val anchor = fromBounds ?: registry?.get(from) ?: return
+    // On a page, the source is kept in the page's own space (where it is when the page rests), so a page
+    // that moves carries the whole morph with it instead of the springs chasing the source.
+    val layoutDirection = LocalLayoutDirection.current
+    val page = settings.page
+    val shift = if (fromBounds == null) page?.offset(layoutDirection) ?: Offset.Zero else Offset.Zero
+    val source = if (shift == Offset.Zero) anchor else MorphAnchor(anchor.bounds.translate(-shift), anchor.cornerRadius)
     // The first source is set at once (opening reads it); later ones re-aim the springs after composition.
     if (motion.source == null) motion.source = source
     SideEffect { motion.updateSource(source) }
@@ -463,7 +472,27 @@ fun SpringMorph(
     // Moving (opening or closing), a touch reaches what's underneath as well as the surface: the
     // surface takes a tap or a vertical drag, a sideways swipe is left to the page below (user
     // 2026-11-21: a closing window held up swipes). At rest and open, it's the only thing touched.
-    Box(modifier.morphPassThrough(motion, touches).fillMaxSize()) {
+    Box(
+        modifier
+            .morphPassThrough(motion, settings.touches)
+            .then(
+                if (page == null) {
+                    Modifier
+                } else {
+                    Modifier
+                        .graphicsLayer {
+                            val moved = page.offset(layoutDirection)
+                            translationX = moved.x
+                            translationY = moved.y
+                        }
+                        // Closing, it stays inside its page (the layer's own bounds are the page's).
+                        .drawWithContent {
+                            if (motion.isOpen) drawContent() else clipRect { this@drawWithContent.drawContent() }
+                        }
+                }
+            )
+            .fillMaxSize()
+    ) {
         // The app's material at the surface's bounds (laid out each frame: a material like glass
         // needs a real node where the surface is, to blur what's behind it).
         if (material != null) {
