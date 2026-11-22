@@ -761,8 +761,8 @@ enum class MorphTouches {
     WhileMoving,
 
     /**
-     * Only while closing (agreed 2026-11-21 for a postcard window): opening, the whole screen belongs to
-     * it (a tap catches it); closing, the page below takes a sideways swipe.
+     * Only while closing (the default; agreed 2026-11-21): opening and settling, the whole screen
+     * belongs to it (a tap catches it); closing, the page below takes a sideways swipe.
      */
     WhileClosing,
 }
@@ -771,7 +771,7 @@ enum class MorphTouches {
  * A morph's touch rule ([touches]) for whatever holds it on screen. [SpringMorph] applies it to itself; a
  * wrapper around it that sits beside the page needs it too, as touches are only shared between siblings.
  */
-fun Modifier.morphPassThrough(motion: MorphMotion, touches: MorphTouches = MorphTouches.WhileMoving): Modifier =
+fun Modifier.morphPassThrough(motion: MorphMotion, touches: MorphTouches = MorphTouches.WhileClosing): Modifier =
     shareTouchesWhile {
         when (touches) {
             MorphTouches.WhileMoving -> !motion.isRestingOpen

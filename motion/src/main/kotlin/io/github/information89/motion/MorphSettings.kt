@@ -29,8 +29,11 @@ import androidx.compose.ui.unit.LayoutDirection
  */
 @Immutable
 data class MorphSettings(
-    /** When touches reach the page below while it moves. */
-    val touches: MorphTouches = MorphTouches.WhileMoving,
+    /**
+     * When touches reach the page below while it moves. By default only while closing (2026-11-21: with
+     * the moon card opening or settling, a scroll went to the page underneath).
+     */
+    val touches: MorphTouches = MorphTouches.WhileClosing,
     /**
      * The page its source lives on, if any: the morph then belongs to that page, moving 1:1 with it and,
      * while closing, clipped to it, so it folds home inside its own page and never draws over another.
