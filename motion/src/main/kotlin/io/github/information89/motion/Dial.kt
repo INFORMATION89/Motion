@@ -21,6 +21,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,6 +33,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.progressBarRangeInfo
@@ -93,6 +95,10 @@ data class DialLook(
     /** The edges blur and fade ([edgeBlur]). */
     val edgeBlur: Dp = 10.dp,
     val labelStyle: TextStyle? = null,
+    /** Space between a major tick and its label. */
+    val labelGap: Dp = 4.dp,
+    /** Space between a decoration (e.g. an icon) and what's under it. */
+    val decorationGap: Dp = 8.dp,
     /** The colour of the home point (e.g. today), when the dial has one. */
     val home: Color? = null,
 )
@@ -143,6 +149,8 @@ fun Dial(
     // A home point (e.g. today): its tick in [DialLook.home]; out of view, an arrow at that edge points
     // the way back (2026-11-22, from the moon card's dial).
     home: Float? = null,
+    // How tall a decoration is (e.g. an icon's size), so the dial makes room for it.
+    decorationSize: Dp = 0.dp,
 ) {
     val scale = state.scale
     val value = state.value
@@ -175,8 +183,17 @@ fun Dial(
         }
     }
 
+    // Its own height (2026-11-22: no height typed in by callers): the tallest tick (the ends), then a
+    // label line and a decoration when it has them. A height the caller sets still wins.
+    val density = LocalDensity.current
+    val labelLine = look.labelStyle?.takeIf { label != null }?.let {
+        with(density) { measurer.measure("0", it).size.height.toDp() } + look.labelGap
+    } ?: 0.dp
+    val decorationRoom = if (decorate != null) decorationSize + look.decorationGap else 0.dp
+    val ownHeight = look.majorHeight * END_CAP + labelLine + decorationRoom
     BoxWithConstraints(
         modifier
+            .height(ownHeight)
             .semantics {
                 contentDescription = describe(value.target)
                 stateDescription = describe(value.target)
@@ -240,7 +257,7 @@ fun Dial(
                     val text = label?.invoke(x)
                     val style = look.labelStyle
                     // Decorations sit above the label when there is one.
-                    var decorationY = bottom - look.majorHeight.toPx() - 8.dp.toPx()
+                    var decorationY = bottom - look.majorHeight.toPx() - look.decorationGap.toPx()
                     if (text != null && style != null) {
                         val k = if (look.curvature) 0.7f + 0.3f * emphasis else 1f
                         val laid = measurer.measure(text, style.copy(color = look.ink, fontSize = style.fontSize * k))
@@ -248,11 +265,11 @@ fun Dial(
                             laid,
                             topLeft = Offset(
                                 px - laid.size.width / 2f,
-                                bottom - look.majorHeight.toPx() - laid.size.height - 4.dp.toPx()
+                                bottom - look.majorHeight.toPx() - laid.size.height - look.labelGap.toPx()
                             ),
                             alpha = (0.4f + 0.6f * emphasis)
                         )
-                        decorationY -= laid.size.height + 4.dp.toPx()
+                        decorationY -= laid.size.height + look.labelGap.toPx()
                     }
                     decorate?.invoke(this, x, Offset(px, decorationY), emphasis)
                 }
@@ -262,7 +279,7 @@ fun Dial(
                 place(end)?.let { (px, emphasis) ->
                     drawLine(
                         look.ink.copy(alpha = 0.9f * (0.35f + 0.65f * emphasis)),
-                        Offset(px, bottom - look.majorHeight.toPx() * 1.3f),
+                        Offset(px, bottom - look.majorHeight.toPx() * END_CAP),
                         Offset(px, bottom),
                         strokeWidth = look.majorWidth.toPx() * 1.5f
                     )
@@ -289,10 +306,16 @@ fun Dial(
             // The centre marker.
             drawLine(
                 look.marker,
-                Offset(half, bottom - look.majorHeight.toPx() * 1.25f),
+                Offset(half, bottom - look.majorHeight.toPx() * MARKER),
                 Offset(half, bottom),
                 strokeWidth = look.majorWidth.toPx() * 1.5f
             )
         }
     }
 }
+
+/** How much taller than a major tick the end caps are (the dial's tallest marks). */
+private const val END_CAP = 1.3f
+
+/** How much taller than a major tick the centre marker is. */
+private const val MARKER = 1.25f
