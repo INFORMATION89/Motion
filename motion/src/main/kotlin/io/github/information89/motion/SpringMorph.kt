@@ -429,6 +429,8 @@ fun SpringMorph(
     val page = settings.page
     val shift = if (fromBounds == null) page?.offset(layoutDirection) ?: Offset.Zero else Offset.Zero
     val source = if (shift == Offset.Zero) anchor else MorphAnchor(anchor.bounds.translate(-shift), anchor.cornerRadius)
+    // Cards don't press like buttons unless they ask to (MorphSettings.pressable).
+    motion.pressDepth = if (settings.pressable) MorphDefaults.PRESS_DEPTH else 0f
     // The first source is set at once (opening reads it); later ones re-aim the springs after composition.
     if (motion.source == null) motion.source = source
     SideEffect { motion.updateSource(source) }

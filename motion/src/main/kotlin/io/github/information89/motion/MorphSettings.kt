@@ -39,6 +39,11 @@ data class MorphSettings(
      * while closing, clipped to it, so it folds home inside its own page and never draws over another.
      */
     val page: MorphPage? = null,
+    /**
+     * Whether a touch presses it like a button (it sinks and springs back with a bounce). Off by
+     * default (2026-11-22, the user: cards bounced on quick taps like buttons); buttons opt in.
+     */
+    val pressable: Boolean = false,
 )
 
 /**
