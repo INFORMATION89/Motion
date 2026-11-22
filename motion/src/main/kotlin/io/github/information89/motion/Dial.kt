@@ -93,6 +93,8 @@ data class DialLook(
     /** The edges blur and fade ([edgeBlur]). */
     val edgeBlur: Dp = 10.dp,
     val labelStyle: TextStyle? = null,
+    /** The colour of the home point (e.g. today), when the dial has one. */
+    val home: Color? = null,
 )
 
 /**
@@ -138,6 +140,9 @@ fun Dial(
     decorate: (DrawScope.(major: Float, at: Offset, emphasis: Float) -> Unit)? = null,
     describe: (Float) -> String = { "%.2f".format(it) },
     onDoubleTap: ((DialState) -> Unit)? = null,
+    // A home point (e.g. today): its tick in [DialLook.home]; out of view, an arrow at that edge points
+    // the way back (2026-11-22, from the moon card's dial).
+    home: Float? = null,
 ) {
     val scale = state.scale
     val value = state.value
@@ -223,8 +228,10 @@ fun Dial(
                 val (px, emphasis) = place(x) ?: continue
                 val major = ((i % scale.majorEvery) + scale.majorEvery) % scale.majorEvery == 0
                 val h = (if (major) look.majorHeight else look.tickHeight).toPx() * (0.6f + 0.4f * emphasis)
+                val isHome = home != null && look.home != null && abs(x - home) < scale.step / 2f
+                val tickInk = if (isHome) look.home!! else look.ink
                 drawLine(
-                    look.ink.copy(alpha = look.ink.alpha * (if (major) 0.9f else 0.45f) * (0.35f + 0.65f * emphasis)),
+                    tickInk.copy(alpha = tickInk.alpha * (if (major) 0.9f else 0.45f) * (0.35f + 0.65f * emphasis)),
                     Offset(px, bottom - h),
                     Offset(px, bottom),
                     strokeWidth = (if (major) look.majorWidth else look.tickWidth).toPx()
@@ -232,6 +239,8 @@ fun Dial(
                 if (major) {
                     val text = label?.invoke(x)
                     val style = look.labelStyle
+                    // Decorations sit above the label when there is one.
+                    var decorationY = bottom - look.majorHeight.toPx() - 8.dp.toPx()
                     if (text != null && style != null) {
                         val k = if (look.curvature) 0.7f + 0.3f * emphasis else 1f
                         val laid = measurer.measure(text, style.copy(color = look.ink, fontSize = style.fontSize * k))
@@ -243,8 +252,9 @@ fun Dial(
                             ),
                             alpha = (0.4f + 0.6f * emphasis)
                         )
+                        decorationY -= laid.size.height + 4.dp.toPx()
                     }
-                    decorate?.invoke(this, x, Offset(px, bottom - look.majorHeight.toPx() - 8.dp.toPx()), emphasis)
+                    decorate?.invoke(this, x, Offset(px, decorationY), emphasis)
                 }
             }
             // The ends: a short end cap where the range stops, so it never looks endless.
@@ -257,6 +267,24 @@ fun Dial(
                         strokeWidth = look.majorWidth.toPx() * 1.5f
                     )
                 }
+            }
+            // The home point out of view: an arrow at that edge, pointing the way back.
+            val homeColour = look.home
+            if (home != null && homeColour != null && place(home) == null) {
+                val toLeft = home < v
+                val size = look.tickHeight.toPx()
+                val x = if (toLeft) size else this.size.width - size
+                val y = bottom - look.majorHeight.toPx() / 2f
+                val dir = if (toLeft) -1f else 1f
+                drawPath(
+                    androidx.compose.ui.graphics.Path().apply {
+                        moveTo(x + dir * size / 2f, y)
+                        lineTo(x - dir * size / 2f, y - size / 2f)
+                        lineTo(x - dir * size / 2f, y + size / 2f)
+                        close()
+                    },
+                    homeColour
+                )
             }
             // The centre marker.
             drawLine(
