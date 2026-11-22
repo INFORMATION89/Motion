@@ -46,11 +46,14 @@ import androidx.compose.ui.unit.dp
  * One edge's treatment (F2): within [size] of the edge, the content is blurred progressively (up to
  * [blur] at the very edge; Android 12+) and faded, either into [fadeTo] (a colour, e.g. the page
  * behind, up to [fadeAlpha] over [fadeLength] of the band) or, with [fadeOut], to transparent (it
- * then really disappears, for content over anything). A band with no blur and no fade does nothing.
+ * then really disappears, for content over anything). The first [hold] of the band, at the edge, stays
+ * at full strength (e.g. under a bar, so nothing reads through it); the blur and fade ramp off over
+ * the rest. A band with no blur and no fade does nothing.
  */
 @Immutable
 data class EdgeBand(
     val size: Dp,
+    val hold: Dp = 0.dp,
     val blur: Dp = 0.dp,
     val fadeTo: Color? = null,
     val fadeAlpha: Float = 1f,
@@ -110,7 +113,7 @@ fun Modifier.edgeBlur(
                     if (band.blur.value > 0f && k > 0f) {
                         val layer = layers[side.ordinal]
                         layer.alpha = k
-                        blurBand(layer, content, side, band.size.toPx(), band.blur.toPx())
+                        blurBand(layer, content, side, band.size.toPx(), band.blur.toPx(), band.hold.toPx())
                     }
                 }
             } else {
@@ -118,10 +121,12 @@ fun Modifier.edgeBlur(
             }
             bands.forEach { (side, band) ->
                 val k = kOf(side)
-                val length = band.size.toPx() * band.fadeLength.coerceIn(0f, 1f)
+                val hold = band.hold.toPx().coerceIn(0f, band.size.toPx())
+                val length = hold + (band.size.toPx() - hold) * band.fadeLength.coerceIn(0f, 1f)
+                val held = if (length > 0f) hold / length else 0f
                 if (band.fadeOut) {
                     drawRect(
-                        fadeBrush(side, length, Color.Transparent, Color.Black, k),
+                        fadeBrush(side, length, Color.Transparent, Color.Black, k, held),
                         topLeft(side, length),
                         bandSize(side, length),
                         blendMode = BlendMode.DstIn
@@ -131,7 +136,7 @@ fun Modifier.edgeBlur(
                 if (colour != null) {
                     val edge = colour.copy(alpha = colour.alpha * band.fadeAlpha * k)
                     drawRect(
-                        fadeBrush(side, length, edge, colour.copy(alpha = 0f), 1f),
+                        fadeBrush(side, length, edge, colour.copy(alpha = 0f), 1f, held),
                         topLeft(side, length),
                         bandSize(side, length)
                     )
@@ -151,24 +156,50 @@ private fun DrawScope.bandSize(side: Side, length: Float): Size = when (side) {
     Side.Start, Side.End -> Size(length, size.height)
 }
 
-/** A gradient across the band, [atEdge] at the edge to [inward] inside; [k] blends a mask towards none. */
-private fun DrawScope.fadeBrush(side: Side, length: Float, atEdge: Color, inward: Color, k: Float): Brush {
+/**
+ * A gradient across the band, [atEdge] at the edge to [inward] inside, holding [atEdge] over the first
+ * [held] (fraction) of it; [k] blends a mask towards none.
+ */
+private fun DrawScope.fadeBrush(
+    side: Side,
+    length: Float,
+    atEdge: Color,
+    inward: Color,
+    k: Float,
+    held: Float = 0f,
+): Brush {
     val edge = if (k < 1f) androidx.compose.ui.graphics.lerp(inward, atEdge, k) else atEdge
+    val h = held.coerceIn(0f, 1f)
     return when (side) {
-        Side.Top -> Brush.verticalGradient(0f to edge, 1f to inward, startY = 0f, endY = length)
+        Side.Top -> Brush.verticalGradient(0f to edge, h to edge, 1f to inward, startY = 0f, endY = length)
         Side.Bottom -> Brush.verticalGradient(
             0f to inward,
+            1f - h to edge,
             1f to edge,
             startY = size.height - length,
             endY = size.height
         )
-        Side.Start -> Brush.horizontalGradient(0f to edge, 1f to inward, startX = 0f, endX = length)
-        Side.End -> Brush.horizontalGradient(0f to inward, 1f to edge, startX = size.width - length, endX = size.width)
+        Side.Start -> Brush.horizontalGradient(0f to edge, h to edge, 1f to inward, startX = 0f, endX = length)
+        Side.End -> Brush.horizontalGradient(
+            0f to inward,
+            1f - h to edge,
+            1f to edge,
+            startX = size.width - length,
+            endX = size.width
+        )
     }
 }
 
 /** A blurred copy of [content]'s band on [side], fading from full blur at the edge to none inward. */
-private fun DrawScope.blurBand(layer: GraphicsLayer, content: GraphicsLayer, side: Side, length: Float, blurPx: Float) {
+private fun DrawScope.blurBand(
+    layer: GraphicsLayer,
+    content: GraphicsLayer,
+    side: Side,
+    length: Float,
+    blurPx: Float,
+    holdPx: Float = 0f,
+) {
+    val h = if (length > 0f) (holdPx / length).coerceIn(0f, 1f) else 0f
     // Set once: a new RenderEffect every frame would make the GPU rebuild the blur each time.
     if (layer.renderEffect == null) layer.renderEffect = BlurEffect(blurPx, blurPx, TileMode.Clamp)
     val origin = topLeft(side, length)
@@ -176,10 +207,10 @@ private fun DrawScope.blurBand(layer: GraphicsLayer, content: GraphicsLayer, sid
     layer.record(IntSize(area.width.toInt().coerceAtLeast(1), area.height.toInt().coerceAtLeast(1))) {
         translate(-origin.x, -origin.y) { drawLayer(content) }
         val mask = when (side) {
-            Side.Top -> Brush.verticalGradient(0f to Color.Black, 1f to Color.Transparent)
-            Side.Bottom -> Brush.verticalGradient(0f to Color.Transparent, 1f to Color.Black)
-            Side.Start -> Brush.horizontalGradient(0f to Color.Black, 1f to Color.Transparent)
-            Side.End -> Brush.horizontalGradient(0f to Color.Transparent, 1f to Color.Black)
+            Side.Top -> Brush.verticalGradient(0f to Color.Black, h to Color.Black, 1f to Color.Transparent)
+            Side.Bottom -> Brush.verticalGradient(0f to Color.Transparent, 1f - h to Color.Black, 1f to Color.Black)
+            Side.Start -> Brush.horizontalGradient(0f to Color.Black, h to Color.Black, 1f to Color.Transparent)
+            Side.End -> Brush.horizontalGradient(0f to Color.Transparent, 1f - h to Color.Black, 1f to Color.Black)
         }
         drawRect(mask, blendMode = BlendMode.DstIn)
     }
@@ -204,16 +235,20 @@ object EdgeBlurDefaults {
     const val BOTTOM_FADE_LENGTH = 0.7f
 
     /**
-     * A page's top edge under [size] of chrome: fading into [fadeTo] (a plain page), or to transparent
-     * when it's null (over a sky or anything else).
+     * A page's top edge under [chrome] (what's pinned over it), easing off over [transition] below it:
+     * fading into [fadeTo] (a plain page), or to transparent when it's null (over a sky). With a
+     * [transition], content under the chrome is fully treated and only the transition ramps.
      */
-    fun top(size: Dp, fadeTo: Color?): EdgeBand = band(size, fadeTo, TOP_FADE_LENGTH)
+    fun top(chrome: Dp, fadeTo: Color?, transition: Dp = 0.dp): EdgeBand =
+        band(chrome, transition, fadeTo, TOP_FADE_LENGTH)
 
-    /** A page's bottom edge under [size] of chrome (e.g. a toolbar); see [top]. */
-    fun bottom(size: Dp, fadeTo: Color?): EdgeBand = band(size, fadeTo, BOTTOM_FADE_LENGTH)
+    /** A page's bottom edge under [chrome] (e.g. a toolbar); see [top]. */
+    fun bottom(chrome: Dp, fadeTo: Color?, transition: Dp = 0.dp): EdgeBand =
+        band(chrome, transition, fadeTo, BOTTOM_FADE_LENGTH)
 
-    private fun band(size: Dp, fadeTo: Color?, fadeLength: Float) = EdgeBand(
-        size = size,
+    private fun band(chrome: Dp, transition: Dp, fadeTo: Color?, fadeLength: Float) = EdgeBand(
+        size = chrome + transition,
+        hold = if (transition > 0.dp) chrome else 0.dp,
         blur = Blur,
         fadeTo = fadeTo,
         fadeAlpha = FADE_ALPHA,
@@ -223,8 +258,16 @@ object EdgeBlurDefaults {
 }
 
 /**
+ * How far content must scroll under a band for it to reach full strength: its ramp (the part past
+ * [EdgeBand.hold]), or the whole band when nothing is held.
+ */
+private fun EdgeBand.rampPx(density: androidx.compose.ui.unit.Density): Float = with(density) {
+    (if (hold > 0.dp) size - hold else size).toPx().coerceAtLeast(1f)
+}
+
+/**
  * [edgeBlur] for a scrolling column: each edge shows only while content is scrolled under it, coming in
- * over its band's height (agreed 2026-11-21).
+ * over its band's ramp (agreed 2026-11-21).
  */
 @Composable
 fun Modifier.scrollEdgeBlur(
@@ -234,7 +277,7 @@ fun Modifier.scrollEdgeBlur(
     strength: () -> Float = { 1f },
 ): Modifier {
     val density = LocalDensity.current
-    fun under(px: Int, band: EdgeBand?) = band?.let { px / with(density) { it.size.toPx() }.coerceAtLeast(1f) } ?: 0f
+    fun under(px: Int, band: EdgeBand?) = band?.let { px / it.rampPx(density) } ?: 0f
     return edgeBlur(
         top = top,
         bottom = bottom,
@@ -253,7 +296,7 @@ fun Modifier.scrollEdgeBlur(
     strength: () -> Float = { 1f },
 ): Modifier {
     val density = LocalDensity.current
-    fun px(band: EdgeBand?) = band?.let { with(density) { it.size.toPx() }.coerceAtLeast(1f) } ?: 1f
+    fun px(band: EdgeBand?) = band?.rampPx(density) ?: 1f
 
     // How far content runs past the list's start and end, in pixels (capped: only the band matters).
     fun beforeStart(): Float = if (list.firstVisibleItemIndex >
