@@ -4,7 +4,8 @@ This is the working handoff for the next development session. Keep it current wh
 
 ## Read first
 
-1. [MOT0.1 implementation plan](docs/MOT0.1_PLAN.md) — exact code tasks, test cases, and acceptance criteria for the next coding session.
+1. [Agent instructions](AGENTS.md) — repository-wide constraints for AI coding assistants.
+2. [MOT0.1 implementation plan](docs/MOT0.1_PLAN.md) — exact code tasks, test cases, and acceptance criteria for the next coding session.
 2. [Motion rules](docs/MOTION.md) — interaction principles and agreed behavior.
 3. [Morph study](docs/MORPH_STUDY.md) — rationale and constraints for morphing surfaces.
 4. [Repository plan](docs/MOTION_REPO_PLAN.md) — independence from Solstice and the app integration workflow.
@@ -26,7 +27,8 @@ This is the working handoff for the next development session. Keep it current wh
 - Branch: `mot-0.1/core-validation`
 - Pull request: [#1 — MOT0.1: validate MotionValue and physics inputs](https://github.com/INFORMATION89/Motion-UI/pull/1)
 - Baseline commit `c636413e1e4790675c38ea36e8c3c22ac84d0aa7` passed GitHub Actions run `45674503787`: Spotless, unit tests, and library build.
-- The execution plan was added in `d0ee112c3ffd163c2ecd554b18ad9a0f6e5c9929` and refined in `617068f08c3a9a778e490d8758a9227fdfe95d4b`. Verify CI for the exact current branch head before coding or marking anything green.
+- The execution plan was added in `d0ee112c3ffd163c2ecd554b18ad9a0f6e5c9929` and refined in `617068f08c3a9a778e490d8758a9227fdfe95d4b`; `AGENTS.md` was added in `79544d011d6ad008ca8b5dd771d1faaed696d75e`.
+- Current branch head before this handoff refresh: `8d875ad2e1d0ad8f05899a7fefb1b6037db33c63`; its GitHub Actions run `45703168869` was in progress. Recheck the exact branch head before coding or marking anything green.
 - The PR remains draft while the MorphMotion interruption and retargeting coverage is incomplete.
 
 ### Implemented
