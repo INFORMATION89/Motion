@@ -1,49 +1,91 @@
 # Motion
 
-A motion framework for Jetpack Compose that makes interactions feel like iOS: springs written as
-*response* and *damping*, gestures that hand their velocity to the animation, rubber-banding, UIKit's
-release rule, and surfaces that morph out of the element that opened them. It depends only on
-Compose (`animation`, `foundation`). Licensed under the Apache License 2.0 (see `LICENSE`).
+A motion framework for Android apps built with Jetpack Compose.
 
-Made for [Solstice](https://github.com/INFORMATION89/Solstice), where it started as the `:motion`
-module, and meant for any Compose app.
+Motion provides spring-driven, gesture-aware interactions with an emphasis on continuity: animations can be interrupted, gestures hand their velocity to the next movement, and surfaces can morph between layout anchors instead of being replaced.
 
-## In this repo
+Motion is an independent library. It does not depend on Solstice or on any consuming application.
 
-| | |
-|---|---|
-| `motion/` | The library (Gradle module `:motion`, package `io.github.information89.motion`). What each piece does: [motion/README.md](motion/README.md). |
-| `lab/` | Motion Lab, a Material You Expressive app to try every piece. Moving in from Solstice; not built yet (phase 2 of [docs/MOTION_REPO_PLAN.md](docs/MOTION_REPO_PLAN.md)). |
-| `docs/` | The motion rules ([MOTION.md](docs/MOTION.md)), the morph study, the lab plan, and the plan for this repo. |
+## Features
 
-Build and test: `./gradlew :motion:testDebugUnitTest :motion:assembleRelease` (JDK 21, Android SDK 37).
+- **Spring motion** — reusable motion tokens expressed as response and damping.
+- **Gesture-driven state** — dragging, velocity handoff, projected release targets, multiple resting points, and elastic boundaries.
+- **Morphing surfaces** — animate a surface between registered layout anchors while preserving its geometry and visual style.
+- **Interaction primitives** — spring-driven pager movement, dials, haptic feedback, ambient motion, and edge blur.
 
-## Using it in an app
+## Platform and status
 
-It isn't published. Build it from source with a Gradle composite build, as Solstice does:
+The current library targets Android with Jetpack Compose.
 
-1. Add this repo as a git submodule, e.g. at `motion/`:
-   `git submodule add https://github.com/INFORMATION89/Motion.git motion`
-2. In `settings.gradle.kts`:
-   ```kotlin
-   includeBuild("motion") {
-       dependencySubstitution {
-           substitute(module("io.github.information89:motion")).using(project(":motion"))
-       }
-   }
-   ```
-3. In your module: `implementation("io.github.information89:motion")`.
+| Requirement | Version |
+|---|---:|
+| Minimum Android version | Android 10 (API 29) |
+| Compile SDK | 37 |
+| JDK | 21 |
 
-Clone with `git clone --recurse-submodules`, or run `git submodule update --init` in an existing
-clone. In CI, check out submodules (`actions/checkout` with `submodules: true`).
+Motion is under active development and is not currently published to a Maven repository. The repository builds the `:motion` Android library; the prototype sources in `lab/` are not currently included as a Gradle module.
 
-## How a change reaches Solstice
+## Use in an Android app
 
-1. Change Motion here (code, tests, lab), push; CI goes green.
-2. In Solstice, move the submodule to that commit (`git -C motion pull` or
-   `git submodule update --remote motion`), build and check, and commit the new pointer:
-   "Bump Motion to abc1234: what changed".
-3. To try a change inside Solstice first, edit Solstice's `motion/` folder (it's a checkout of this
-   repo), test it in Solstice, then commit and push from inside `motion/` and bump the pointer.
+Motion is consumed from source through a Gradle composite build.
 
-Motion never imports app code: anything an app needs from Motion lands here first.
+Add the repository as a submodule:
+
+```bash
+git submodule add https://github.com/INFORMATION89/Motion-UI.git motion
+```
+
+In the consuming project's `settings.gradle.kts`, include the build and substitute the published coordinates with the local project:
+
+```kotlin
+includeBuild("motion") {
+    dependencySubstitution {
+        substitute(module("io.github.information89:motion"))
+            .using(project(":motion"))
+    }
+}
+```
+
+Then add the dependency to the app or library module:
+
+```kotlin
+dependencies {
+    implementation("io.github.information89:motion")
+}
+```
+
+Clone the consuming project with its submodules:
+
+```bash
+git clone --recurse-submodules <app-repository-url>
+```
+
+For an existing clone:
+
+```bash
+git submodule update --init --recursive
+```
+
+The consuming project should pin Motion to a tested commit and update the submodule pointer when adopting a newer version.
+
+## Build and test
+
+Run these commands from the repository root:
+
+```bash
+./gradlew spotlessCheck
+./gradlew :motion:testDebugUnitTest
+./gradlew :motion:assembleRelease
+```
+
+On Windows, use `gradlew.bat` instead of `./gradlew`.
+
+## Documentation
+
+- [Library API and usage](motion/README.md)
+- [Motion principles](docs/MOTION.md)
+- [Morph design study](docs/MORPH_STUDY.md)
+
+## License
+
+Motion is licensed under the [Apache License 2.0](LICENSE).
