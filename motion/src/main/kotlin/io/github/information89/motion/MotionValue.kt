@@ -255,8 +255,17 @@ fun Modifier.motionDrag(
     val fastPx = with(density) { MotionPhysics.FastFlick.toPx() }
     // Written after composition, not during it.
     SideEffect {
-        value.slowFlick = slowPx / rangePx
-        value.fastFlick = fastPx / rangePx
+        val slow = slowPx / rangePx
+        val fast = fastPx / rangePx
+        // Keep the invariant while the drag range changes: widen the interval before moving
+        // the lower bound, or move the lower bound before narrowing the upper one.
+        if (fast >= value.slowFlick) {
+            value.fastFlick = fast
+            value.slowFlick = slow
+        } else {
+            value.slowFlick = slow
+            value.fastFlick = fast
+        }
     }
     val state = rememberDraggableState { delta -> value.drag(delta / rangePx) }
     return draggable(
