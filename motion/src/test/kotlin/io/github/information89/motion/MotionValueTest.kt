@@ -63,39 +63,81 @@ class MotionValueTest {
     @Test
     fun `rest points reject empty and non finite values`() = motionTest {
         val v = value()
-        (runCatching { v.restPoints = emptyList() }.exceptionOrNull() is IllegalArgumentException) shouldBe true
-        (runCatching { v.restPoints = listOf(0f, Float.NaN) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
-        (runCatching { v.restPoints = listOf(Float.POSITIVE_INFINITY) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
+        (
+            runCatching { v.restPoints = emptyList() }.exceptionOrNull() is IllegalArgumentException
+        ) shouldBe true
+        (
+            runCatching { v.restPoints = listOf(0f, Float.NaN) }.exceptionOrNull() is IllegalArgumentException
+        ) shouldBe true
+        (
+            runCatching { v.restPoints = listOf(Float.POSITIVE_INFINITY) }.exceptionOrNull() is
+                    IllegalArgumentException
+        ) shouldBe true
     }
 
     @Test
     fun `constructor rejects non finite and invalid configuration values`() = motionTest {
-        (runCatching { MotionValue(Float.NaN, this) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
-        (runCatching { MotionValue(0f, this, overMin = -1f) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
-        (runCatching { MotionValue(0f, this, overMax = Float.POSITIVE_INFINITY) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
-        (runCatching { MotionValue(0f, this, slowFlick = Float.NaN) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
-        (runCatching { MotionValue(0f, this, fastFlick = -1f) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
-        (runCatching { MotionValue(0f, this, slowFlick = 3f, fastFlick = 2f) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
-        (runCatching { MotionValue(0f, this, deceleration = 1f) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
+        (
+            runCatching { MotionValue(Float.NaN, this) }.exceptionOrNull() is IllegalArgumentException
+        ) shouldBe true
+        (
+            runCatching { MotionValue(0f, this, overMin = -1f) }.exceptionOrNull() is IllegalArgumentException
+        ) shouldBe true
+        (
+            runCatching { MotionValue(0f, this, overMax = Float.POSITIVE_INFINITY) }.exceptionOrNull() is
+                    IllegalArgumentException
+        ) shouldBe true
+        (
+            runCatching { MotionValue(0f, this, slowFlick = Float.NaN) }.exceptionOrNull() is
+                    IllegalArgumentException
+        ) shouldBe true
+        (
+            runCatching { MotionValue(0f, this, fastFlick = -1f) }.exceptionOrNull() is IllegalArgumentException
+        ) shouldBe true
+        (
+            runCatching { MotionValue(0f, this, slowFlick = 3f, fastFlick = 2f) }.exceptionOrNull() is
+                    IllegalArgumentException
+        ) shouldBe true
+        (
+            runCatching { MotionValue(0f, this, deceleration = 1f) }.exceptionOrNull() is IllegalArgumentException
+        ) shouldBe true
     }
 
     @Test
     fun `runtime inputs reject non finite values`() = motionTest {
         val v = value()
-        (runCatching { v.drag(Float.NaN) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
-        (runCatching { v.release(Float.POSITIVE_INFINITY) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
-        (runCatching { v.targetFor(Float.NEGATIVE_INFINITY) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
-        (runCatching { v.animateTo(Float.NaN) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
-        (runCatching { v.animateTo(1f, velocity = Float.NaN) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
-        (runCatching { v.snapTo(Float.POSITIVE_INFINITY) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
+        (
+            runCatching { v.drag(Float.NaN) }.exceptionOrNull() is IllegalArgumentException
+        ) shouldBe true
+        (
+            runCatching { v.release(Float.POSITIVE_INFINITY) }.exceptionOrNull() is IllegalArgumentException
+        ) shouldBe true
+        (
+            runCatching { v.targetFor(Float.NEGATIVE_INFINITY) }.exceptionOrNull() is IllegalArgumentException
+        ) shouldBe true
+        (
+            runCatching { v.animateTo(Float.NaN) }.exceptionOrNull() is IllegalArgumentException
+        ) shouldBe true
+        (
+            runCatching { v.animateTo(1f, velocity = Float.NaN) }.exceptionOrNull() is IllegalArgumentException
+        ) shouldBe true
+        (
+            runCatching { v.snapTo(Float.POSITIVE_INFINITY) }.exceptionOrNull() is IllegalArgumentException
+        ) shouldBe true
     }
 
     @Test
     fun `flick thresholds reject invalid assignments immediately`() = motionTest {
         val v = value()
-        (runCatching { v.slowFlick = -1f }.exceptionOrNull() is IllegalArgumentException) shouldBe true
-        (runCatching { v.fastFlick = Float.NaN }.exceptionOrNull() is IllegalArgumentException) shouldBe true
-        (runCatching { v.slowFlick = 3f }.exceptionOrNull() is IllegalArgumentException) shouldBe true
+        (
+            runCatching { v.slowFlick = -1f }.exceptionOrNull() is IllegalArgumentException
+        ) shouldBe true
+        (
+            runCatching { v.fastFlick = Float.NaN }.exceptionOrNull() is IllegalArgumentException
+        ) shouldBe true
+        (
+            runCatching { v.slowFlick = 3f }.exceptionOrNull() is IllegalArgumentException
+        ) shouldBe true
     }
 
     @Test
