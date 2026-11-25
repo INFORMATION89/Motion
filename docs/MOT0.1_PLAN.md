@@ -57,7 +57,8 @@ Cover target and source changes separately because their timing contracts are in
 **Target changes**
 - While opening, update the target to different bounds. The current geometry must not jump on the update; the motion must subsequently settle at the new target.
 - While closed, update the target. The closed surface must not move; the next `open()` must use the updated target.
-- While already open and settled, update the target. First characterize current behavior and decide whether the open surface should animate to the new target or whether the change only affects the next opening. Do not leave this ambiguous: record the selected behavior in the test name and KDoc.
+- While already open and settled, update the target. The open surface should animate from its current geometry to the new target using the last active spring set; it must not remain at stale bounds. This keeps the visible surface attached to the anchor it represents.
+- If the morph is caught by a gesture, a target update must not move it under the finger. The latest target is used when the gesture releases or the next command resumes motion.
 
 **Source changes**
 - While closing, update the source. The closing motion must redirect to the latest source without a geometry jump.
@@ -98,7 +99,7 @@ Check geometric edge cases separately:
 - Zero-size or transient anchors that Compose can produce during layout.
 - Non-finite anchor geometry / corner radius.
 
-Before adding constructor validation to public `MorphAnchor`, inspect all call sites and preserve legitimate transient zero-size layout behavior. Reject non-finite geometry if it can reach `MorphMotion`; do not silently normalize corrupt anchors into plausible values.
+Validate `MorphAnchor` geometry at its boundary: all four rectangle edges and `cornerRadius` must be finite; `right >= left`, `bottom >= top`, and `cornerRadius >= 0`. Allow zero width/height because Compose can report transient zero-size layout anchors. Add tests for zero-size acceptance and invalid/inverted/non-finite geometry. Do not silently normalize corrupt anchors into plausible values.
 
 ### 5. Recheck the scalar motion contracts
 
@@ -110,7 +111,7 @@ Do not broaden this into a rewrite. Confirm tests already cover:
 - Changing `restPoints` does not retarget an already-running animation.
 - Same-target `animateTo()` still animates as agreed.
 
-Add only any missing regression test discovered during implementation.
+Add only any missing regression test discovered during implementation. Keep `MotionSpring` constructor/conversion validation (positive finite response and damping, finite conversion inputs) as a separate follow-up unless implementation reveals that it directly blocks MOT0.1.
 
 ### 6. Final review and PR readiness
 
