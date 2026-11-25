@@ -26,7 +26,7 @@ This is the working handoff for the next development session. Keep it current wh
 - Branch: `mot-0.1/core-validation`
 - Pull request: [#1 — MOT0.1: validate MotionValue and physics inputs](https://github.com/INFORMATION89/Motion-UI/pull/1)
 - Baseline commit `c636413e1e4790675c38ea36e8c3c22ac84d0aa7` passed GitHub Actions run `45674503787`: Spotless, unit tests, and library build.
-- The follow-up planning document was committed as `d0ee112c3ffd163c2ecd554b18ad9a0f6e5c9929`. Its CI was running when this handoff was updated; verify the exact current branch-head result before coding or marking anything green.
+- The execution plan was added in `d0ee112c3ffd163c2ecd554b18ad9a0f6e5c9929` and refined in `617068f08c3a9a778e490d8758a9227fdfe95d4b`. Verify CI for the exact current branch head before coding or marking anything green.
 - The PR remains draft while the MorphMotion interruption and retargeting coverage is incomplete.
 
 ### Implemented
@@ -65,7 +65,27 @@ Order:
 
 Detailed scenarios and acceptance criteria are in `docs/MOT0.1_PLAN.md`.
 
-## Verification
+## Local setup and verification
+
+The repository specifies **JDK 21** and **Android SDK / Build Tools 37**. This session cannot inspect the developer machine, so verify these locally before the Saturday session.
+
+On Windows PowerShell, from the repository root:
+
+```powershell
+git fetch origin
+# If the branch already exists locally:
+git switch mot-0.1/core-validation
+git pull --ff-only
+# If it does not exist locally, use this instead of the two switch/pull lines:
+# git switch --track -c mot-0.1/core-validation origin/mot-0.1/core-validation
+
+git status --short --branch
+java -version
+.\\gradlew.bat --version
+.\\gradlew.bat spotlessCheck
+.\\gradlew.bat :motion:testDebugUnitTest
+.\\gradlew.bat :motion:assembleRelease
+```
 
 The GitHub Actions workflow runs:
 
