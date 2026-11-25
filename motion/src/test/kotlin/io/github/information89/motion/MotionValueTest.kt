@@ -75,6 +75,7 @@ class MotionValueTest {
         (runCatching { MotionValue(0f, this, overMax = Float.POSITIVE_INFINITY) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
         (runCatching { MotionValue(0f, this, slowFlick = Float.NaN) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
         (runCatching { MotionValue(0f, this, fastFlick = -1f) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
+        (runCatching { MotionValue(0f, this, slowFlick = 3f, fastFlick = 2f) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
         (runCatching { MotionValue(0f, this, deceleration = 1f) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
     }
 
@@ -94,6 +95,7 @@ class MotionValueTest {
         val v = value()
         (runCatching { v.slowFlick = -1f }.exceptionOrNull() is IllegalArgumentException) shouldBe true
         (runCatching { v.fastFlick = Float.NaN }.exceptionOrNull() is IllegalArgumentException) shouldBe true
+        (runCatching { v.slowFlick = 3f }.exceptionOrNull() is IllegalArgumentException) shouldBe true
     }
 
     @Test
