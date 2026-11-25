@@ -81,10 +81,10 @@ git pull --ff-only
 
 git status --short --branch
 java -version
-.\\gradlew.bat --version
-.\\gradlew.bat spotlessCheck
-.\\gradlew.bat :motion:testDebugUnitTest
-.\\gradlew.bat :motion:assembleRelease
+.\gradlew.bat --version
+.\gradlew.bat spotlessCheck
+.\gradlew.bat :motion:testDebugUnitTest
+.\gradlew.bat :motion:assembleRelease
 ```
 
 The GitHub Actions workflow runs:
