@@ -35,7 +35,7 @@ Add the repository as a submodule:
 git submodule add https://github.com/INFORMATION89/Motion-UI.git motion
 ```
 
-In the consuming project's `settings.gradle.kts`, include the build and substitute the published coordinates with the local project:
+In the consuming project's `settings.gradle.kts`, include the build and substitute the dependency coordinates with the local project:
 
 ```kotlin
 includeBuild("motion") {
