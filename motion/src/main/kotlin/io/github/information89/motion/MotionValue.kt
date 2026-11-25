@@ -79,6 +79,8 @@ class MotionValue internal constructor(
         requireFinite(initial, "initial")
         requireNonNegativeFinite(overMin, "overMin")
         requireNonNegativeFinite(overMax, "overMax")
+        requireNonNegativeFinite(slowFlick, "slowFlick")
+        requireNonNegativeFinite(fastFlick, "fastFlick")
         require(deceleration.isFinite() && deceleration > 0f && deceleration < 1f) {
             "deceleration must be finite and in the range (0, 1)"
         }
