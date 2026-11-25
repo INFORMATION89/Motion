@@ -33,6 +33,21 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 
+private fun requireFinite(value: Float, name: String) {
+    require(value.isFinite()) { "$name must be finite" }
+}
+
+private fun requireNonNegativeFinite(value: Float, name: String) {
+    requireFinite(value, name)
+    require(value >= 0f) { "$name must be non-negative" }
+}
+
+private fun normalizedRestPoints(points: List<Float>): List<Float> {
+    require(points.isNotEmpty()) { "restPoints must not be empty" }
+    points.forEach { requireFinite(it, "restPoints entries") }
+    return points.distinct().sorted()
+}
+
 /**
  * One number per interaction: 0 = closed, 1 = open (or any rest points you give). A finger moves
  * it directly ([drag]), letting go hands the finger's velocity to a spring ([release]), and a new
@@ -50,8 +65,8 @@ class MotionValue internal constructor(
     val overMin: Float = 0.1f,
     val overMax: Float = 0.1f,
     /** Releases slower / faster than these (value units per second): see [MotionPhysics.chooseTarget]. */
-    var slowFlick: Float = 0.5f,
-    var fastFlick: Float = 2f,
+    slowFlick: Float = 0.5f,
+    fastFlick: Float = 2f,
     val deceleration: Float = MotionPhysics.DECELERATION_FAST,
     /** The spring for a move towards [target]; by default the container opens, dismiss closes. */
     val springFor: (from: Float, target: Float) -> MotionSpring = { from, target ->
@@ -60,17 +75,39 @@ class MotionValue internal constructor(
 ) {
     private val animatable = Animatable(initial)
 
+    init {
+        requireFinite(initial, "initial")
+        requireNonNegativeFinite(overMin, "overMin")
+        requireNonNegativeFinite(overMax, "overMax")
+        require(deceleration.isFinite() && deceleration > 0f && deceleration < 1f) {
+            "deceleration must be finite and in the range (0, 1)"
+        }
+    }
+
     /**
      * Where a release may come to rest. Can change (e.g. a sheet whose tall size follows the
      * keyboard); a motion already running keeps its target.
      */
-    var restPoints: List<Float> = restPoints
+    var restPoints: List<Float> = normalizedRestPoints(restPoints)
         set(value) {
-            require(value.isNotEmpty()) { "restPoints must not be empty" }
-            field = value
+            field = normalizedRestPoints(value)
         }
     private val min get() = restPoints.min()
     private val max get() = restPoints.max()
+
+    /** Minimum release speed that counts as a flick. */
+    var slowFlick: Float = slowFlick
+        set(value) {
+            requireNonNegativeFinite(value, "slowFlick")
+            field = value
+        }
+
+    /** Release speed above which a fling advances at least one rest point. */
+    var fastFlick: Float = fastFlick
+        set(value) {
+            requireNonNegativeFinite(value, "fastFlick")
+            field = value
+        }
 
     /** The finger's position before resistance (only meaningful while dragging). */
     private var raw = initial
@@ -96,7 +133,10 @@ class MotionValue internal constructor(
 
     /** Moves by [delta] value units with rubber-banding past the ends. */
     fun drag(delta: Float) {
-        raw += delta
+        requireFinite(delta, "delta")
+        val nextRaw = raw + delta
+        requireFinite(nextRaw, "dragged position")
+        raw = nextRaw
         val shown = MotionPhysics.resist(raw, min, max, overMin, overMax)
         scope.launch(start = CoroutineStart.UNDISPATCHED) { animatable.snapTo(shown) }
     }
@@ -107,6 +147,7 @@ class MotionValue internal constructor(
      * resistance, so a release from an over-pull doesn't shoot off. Returns the chosen rest point.
      */
     fun release(velocity: Float): Float {
+        requireFinite(velocity, "velocity")
         val v = velocity * MotionPhysics.resistance(raw, min, max, overMin, overMax)
         val to = targetFor(velocity)
         animateTo(to, v)
@@ -115,12 +156,15 @@ class MotionValue internal constructor(
 
     /** The rest point [release] would pick for [velocity], without moving. */
     fun targetFor(velocity: Float): Float {
+        requireFinite(velocity, "velocity")
         val v = velocity * MotionPhysics.resistance(raw, min, max, overMin, overMax)
         return MotionPhysics.chooseTarget(animatable.value, v, restPoints, slowFlick, fastFlick, deceleration)
     }
 
     /** Springs to [target], starting with [velocity] (defaults to the current one, so it never jumps). */
     fun animateTo(target: Float, velocity: Float = animatable.velocity, spring: MotionSpring? = null) {
+        requireFinite(target, "target")
+        requireFinite(velocity, "velocity")
         val spec = (spring ?: springFor(animatable.value, target)).spec<Float>()
         raw = target
         scope.launch { animatable.animateTo(target, spec, initialVelocity = velocity) }
@@ -128,6 +172,7 @@ class MotionValue internal constructor(
 
     /** Jumps to [target] with no motion (e.g. "Remove animations" is on). */
     fun snapTo(target: Float) {
+        requireFinite(target, "target")
         raw = target
         scope.launch(start = CoroutineStart.UNDISPATCHED) { animatable.snapTo(target) }
     }
