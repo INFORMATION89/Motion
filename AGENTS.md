@@ -61,9 +61,9 @@ Run the full workflow from the repository root:
 On Windows PowerShell:
 
 ```powershell
-.\\gradlew.bat spotlessCheck
-.\\gradlew.bat :motion:testDebugUnitTest
-.\\gradlew.bat :motion:assembleRelease
+.\gradlew.bat spotlessCheck
+.\gradlew.bat :motion:testDebugUnitTest
+.\gradlew.bat :motion:assembleRelease
 ```
 
 A task is not verified merely because it compiles locally. Confirm that GitHub Actions passed for the exact latest branch-head SHA. Report any unavailable local SDK/device checks honestly.
