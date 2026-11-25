@@ -18,11 +18,11 @@ package io.github.information89.motion
 
 import androidx.compose.runtime.MonotonicFrameClock
 import androidx.compose.ui.geometry.Rect
+import io.kotest.matchers.floats.plusOrMinus
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.runBlocking
-import io.kotest.matchers.floats.plusOrMinus
-import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.yield
 import org.junit.jupiter.api.Test
 
