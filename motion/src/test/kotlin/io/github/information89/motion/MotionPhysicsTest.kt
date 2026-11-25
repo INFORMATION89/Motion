@@ -139,6 +139,21 @@ class MotionPhysicsTest {
     }
 
     @Test
+    fun `projection rejects non finite values and invalid deceleration`() {
+        (runCatching { MotionPhysics.project(Float.NaN, 1f) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
+        (runCatching { MotionPhysics.project(0f, Float.POSITIVE_INFINITY) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
+        (runCatching { MotionPhysics.project(0f, 1f, 1f) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
+    }
+
+    @Test
+    fun `target selection rejects invalid thresholds and rest points`() {
+        val points = listOf(0f, 1f)
+        (runCatching { MotionPhysics.chooseTarget(0f, 1f, emptyList(), 0f, 1f) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
+        (runCatching { MotionPhysics.chooseTarget(0f, 1f, listOf(0f, Float.NaN), 0f, 1f) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
+        (runCatching { MotionPhysics.chooseTarget(0f, 1f, points, 2f, 1f) }.exceptionOrNull() is IllegalArgumentException) shouldBe true
+    }
+
+    @Test
     fun `window maps progress through a range`() {
         MotionValue.window(0.35f, 0.35f, 0.70f) shouldBe 0f
         MotionValue.window(0.525f, 0.35f, 0.70f) shouldBe (0.5f plusOrMinus 0.001f)
