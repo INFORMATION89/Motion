@@ -264,26 +264,26 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
 
     /** Opens, from wherever it is now (a tap: no bounce). */
     fun open(springs: MorphSprings = MorphSprings.Open) {
-        val t = target ?: return
+        if (target == null) return
         isOpen = true
         val generation = ++moveGeneration
         scope.launch(start = CoroutineStart.UNDISPATCHED) {
             if (!placed) placeAtSource()
             // A close (or a newer open) may have arrived while the first layout was pending.
             if (generation != moveGeneration || !isOpen) return@launch
-            animate(t, springs)
+            animate(target ?: return@launch, springs)
         }
     }
 
     /** Closes back into the source, from wherever it is now (a tap or back: no bounce). */
     fun close(springs: MorphSprings = MorphSprings.Close) {
-        val s = source ?: return
+        if (source == null) return
         isOpen = false
         val generation = ++moveGeneration
         scope.launch(start = CoroutineStart.UNDISPATCHED) {
             if (!placed) placeAtSource()
             if (generation != moveGeneration || isOpen) return@launch
-            animate(s, springs)
+            animate(source ?: return@launch, springs)
         }
     }
 
