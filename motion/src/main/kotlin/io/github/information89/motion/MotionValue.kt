@@ -81,6 +81,7 @@ class MotionValue internal constructor(
         requireNonNegativeFinite(overMax, "overMax")
         requireNonNegativeFinite(slowFlick, "slowFlick")
         requireNonNegativeFinite(fastFlick, "fastFlick")
+        require(fastFlick >= slowFlick) { "fastFlick must be greater than or equal to slowFlick" }
         require(deceleration.isFinite() && deceleration > 0f && deceleration < 1f) {
             "deceleration must be finite and in the range (0, 1)"
         }
@@ -101,6 +102,7 @@ class MotionValue internal constructor(
     var slowFlick: Float = slowFlick
         set(value) {
             requireNonNegativeFinite(value, "slowFlick")
+            require(value <= fastFlick) { "slowFlick must not exceed fastFlick" }
             field = value
         }
 
@@ -108,6 +110,7 @@ class MotionValue internal constructor(
     var fastFlick: Float = fastFlick
         set(value) {
             requireNonNegativeFinite(value, "fastFlick")
+            require(value >= slowFlick) { "fastFlick must be greater than or equal to slowFlick" }
             field = value
         }
 
