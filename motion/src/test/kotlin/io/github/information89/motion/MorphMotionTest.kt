@@ -21,10 +21,10 @@ import androidx.compose.ui.geometry.Rect
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.yield
-import org.junit.jupiter.api.Test
 import io.kotest.matchers.floats.plusOrMinus
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.yield
+import org.junit.jupiter.api.Test
 
 private class MorphStepClock : MonotonicFrameClock {
     private var time = 0L
