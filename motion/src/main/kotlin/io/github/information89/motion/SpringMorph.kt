@@ -292,6 +292,7 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
      * along the straight path, so the surface stays under the finger.
      */
     fun drag(delta: Float) {
+        moveGeneration++
         val s = source ?: return
         val t = target ?: return
         val p = (progress + delta).coerceIn(-0.05f, 1.08f)
@@ -311,6 +312,7 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
      * predictive back gesture. Then [open] (cancelled) or [close] (committed) carries on from there.
      */
     fun scrub(progress: Float) {
+        moveGeneration++
         val s = source ?: return
         val t = target ?: return
         val p = progress.coerceIn(-0.05f, 1.08f)
@@ -384,6 +386,7 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
      * cancelled); a drag carries on from there, a tap turns it back.
      */
     internal fun catch() {
+        moveGeneration++
         caught = true
         scope.launch { press.animateTo(1f, Motion.snappy.spec()) }
         scope.launch(start = CoroutineStart.UNDISPATCHED) {
