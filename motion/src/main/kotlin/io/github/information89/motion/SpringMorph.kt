@@ -132,6 +132,7 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
     private val h = Animatable(0f)
     private val r = Animatable(0f)
     private var placed = false
+    private var moveGeneration = 0L
 
     // Under a finger the surface sinks a little and springs back when let go, like iOS 26's
     // interactive glass ("scales and bounces"; WWDC25 Meet Liquid Glass). 0 at rest, 1 pressed.
@@ -175,9 +176,18 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
         get() {
             val s = source ?: return 0f
             val t = target ?: return 0f
-            val span = (t.bounds.height - s.bounds.height) + (t.bounds.width - s.bounds.width)
-            if (abs(span) < 1f) return if (isOpen) 1f else 0f
-            return ((h.value - s.bounds.height) + (w.value - s.bounds.width)) / span
+            val dx = t.bounds.center.x - s.bounds.center.x
+            val dy = t.bounds.center.y - s.bounds.center.y
+            val dw = t.bounds.width - s.bounds.width
+            val dh = t.bounds.height - s.bounds.height
+            val denominator = dx * dx + dy * dy + dw * dw + dh * dh
+            if (denominator < 1f) return if (isOpen) 1f else 0f
+            val numerator =
+                (cx.value - s.bounds.center.x) * dx +
+                    (cy.value - s.bounds.center.y) * dy +
+                    (w.value - s.bounds.width) * dw +
+                    (h.value - s.bounds.height) * dh
+            return numerator / denominator
         }
 
     // The corner as it actually looks: a pill's "100 dp" is really half its height. Springing from the
@@ -218,6 +228,16 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
         if (!isOpen && isMoving && !caught) animate(anchor, lastSprings)
     }
 
+    /**
+     * The target's current bounds. While opening, re-aim at the new target from the current
+     * geometry and velocity; while closed, the next opening uses it.
+     */
+    internal fun updateTarget(anchor: MorphAnchor) {
+        if (anchor == target) return
+        target = anchor
+        if (isOpen && isMoving && !caught) animate(anchor, lastSprings)
+    }
+
     /** Springs every property to [to] with [springs], each from its current velocity plus [kick]. */
     private fun animate(to: MorphAnchor, springs: MorphSprings, kick: List<Float> = List(5) { 0f }) {
         val v = values(to)
@@ -246,8 +266,11 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
     fun open(springs: MorphSprings = MorphSprings.Open) {
         val t = target ?: return
         isOpen = true
+        val generation = ++moveGeneration
         scope.launch(start = CoroutineStart.UNDISPATCHED) {
             if (!placed) placeAtSource()
+            // A close (or a newer open) may have arrived while the first layout was pending.
+            if (generation != moveGeneration || !isOpen) return@launch
             animate(t, springs)
         }
     }
@@ -256,7 +279,12 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
     fun close(springs: MorphSprings = MorphSprings.Close) {
         val s = source ?: return
         isOpen = false
-        animate(s, springs)
+        val generation = ++moveGeneration
+        scope.launch(start = CoroutineStart.UNDISPATCHED) {
+            if (!placed) placeAtSource()
+            if (generation != moveGeneration || isOpen) return@launch
+            animate(s, springs)
+        }
     }
 
     /**
@@ -320,6 +348,7 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
             else -> MorphSprings.Close
         }
         isOpen = opening
+        moveGeneration++
         // The springs carry their own velocity (zeroed by the drag's snaps), so the kick is the finger's.
         animate(if (opening) t else s, springs, kick)
     }
@@ -434,7 +463,8 @@ fun SpringMorph(
     // The first source is set at once (opening reads it); later ones re-aim the springs after composition.
     if (motion.source == null) motion.source = source
     SideEffect { motion.updateSource(source) }
-    motion.target = target
+    if (motion.target == null) motion.target = target
+    SideEffect { motion.updateTarget(target) }
     val density = LocalDensity.current
     // How far a finger travels for the whole path: the farthest an edge moves between source and target,
     // so the edge under the finger keeps up with it (2026-11-21: by the change in height, the moon sheet
