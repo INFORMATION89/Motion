@@ -4,7 +4,7 @@ An independent motion and interaction framework for Jetpack Compose apps.
 
 Motion provides reusable motion behavior: spring-driven state, interruptible animations, gesture-to-animation handoff, elastic boundaries, morphing surfaces, and interaction primitives. It is designed to be used by different apps without depending on their screens, themes, or business logic.
 
-Motion is **not a general-purpose UI kit**. It owns how reusable interactions move and respond; the consuming app and its UI libraries own what the interface looks like and what it contains.
+Motion is organized around two layers: **Motion Core** (`:motion`) owns reusable motion and interaction behavior; **Motion UI** (`:motion-ui`) is a planned, optional component layer for configurable page frames, cards, sheets, header actions, and message surfaces. Motion UI will build on Core, not replace Material 3 or specialized UI libraries. The `:motion-ui` module does not exist yet.
 
 ## What Motion covers
 
@@ -13,7 +13,7 @@ Motion is **not a general-purpose UI kit**. It owns how reusable interactions mo
 - **Reusable interactions** — morphing surfaces, page movement, dials, reveal choreography, and related interaction state.
 - **Motion-related feedback** — semantic haptic primitives, ambient motion scheduling, and reduced-motion support.
 
-See [the framework overview](docs/FRAMEWORK_OVERVIEW.md) for the boundary between Motion, Compose, UI component libraries, and app code.
+See [the framework overview](docs/FRAMEWORK_OVERVIEW.md) for the responsibilities of Motion Core, the planned Motion UI layer, Compose, other UI libraries, and app code.
 
 ## Platform support
 
