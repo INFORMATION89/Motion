@@ -17,9 +17,9 @@ Motion Core is the reusable motion and interaction engine for Compose apps. It o
 
 Compose remains the animation, rendering, and input foundation. Motion Core must not introduce a second animation engine.
 
-### Motion UI — planned `:motion-ui`
+### Motion UI — `:motion-ui`
 
-Motion UI is a planned, optional Compose component layer built on Motion Core. It should provide reusable building blocks that combine common UI structure with Motion interactions, using neutral defaults and app-supplied theme values.
+Motion UI is an optional Compose component layer built on Motion Core. Its first delivered stage (MOT0.3A) provides an app-configurable Material 3 theme entry point and semantic shape, spacing, and surface-material tokens. Further reusable building blocks are staged separately.
 
 The initial intended scope is:
 
@@ -29,7 +29,7 @@ The initial intended scope is:
 - shared component contracts and theme/token names for typography, shape, spacing, materials, and motion;
 - optional glass/material wrappers only where a focused rendering dependency is justified and platform fallbacks are explicit.
 
-Motion UI is **not** meant to replace Material 3 or become a complete application framework. It should not clone standard controls that Compose or Material already provide. The module does not exist in the current build yet; this is a planned layer, not a currently consumable artifact.
+Motion UI is **not** meant to replace Material 3 or become a complete application framework. It should not clone standard controls that Compose or Material already provide. The module is now included in the Gradle build and required CI. Its current public API is limited to the theme and token foundation; card, page, sheet, and glass components are not yet delivered.
 
 Motion UI depends on Motion Core. Motion Core must never depend on Motion UI.
 
@@ -39,7 +39,7 @@ Think of an app as these cooperating layers:
 
 1. **Application and domain** — weather data, forecasts, business rules, screen state, navigation destinations, and product-specific decisions.
 2. **App theme and product design** — brand colors, visual identity, product-specific typography choices, content, and screen composition.
-3. **Motion UI (future, optional)** — reusable component building blocks such as page frames, cards, sheets, header actions, and message surfaces, with configurable defaults.
+3. **Motion UI (optional)** — reusable component building blocks such as page frames, cards, sheets, header actions, and message surfaces, with configurable defaults.
 4. **UI component libraries** — standard buttons, switches, sliders, text fields, dialogs, navigation controls, semantics, and accessibility behavior. Prefer Material 3 or another focused library instead of cloning these.
 5. **Motion Core** — reusable movement and interaction behavior used by components: spring state, gesture tracking, interruption, retargeting, velocity handoff, morph mechanics, and motion feedback.
 6. **Compose and the platform** — rendering, layout, pointer input, animation primitives, windowing, OS services, and hardware capabilities.
@@ -118,4 +118,4 @@ For Solstice, Motion Core should own generic motion mechanics; Motion UI may lat
 
 ## Platform boundary
 
-The current implementation targets Android and Jetpack Compose only. The planned UI layer is also initially Android/Compose-oriented unless a separate multiplatform design is approved. Shared design principles do not mean iOS or desktop targets are currently supported. See [Platform support](PLATFORM_SUPPORT.md).
+The current implementation targets Android and Jetpack Compose only. Motion UI is also Android/Compose-oriented. Shared design principles do not mean iOS or desktop targets are currently supported. See [Platform support](PLATFORM_SUPPORT.md).
