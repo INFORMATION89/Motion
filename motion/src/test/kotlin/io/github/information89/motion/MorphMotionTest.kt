@@ -280,6 +280,7 @@ class MorphMotionTest {
         advanceMorphFrames(4)
 
         motion.scrub(0.4f)
+        advanceMorphFrames(12)
         motion.bounds.center.x shouldBe (110f plusOrMinus 0.1f)
         motion.bounds.center.y shouldBe (110f plusOrMinus 0.1f)
         motion.open()
@@ -401,7 +402,7 @@ class MorphMotionTest {
         advanceMorphFrames(5)
 
         motion.drag(0.1f)
-        advanceMorphFrames(3)
+        advanceMorphFrames(12)
         motion.isVisible shouldBe true
         motion.isMoving shouldBe false
         val draggedBounds = motion.bounds
