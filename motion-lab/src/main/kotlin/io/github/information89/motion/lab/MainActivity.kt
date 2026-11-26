@@ -63,11 +63,11 @@ import io.github.information89.motion.Dial
 import io.github.information89.motion.DialLook
 import io.github.information89.motion.DialScale
 import io.github.information89.motion.EdgeBand
+import io.github.information89.motion.Morph
+import io.github.information89.motion.MorphHost
 import io.github.information89.motion.Motion
 import io.github.information89.motion.MotionSpring
 import io.github.information89.motion.MotionTime
-import io.github.information89.motion.Morph
-import io.github.information89.motion.MorphHost
 import io.github.information89.motion.PageOvershoot
 import io.github.information89.motion.edgeBlur
 import io.github.information89.motion.morphAnchor
@@ -97,7 +97,7 @@ private enum class LabPage(val title: String, val description: String) {
     MORPH("Morph", "Grow a surface from its source, then catch or drag it back."),
     PAGES("Page movement", "Swipe between pages or choose a page; both use the same spring motion."),
     DIAL("Dial", "Drag, flick, and snap a reusable dial with haptic feedback."),
-    EDGE_BLUR("Scroll edge blur", "Explore progressive blur and fade at the edges of a horizontal list.")
+    EDGE_BLUR("Scroll edge blur", "Explore progressive blur and fade at the edges of a horizontal list."),
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -155,7 +155,11 @@ private fun MotionLabApp() {
                         ) {
                             Text(item.title, style = MaterialTheme.typography.titleLarge)
                             Text(item.description, style = MaterialTheme.typography.bodyMedium)
-                            Text("Explore →", color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
+                            Text(
+                                "Explore →",
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.labelLarge
+                            )
                         }
                     }
                 }
@@ -209,7 +213,10 @@ private fun SpringsDemo() {
     val scope = rememberCoroutineScope()
     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
         Text("Choose a spring token, then play it in both directions.", style = MaterialTheme.typography.bodyMedium)
-        Row(modifier = Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            modifier = Modifier.horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             springTokens.forEachIndexed { index, item ->
                 FilterChip(
                     selected = selected == index,
@@ -235,7 +242,9 @@ private fun SpringsDemo() {
             )
         }
         Text(
-            "${springTokens[selected].first} · response ${"%.2f".format(springTokens[selected].second.response)} s · damping ${"%.2f".format(springTokens[selected].second.damping)}",
+            "${springTokens[selected].first} · response ${"%.2f".format(
+                springTokens[selected].second.response
+            )} s · damping ${"%.2f".format(springTokens[selected].second.damping)}",
             style = MaterialTheme.typography.bodySmall
         )
         Button(onClick = {
@@ -353,7 +362,9 @@ private fun PageDemo() {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             springs.forEachIndexed { index, item ->
-                FilterChip(selected = springIndex == index, onClick = { springIndex = index }, label = { Text(item.first) })
+                FilterChip(selected = springIndex == index, onClick = {
+                    springIndex = index
+                }, label = { Text(item.first) })
             }
         }
         HorizontalPager(
@@ -383,12 +394,17 @@ private fun PageDemo() {
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             repeat(3) { index ->
-                Button(onClick = { scope.launch { pager.springToPage(index, overshoot, springs[springIndex].second) } }) {
+                Button(onClick = {
+                    scope.launch { pager.springToPage(index, overshoot, springs[springIndex].second) }
+                }) {
                     Text("${index + 1}")
                 }
             }
         }
-        Text("Swipe, or tap a page number. The pages use the same spring-based movement.", style = MaterialTheme.typography.bodySmall)
+        Text(
+            "Swipe, or tap a page number. The pages use the same spring-based movement.",
+            style = MaterialTheme.typography.bodySmall
+        )
     }
 }
 
