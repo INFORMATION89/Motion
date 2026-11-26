@@ -6,7 +6,7 @@ Read this file and [project rules](docs/RULES.md) before making changes. Then re
 
 - This repository contains the reusable Motion framework. It is independent of the consuming application and must remain useful to unrelated apps.
 - The current library artifact is an Android library for Jetpack Compose. Do not claim iOS, Windows, macOS, or Linux support until corresponding Gradle targets, platform implementations, tests, and CI exist.
-- Never add the consuming application, weather-domain, or other consumer-app dependencies, source code, assets, or assumptions to Motion.
+- Never add consumer-specific domain dependencies, source code, assets, or assumptions to Motion.
 - Motion Core (`:motion`) owns reusable motion and interaction behavior. The planned Motion UI (`:motion-ui`) layer may own configurable, cross-app component building blocks, but not a complete application framework, product screens, visual brand, navigation policy, or domain logic. Motion UI depends on Core; Core never depends on Motion UI. Follow [the framework overview](docs/FRAMEWORK_OVERVIEW.md) when deciding where code belongs.
 - Compose remains the animation, rendering, and interaction foundation. Use Compose primitives such as `Animatable`, `spring`, and gesture APIs; do not invent a second general-purpose animation engine.
 - Motion-specific behavior and interaction decisions must follow `docs/MOTION.md`. Do not change agreed, user-visible motion behavior without documenting the trade-off and obtaining the owner's agreement.
