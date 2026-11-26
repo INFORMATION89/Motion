@@ -296,7 +296,7 @@ class MorphMotionTest {
         motion.open()
         advanceMorphFrames(5)
         motion.catch()
-        advanceMorphFrames(3)
+        advanceMorphFrames(40)
         val caughtBounds = motion.bounds
 
         advanceMorphFrames(20)
@@ -322,6 +322,71 @@ class MorphMotionTest {
         motion.isOpen shouldBe false
         motion.bounds.center.x shouldBe (50f plusOrMinus 0.1f)
         motion.isMoving shouldBe false
+    }
+
+
+    @Test
+    fun `target retargeting after opening has settled follows the new anchor`() = morphMotionTest {
+        val motion = MorphMotion(this)
+        motion.source = sourceAnchor()
+        motion.target = targetAnchor()
+        motion.open()
+        advanceMorphFrames(240)
+        val before = motion.bounds
+
+        motion.updateTarget(alternateTargetAnchor())
+        motion.bounds shouldBe before
+        motion.isVisible shouldBe true
+        advanceMorphFrames(240)
+
+        motion.bounds.center.x shouldBe (350f plusOrMinus 0.1f)
+        motion.bounds.center.y shouldBe (200f plusOrMinus 0.1f)
+        motion.isMoving shouldBe false
+    }
+
+    @Test
+    fun `target update while caught waits for release and uses latest anchor`() = morphMotionTest {
+        val motion = MorphMotion(this)
+        motion.source = sourceAnchor()
+        motion.target = targetAnchor()
+        motion.open()
+        advanceMorphFrames(240)
+        motion.catch()
+        advanceMorphFrames(40)
+        val caughtBounds = motion.bounds
+
+        motion.updateTarget(alternateTargetAnchor())
+        motion.bounds shouldBe caughtBounds
+        motion.isVisible shouldBe true
+        motion.isMoving shouldBe false
+
+        motion.release(0f)
+        advanceMorphFrames(240)
+        motion.isOpen shouldBe true
+        motion.bounds.center.x shouldBe (350f plusOrMinus 0.1f)
+        motion.bounds.center.y shouldBe (200f plusOrMinus 0.1f)
+    }
+
+    @Test
+    fun `scrubbing a closing morph keeps it visible under gesture ownership`() = morphMotionTest {
+        val motion = MorphMotion(this)
+        motion.source = sourceAnchor()
+        motion.target = targetAnchor()
+        motion.open()
+        advanceMorphFrames(240)
+        motion.close()
+        advanceMorphFrames(5)
+
+        motion.scrub(0.4f)
+        advanceMorphFrames(3)
+        motion.isVisible shouldBe true
+        motion.isMoving shouldBe false
+        motion.bounds.center.x shouldBe (110f plusOrMinus 0.1f)
+
+        motion.open()
+        advanceMorphFrames(240)
+        motion.isOpen shouldBe true
+        motion.bounds.center.x shouldBe (200f plusOrMinus 0.1f)
     }
 
 }
