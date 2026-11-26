@@ -18,8 +18,8 @@ package io.github.information89.motion
 
 import androidx.compose.ui.geometry.Rect
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
 
 class MorphGeometryTest {
     private val pill = MorphAnchor(Rect(100f, 1000f, 300f, 1060f), cornerRadius = 30f)
