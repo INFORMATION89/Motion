@@ -91,12 +91,12 @@ private data class ToolbarDestination(
     val id: String,
     val label: String,
     val symbol: String,
-    val description: String
+    val description: String,
 )
 
 private enum class ToolbarVisualProfile(val title: String) {
     EXPRESSIVE("M3 Expressive"),
-    CUSTOM("App-defined")
+    CUSTOM("App-defined"),
 }
 
 private data class ToolbarAppearance(
@@ -106,7 +106,7 @@ private data class ToolbarAppearance(
     val unselectedContent: Color,
     val barShape: Shape,
     val indicatorShape: Shape,
-    val border: Color?
+    val border: Color?,
 )
 
 private val toolbarDestinations = listOf(
@@ -250,7 +250,7 @@ private fun ToolbarPrototypeBar(
     hapticsEnabled: Boolean,
     onActionClick: () -> Unit,
     onSelectionRequest: (String) -> Unit,
-    onSelectionInteractionStarted: () -> Unit
+    onSelectionInteractionStarted: () -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
     val tokens = MotionUiThemeTokens.current
@@ -496,7 +496,7 @@ private fun ToolbarPrototypeBar(
 private fun toolbarProgressForPager(
     destinations: List<ToolbarDestination>,
     currentPage: Int,
-    pageOffset: Float
+    pageOffset: Float,
 ): ToolbarHostProgress? {
     if (!pageOffset.isFinite() || pageOffset == 0f || destinations.isEmpty()) return null
     return when {
