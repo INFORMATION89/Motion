@@ -25,7 +25,8 @@ The initial intended scope is:
 
 - reusable page frame/scaffold and header-action slots;
 - configurable card and sheet building blocks;
-- reusable toolbar/header action and message/feedback surfaces;
+- a first-class, fully customisable animated toolbar with advanced tab morphing, gesture-driven selection, contextual action/bud transitions, and app-provided actions;
+- reusable message/feedback surfaces;
 - shared component contracts and theme/token names for typography, shape, spacing, materials, and motion;
 - optional glass/material wrappers only where a focused rendering dependency is justified and platform fallbacks are explicit.
 
@@ -69,6 +70,9 @@ Good candidates include configurable page frames, card/sheet containers, header-
 
 Motion UI should:
 
+- separate component behaviour and interaction mechanics from visual styling and app configuration;
+- allow the same component (especially the animated toolbar) to use different style profiles, including a Material 3 Expressive-like profile or an app-defined profile;
+- keep Solstice's distinctive palette, glass treatment, icons, weather context, and product branding in Solstice; a consumer may recreate that look through its own style configuration without importing Solstice code or assets;
 - expose slots and configuration rather than hardcode a consuming app's content;
 - provide neutral defaults that apps can override;
 - use Motion Core for movement and interaction mechanics;
