@@ -1,41 +1,39 @@
 # :motion
 
-A small motion framework for Jetpack Compose that makes interactions feel like iOS: springs written
-as *response* and *damping*, gestures that hand their velocity to the animation, rubber-banding,
-UIKit's release rule, and surfaces that morph out of the element that opened them. A universal library of
-animations and interaction components for any app: it depends only on Compose (`animation`,
-`foundation`).
+Motion is the reusable motion and interaction layer for Jetpack Compose apps. It provides spring-driven state, gesture mechanics, morphing behavior, and reusable interaction primitives without taking ownership of an app's visual design, screen structure, or domain logic.
+
+It is an independent library, not a general-purpose UI component kit. Use Compose and your preferred UI/design-system libraries for layout and components, then compose them with Motion for movement and interaction behavior.
+
+See the [framework overview](../docs/FRAMEWORK_OVERVIEW.md) for responsibility boundaries and the [platform guide](../docs/PLATFORM_SUPPORT.md) for current support. Today the artifact targets Android only.
 
 Licensed under the Apache License 2.0 (see `LICENSE`).
 
 ## Install
 
-Not published: build it from source as a git submodule and a Gradle composite build (see the
-[repo README](../README.md#using-it-in-an-app)). Coordinates `io.github.information89:motion`,
-package `io.github.information89.motion`.
+Not published: build it from source as a Git submodule and Gradle composite build (see the [repo README](../README.md#use-in-an-android-app)). Coordinates `io.github.information89:motion`, package `io.github.information89.motion`.
 
 ## The pieces
 
 | | What it is |
 |---|---|
-| `MotionSpring(response, damping)` | A spring the iOS way: `response` is the period in seconds (how quick it feels), `damping` the ratio (1 = no bounce). `spec()` gives a Compose `SpringSpec`; `fromCompose(dampingRatio, stiffness)` converts back. |
-| `Motion` | The tokens. Use only these; anything new becomes a token first. |
-| `MotionValue` | One number per interaction (0 = closed, 1 = open, or your own rest points). A finger moves it (`drag`), letting go hands the velocity to a spring (`release`), a new touch catches it (`stop`). Rubber-bands past its ends. |
-| `rememberMotionValue(...)` | Remembers a `MotionValue`. Rest points can change later (e.g. a sheet's tall size following the keyboard). |
-| `Modifier.motionDrag(value, orientation, range)` | A drag that drives a `MotionValue`: `range` of finger travel moves it by 1. Catches immediately while it moves. |
-| `MotionPhysics` | The maths: `rubberBand`, `resist` / `unresist`, `project` (where a fling would land), `chooseTarget` (the release rule), and the `SlowFlick` / `FastFlick` thresholds. |
-| `MorphHost`, `Modifier.morphAnchor`, `Morph` | A surface that grows from one element (`from` anchor) into another (`to` anchor, or a known `MorphAnchor`), driven by a `MotionValue`. Its content is laid out once at the final size, so nothing reflows. |
-| `MorphStyle`, `Modifier.morphSource(key, cornerRadius, hidden)` | The button becomes the card: give `Morph` the source's style and the target's (fill, border, shadow, how much of your `material` shows) and the source's own `sourceContent`. The morph starts as exactly the button and every property interpolates to the card's (over `styleWindow`; nothing crossfades), while `morphSource` hides the real button in that same frame. |
-| `rememberMorphDrawn(key)` | True once a `Morph` from `key` has drawn: start the opening spring then, so its first visible frame is the source itself. |
-| `rememberAmbientClock(fps, running)`, `rememberAmbientMotionAllowed()` | The clock for ambient animation (drifts, twinkles, weather effects): capped fps, only while the screen is resumed and the thing is visible, wall-clock based; and whether ambient motion should run at all (not in battery saver or with animations off). |
-| `Dial`, `DialScale`, `DialLook`, `rememberDialState` | A value scrubbed along a ruler: drag 1:1, fling with projection, snap to steps, rubber-band at the ends, caught mid-flight; haptics per step, major step, end and settle; labels and decorations per major step, a centre marker, drum curvature, edge blur, visible ends; adjustable in TalkBack. |
-| `Modifier.edgeBlur(top, bottom, start, end)`, `EdgeBand` | A progressive blur and fade at any edge (lists, dials, carousels): each band blurs up to its `blur` at the edge (Android 12+) and fades into a colour (`fadeTo`) or to transparent (`fadeOut`). One blur effect per band, set once. |
-| `Haptic` tokens, `MotionHaptics`, `LocalHaptics`, `haptics()` | Haptic feedback by purpose (`tick`, `detent`, `edge`, `snap`, `press`, `release`, `threshold`, `confirm`, `reject`): each a vibration primitive at an intensity, with a system fallback; rate-limited, lighter on fast gestures, following the touch-feedback setting and one global intensity. Call `haptics().perform(Haptic.detent)`; never the vibrator directly. |
-| `pageSpringFling`, `springToPage`, `PageOvershoot`, `Modifier.pageOvershoot` | One page motion: a swipe let go (`pageSpringFling`) or a tab tap (`springToPage`) springs the pages themselves to their page, one spring the whole way, bouncing past the first and last page (draw it with `pageOvershoot`). A touch while they move stops the pager first. |
-| `Modifier.morphFrom(anchor)` | Inside a `Morph`: an element that travels from an anchor (a button's label) to its place in the target (a heading). |
-| `Modifier.reveal(value, from, to)`, `Modifier.handOff(value, from, to)` | Choreography: content fades and scales in through a window of the value (and leaves first on close); a source's label fades out. |
-| `rememberReducedMotion()` | True when the system's "Remove animations" is on. `Morph` then only fades. |
-| `MotionTime.scale` | Slow motion for checking animations: every token runs this many times slower. Never left on. |
+| `MotionSpring(response, damping)` | A spring expressed using perceptual response and damping. `spec()` returns a Compose `SpringSpec`; `fromCompose(dampingRatio, stiffness)` converts back. |
+| `Motion` | Reusable motion tokens. Add a token only when the behavior is generic and its feel is agreed. |
+| `MotionValue` | Stateful motion for an interaction: drag, release with velocity, catch, snapping, and rest points. |
+| `rememberMotionValue(...)` | Remembers a `MotionValue`; rest points can change later. |
+| `Modifier.motionDrag(value, orientation, range)` | A drag modifier that drives a `MotionValue`; the configured finger travel maps to a value delta. |
+| `MotionPhysics` | Projection, release-target selection, resistance, rubber-banding, and flick thresholds. |
+| `MorphHost`, `Modifier.morphAnchor`, `Morph` | A surface that morphs between registered layout anchors and follows a `MotionValue`. |
+| `MorphStyle`, `Modifier.morphSource(...)` | Morph source/target visual properties such as fill, border, shadow, and source content. The app still owns its visual design. |
+| `rememberMorphDrawn(key)` | Reports when a morph for a source key has drawn, so opening can begin from a valid source frame. |
+| `rememberAmbientClock(fps, running)`, `rememberAmbientMotionAllowed()` | Schedules ambient animation conservatively and reports whether ambient motion should run. |
+| `Dial`, `DialScale`, `DialLook`, `rememberDialState` | A reusable dial interaction with drag, projection, snapping, haptics, labels, and accessibility support. |
+| `Modifier.edgeBlur(...)`, `EdgeBand` | Edge blur/fade helpers for content where the effect supports the interaction or motion presentation. |
+| `Haptic`, `MotionHaptics`, `LocalHaptics`, `haptics()` | Semantic haptic feedback tokens and an abstraction over platform feedback. |
+| `pageSpringFling`, `springToPage`, `PageOvershoot` | Spring-driven page movement and edge overshoot mechanics. |
+| `Modifier.morphFrom(anchor)` | Moves an element within a `Morph` from a source anchor to its target location. |
+| `Modifier.reveal(...)`, `Modifier.handOff(...)` | Choreographs content reveal and hand-off using a motion value. |
+| `rememberReducedMotion()` | Reports the system reduced-motion/animation preference supported by the current platform implementation. |
+| `MotionTime.scale` | Slows Motion tokens for deliberate inspection; restore it after debugging. |
 
 ## Tokens
 
@@ -47,36 +45,28 @@ package `io.github.information89.motion`.
 | `content` | ≈0.31 s / 0.85 | Inner content scaling and fading in. |
 | `settle` | ≈0.31 s / 1 | Settling after a drag or fling. |
 | `snappy` | 0.2 s / 0.9 | Small controls: switch thumbs, presses, icon changes. |
-| `playful` | ≈0.31 s / 0.5 | Expressive moments only: a pop, a press springing back, a landing bump. |
-| `wobble` | ≈0.31 s / 0.32 | Liquid effects only: a drop pulling free, a surface absorbing it. |
-| `gentle` | ≈0.44 s / 1 | Unhurried settles, like a page swipe. |
+| `playful` | ≈0.31 s / 0.5 | Expressive moments only: a pop, press return, or landing bump. |
+| `wobble` | ≈0.31 s / 0.32 | Liquid effects only. |
+| `gentle` | ≈0.44 s / 1 | Unhurried settling, such as a page swipe. |
 
 ## Rules
 
-1. **Only springs, only tokens.** No `tween` or easing curves for motion. (Solstice keeps three
-   timed effects, a sticker peel, a photo "develop" and a slow drift, as documented exceptions.)
-2. **Velocity carries over.** A release starts its spring with the finger's speed; a flick that
-   dismisses carries into the close.
-3. **Everything can be caught.** A touch stops a running motion where it is and the finger takes
-   over.
-4. **The release rule (UIKit):** slower than 250 dp/s is no flick; otherwise the rest point nearest
-   to where the fling would land; faster than 1000 dp/s, at least one step in its direction.
-5. **Rubber-band past the ends** with iOS's curve, and release with the velocity scaled down by the
-   resistance.
-6. **Open on `container`, close on `dismiss`.** Opening can bounce a little; going back never does.
-7. **Read motion values in layout and draw** (`graphicsLayer {}`, `Modifier.layout`, `drawBehind`),
-   so a motion doesn't recompose every frame.
-8. **One material for a morph.** A button and the card it morphs into use the same background
-   material (the same glass or fill): give `SpringMorph` the same material at both ends and let it
-   change only shape, size and content. Two different materials would read as a swap, not a growth.
+1. **Prefer springs and shared tokens.** Avoid local timing/easing values for ordinary interaction motion. Existing documented timed-effect exceptions remain explicit; do not expand them casually.
+2. **Velocity carries over.** A release starts its spring with the gesture's velocity where the API supports it.
+3. **Motion can be caught.** A new gesture should take over a running interaction from its current state.
+4. **Choose release targets from momentum.** Use the projected landing and configured flick rules, not only the current position.
+5. **Use elastic boundaries intentionally.** Over-drag resistance and release behavior should remain consistent.
+6. **Use the appropriate token.** Opening and dismissing a container can have different motion character.
+7. **Read motion values in layout/draw where possible.** Avoid triggering broad recomposition every animation frame.
+8. **Keep appearance in the app.** Motion may interpolate a supplied style as part of a morph, but it does not define the application's theme or visual identity.
 
 ## Examples
 
-A sheet you can drag closed:
+A sheet driven by a motion value:
 
 ```kotlin
 val open = rememberMotionValue(initial = 0f, overMin = 0.02f, overMax = 0.1f)
-LaunchedEffect(Unit) { open.animateTo(1f) } // container spring
+LaunchedEffect(Unit) { open.animateTo(1f) }
 Box(
     Modifier
         .fillMaxSize()
@@ -85,7 +75,7 @@ Box(
 )
 ```
 
-A card that grows out of a pill:
+A card that morphs from a pill:
 
 ```kotlin
 val value = rememberMotionValue()
@@ -100,8 +90,4 @@ MorphHost {
 }
 ```
 
-## Seeing it
-
-Solstice's motion lab (Settings → Debug → Motion lab) shows every token and pattern, with slow
-motion and a frame meter. Design notes: `docs/MOTION.md`; history: "Motion framework" in
-`docs/PLAN.md`.
+For more examples and the current public API, inspect the source and tests. Do not assume an API is available on platforms other than Android.
