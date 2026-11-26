@@ -50,6 +50,7 @@ class MorphGeometryTest {
         val tiny = MorphAnchor(Rect(0f, 0f, 10f, 10f), cornerRadius = 40f)
         MorphGeometry.frame(tiny, tiny, 0f).cornerRadius shouldBe 5f
     }
+
     @Test
     fun `zero-size anchors are allowed for transient layout`() {
         MorphAnchor(Rect(10f, 20f, 10f, 20f), cornerRadius = 0f)
@@ -80,5 +81,4 @@ class MorphGeometryTest {
             MorphAnchor(Rect(0f, 0f, 10f, 10f), cornerRadius = -1f)
         }
     }
-
 }
