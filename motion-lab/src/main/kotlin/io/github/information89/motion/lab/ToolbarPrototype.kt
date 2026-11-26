@@ -29,6 +29,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.stopScroll
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -65,12 +66,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.border
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
@@ -79,6 +86,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.github.information89.motion.Haptic
 import io.github.information89.motion.Motion
@@ -290,6 +298,8 @@ private fun ToolbarPrototypeBar(
     val committedProgress = if (dragging || activeSettlingTargetId != null) null else hostProgress
     val effectiveSelectedId = dragTargetId ?: activeSettlingTargetId ?: selectedTabId
     val ids = remember { toolbarDestinations.map { it.id } }
+    val focusRequesters = remember(ids) { ids.associateWith { FocusRequester() } }
+    val layoutDirection = LocalLayoutDirection.current
     val selectionFractions = toolbarSelectionFractions(
         tabIds = ids,
         selectedTabId = effectiveSelectedId,
@@ -369,7 +379,7 @@ private fun ToolbarPrototypeBar(
                         )
                     }
                     Row(
-                        modifier = Modifier.align(Alignment.CenterStart),
+                        modifier = Modifier.align(Alignment.CenterStart).selectableGroup(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         toolbarDestinations.forEach { destination ->
@@ -399,6 +409,30 @@ private fun ToolbarPrototypeBar(
                                         }
                                     }
                                     .clip(RoundedCornerShape(24.dp))
+                                    .focusRequester(focusRequesters.getValue(destination.id))
+                                    .onPreviewKeyEvent { event ->
+                                        if (event.type != KeyEventType.KeyDown) {
+                                            return@onPreviewKeyEvent false
+                                        }
+                                        val forwardKey = if (layoutDirection == LayoutDirection.Ltr) {
+                                            Key.DirectionRight
+                                        } else {
+                                            Key.DirectionLeft
+                                        }
+                                        val backwardKey = if (layoutDirection == LayoutDirection.Ltr) {
+                                            Key.DirectionLeft
+                                        } else {
+                                            Key.DirectionRight
+                                        }
+                                        val targetId = when (event.key) {
+                                            forwardKey -> toolbarAdjacentTabId(ids, destination.id, forward = true)
+                                            backwardKey -> toolbarAdjacentTabId(ids, destination.id, forward = false)
+                                            else -> null
+                                        } ?: return@onPreviewKeyEvent false
+                                        val focused = focusRequesters[targetId]?.requestFocus() ?: false
+                                        if (focused) latestOnSelectionRequest(targetId)
+                                        focused
+                                    }
                                     .semantics {
                                         role = Role.Tab
                                         selected = isCommittedSelection

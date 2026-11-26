@@ -24,7 +24,7 @@ The pager and destination data belong to Motion Lab. The prototype does not make
 
 - `ToolbarPrototype.kt` is sample-only UI and depends on existing Motion Core and Motion UI APIs.
 - `ToolbarGeometry.kt` contains sample-owned pure progress/geometry helpers. It validates finite progress, stable endpoint IDs, adjacency, and measured bounds.
-- `ToolbarGeometryTest.kt` covers endpoint validation, reverse progress, variable-width interpolation, missing geometry fallback, nearest-tab selection, and duplicate IDs.
+- `ToolbarGeometryTest.kt` covers endpoint validation, reverse progress, variable-width interpolation, missing geometry fallback, nearest-tab selection, keyboard navigation/wrap-around, and duplicate IDs.
 - No new dependency is added. The Motion Lab module reuses the repository's existing test bundle.
 - CI now runs `:motion-lab:testDebugUnitTest` as well as its debug build.
 
@@ -32,7 +32,7 @@ The pager and destination data belong to Motion Lab. The prototype does not make
 
 - The contextual action currently enters and exits as a separate trailing action; the final connected/detached morph is not implemented.
 - Long-press drag previews the nearest measured tab. Automatic edge-scrolling during a drag still needs evaluation on a narrow viewport.
-- The prototype has semantic tab roles and ordinary clickable keyboard activation, but TalkBack traversal and focus behavior still require manual validation.
+- The prototype has grouped tab semantics, roving focus via logical arrow-key navigation (mirrored for RTL), and ordinary click/Enter/Space activation. TalkBack traversal, focus indication, and physical keyboard behavior still require manual validation.
 - Visual comparison uses existing Material 3 colors and Motion UI theme tokens; it is not yet a finalized style interface.
 - Android's animator-enabled signal is checked by the sample during composition. Runtime preference changes while the screen is already open need a lifecycle/manual check.
 - Physical haptic output, contrast, RTL behavior, large font scale, emulator/device interaction, and rapid gesture interruption remain unverified until exercised.

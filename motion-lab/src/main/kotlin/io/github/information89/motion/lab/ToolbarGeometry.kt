@@ -88,6 +88,21 @@ internal fun toolbarIndicatorBounds(
     return interpolateToolbarBounds(from, to, progress.fraction) ?: boundsById[selectedTabId]
 }
 
+internal fun toolbarAdjacentTabId(
+    tabIds: List<String>,
+    currentTabId: String,
+    forward: Boolean,
+): String? {
+    require(tabIds.distinct().size == tabIds.size) { "tab IDs must be unique" }
+    if (tabIds.size < 2) return null
+
+    val currentIndex = tabIds.indexOf(currentTabId)
+    if (currentIndex < 0) return null
+    val delta = if (forward) 1 else -1
+    val targetIndex = (currentIndex + delta + tabIds.size) % tabIds.size
+    return tabIds[targetIndex]
+}
+
 internal fun nearestToolbarTabId(
     tabIds: List<String>,
     boundsById: Map<String, ToolbarTabBounds>,

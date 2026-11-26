@@ -137,6 +137,21 @@ class ToolbarGeometryTest {
     }
 
     @Test
+    fun `keyboard navigation moves forward and backward with wrap around`() {
+        toolbarAdjacentTabId(ids, "saved", forward = true) shouldBe "discover"
+        toolbarAdjacentTabId(ids, "saved", forward = false) shouldBe "overview"
+        toolbarAdjacentTabId(ids, "settings", forward = true) shouldBe "overview"
+        toolbarAdjacentTabId(ids, "overview", forward = false) shouldBe "settings"
+    }
+
+    @Test
+    fun `keyboard navigation returns null for missing IDs or a single tab`() {
+        toolbarAdjacentTabId(ids, "missing", forward = true) shouldBe null
+        toolbarAdjacentTabId(listOf("only"), "only", forward = true) shouldBe null
+        toolbarAdjacentTabId(emptyList(), "missing", forward = false) shouldBe null
+    }
+
+    @Test
     fun `duplicate tab IDs are rejected`() {
         val failure = runCatching {
             toolbarSelectionFractions(
