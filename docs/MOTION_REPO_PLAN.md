@@ -67,7 +67,7 @@ The 2026-11-21 inventory identified these areas for review:
 | Segmented-row press morph | reusable press/morph behavior | row content, labels, settings semantics |
 | Sheet state | detents, drag, and source-to-sheet mechanics | search UI, screen state, product-specific content |
 
-Treat this as a historical candidate list. Re-inspect current consumer source, call sites, and tests before planning a move. See [the AI adoption guide](AI_SOLSTICE_ADOPTION.md).
+Treat this as a historical candidate list. Re-inspect current consumer source, call sites, and tests before planning a move. See [the AI adoption guide](AI_CONSUMER_ADOPTION.md).
 
 ## Planned phases
 
