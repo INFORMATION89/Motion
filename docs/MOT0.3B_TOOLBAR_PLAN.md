@@ -2,9 +2,9 @@
 
 ## Status
 
-Proposal only. This document defines the reusable component contract and a staged implementation. It does not commit the project to a final public Kotlin API, copy third-party implementation code, or migrate a consumer application.
+Proposal and behavioral contract. A separate Motion Lab-only implementation spike is being developed to test these requirements before any public Kotlin API is committed. This document does not authorize consumer migration or third-party code reuse.
 
-**Prerequisite:** MOT0.3A theme/token foundation (the optional Motion UI module) is reviewed and accepted.
+**Prerequisite:** the MOT0.3A theme/token foundation is implemented on its dedicated review branch; the toolbar prototype is stacked on that foundation and must remain separate from its acceptance.
 
 ## 1. Goal
 

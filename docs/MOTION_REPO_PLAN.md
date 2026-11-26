@@ -9,7 +9,7 @@ This document preserves the repository-extraction decisions from 2026-11-21. The
 - The current target is Android 10 / API 29+, compile SDK 37, Android Build Tools 37, and JDK 21.
 - `:motion-lab` is a built Gradle application module and is included in CI through `:motion-lab:assembleDebug`.
 - The former `lab/` directory was an unbuilt prototype, not a Gradle module. It has been removed because its sources were application-coupled and carried LGPL-3.0 notices; no implementation was copied into the maintained modules.
-- CI runs Spotless, Core unit tests/release build, Motion UI unit tests/release build, and the Motion Lab debug build.
+- CI runs Spotless, Core unit tests/release build, Motion UI unit tests/release build, Motion Lab unit tests, and the Motion Lab debug build.
 - Consumer applications may integrate Motion through a Git submodule and Gradle composite build, pinned to an exact tested commit. Motion is not currently published to Maven.
 - Desktop (Windows/macOS/Linux) and iOS support are future design work, not supported targets.
 - Physical-device validation remains NOT TESTED / DEFERRED while suitable hardware is unavailable. Passing CI does not establish device behavior.
@@ -21,6 +21,13 @@ This document preserves the repository-extraction decisions from 2026-11-21. The
 - Neutral defaults derive surface colors from the caller's Material 3 color scheme. Apps can inject their own Material 3 theme values and replace Motion UI tokens.
 - No Haze dependency, glass rendering implementation, visual components, consumer code, or dependency-pin changes are included in the foundation.
 - Final acceptance requires fresh CI on the cleaned PR head.
+
+## MOT0.3B status — contract and implementation spike
+
+- The animated toolbar contract is documented in `docs/MOT0.3B_TOOLBAR_PLAN.md` and remains a proposal until reviewed against the prototype.
+- The current spike is intentionally hosted in Motion Lab, not yet exposed as a public `:motion-ui` API.
+- The spike exercises stable-ID host progress, variable-width geometry, optional long-press drag, a contextual action, and two configurable visual profiles.
+- Public API design follows only after the same interaction behavior has been exercised and reviewed. Manual emulator, TalkBack, contrast, and haptic checks remain deferred until actually performed.
 
 ## Original decisions (2026-11-21)
 

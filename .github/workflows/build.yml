@@ -33,4 +33,5 @@ jobs:
             :motion:assembleRelease \
             :motion-ui:testDebugUnitTest \
             :motion-ui:assembleRelease \
+            :motion-lab:testDebugUnitTest \
             :motion-lab:assembleDebug
