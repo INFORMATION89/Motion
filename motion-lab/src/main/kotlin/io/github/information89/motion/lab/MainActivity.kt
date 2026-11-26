@@ -9,6 +9,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -63,7 +64,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -111,8 +111,16 @@ private enum class LabSection(val title: String) {
 private enum class LabPage(val title: String, val description: String, val section: LabSection) {
     MORPH("Morph", "Grow a surface from its source, then catch or drag it back.", LabSection.COMPONENTS),
     PAGES("Page movement", "Swipe between pages or compare Motion with the Compose default.", LabSection.COMPONENTS),
-    EDGE_BLUR("Scroll edge blur", "Explore progressive blur and fade at the edges of a horizontal list.", LabSection.COMPONENTS),
-    SPRINGS("Springs and release", "Compare Motion spring tokens and try gesture-to-spring release.", LabSection.INTERACTIONS),
+    EDGE_BLUR(
+        "Scroll edge blur",
+        "Explore progressive blur and fade at the edges of a horizontal list.",
+        LabSection.COMPONENTS
+    ),
+    SPRINGS(
+        "Springs and release",
+        "Compare Motion spring tokens and try gesture-to-spring release.",
+        LabSection.INTERACTIONS
+    ),
     DIAL("Dial", "Drag, flick, and snap a reusable dial with haptic feedback.", LabSection.INTERACTIONS),
     HAPTICS("Haptics", "Try semantic haptic tokens.", LabSection.INTERACTIONS),
 }
