@@ -731,7 +731,9 @@ private fun DialDemo() {
         Button(onClick = { state.value.animateTo(0f) }) {
             Text("Reset dial")
         }
-        Text("Double-tap the dial to return to zero. Drag or flick to move between steps; use Reset dial as a button alternative.")
+        Text(
+            "Double-tap the dial to return to zero. Drag or flick to move between steps; use Reset dial as a button alternative."
+        )
     }
 }
 
