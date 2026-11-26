@@ -5,54 +5,52 @@ This file is the working handoff for the next development session. Keep it curre
 ## Read first
 
 1. [Agent instructions](AGENTS.md) — repository-wide constraints for AI coding assistants.
-2. [Framework overview](docs/FRAMEWORK_OVERVIEW.md) — what belongs in Motion and what belongs in app/UI libraries.
-3. [Platform support](docs/PLATFORM_SUPPORT.md) — current Android integration and future platform requirements.
-4. [Solstice AI adoption guide](docs/AI_SOLSTICE_ADOPTION.md) — how to create the adoption plan without prematurely migrating code.
-5. [MOT0.1 plan](docs/MOT0.1_PLAN.md) — code tasks, tests, and acceptance criteria.
-6. [Motion rules](docs/MOTION.md), [morph study](docs/MORPH_STUDY.md), and [module API](motion/README.md).
+2. [MOT0.2 plan](docs/MOT0.2_PLAN.md) — current milestone scope, phases, and acceptance criteria.
+3. [Framework overview](docs/FRAMEWORK_OVERVIEW.md) — what belongs in Motion and what belongs in app/UI libraries.
+4. [Platform support](docs/PLATFORM_SUPPORT.md) — current Android integration and future platform requirements.
+5. [Solstice AI adoption guide](docs/AI_SOLSTICE_ADOPTION.md) — how to create the adoption plan without prematurely migrating code.
+6. [Motion principles](docs/MOTION.md), [Morph study](docs/MORPH_STUDY.md), [Motion Lab design](docs/MOTION_LAB_PLAN.md), and [module API](motion/README.md).
 
 ## Project guardrails
 
-- Motion is an independent, reusable Android/Jetpack Compose motion framework. It must not depend on Solstice or import application code.
-- Motion Core is not a UI kit. Reusable interaction mechanics belong in Core; the planned optional Motion UI layer may provide configurable components, while app branding, navigation policy, screens, and product behavior remain with consuming apps.
+- Motion is an independent, reusable Android/Jetpack Compose framework. It must not depend on Solstice or import application code.
+- Motion Core owns behavior. The planned optional Motion UI layer may provide configurable components; app branding, navigation policy, screens, and product behavior remain with consuming apps.
 - Compose remains the animation and interaction foundation. Do not introduce a separate universal physics engine.
 - Prioritize interruptible motion, continuous velocity, predictable gesture ownership, and explicit input contracts.
 - Desktop and iOS are not currently supported. A multiplatform port requires a separate design and verification plan.
-- Keep milestone identifiers in the `MOT` family. MOT0.1 remains limited to core reliability, focused tests, and directly related docs.
+- Do not change agreed, user-visible motion behavior or add a new public Core API without a documented proposal and owner agreement.
 
-## Consolidated work
+## Current verified baseline
 
-**Integration:** PR #4 is the integration vehicle for MOT0.1. Check its live GitHub status before taking action; this handoff does not assume whether it is open, ready, or merged. The branch contains the MOT0.1 implementation work plus framework, platform, Solstice-planning, AI-agent, and cost-aware verification documentation.
+- `main`: `b5fb7892b0b63e6e180b365496804198269a739a`.
+- MOT0.1 is complete and merged. Its core reliability changes and tests are on `main`.
+- The latest `main` workflow at the time of this handoff is [run #45767829970](https://github.com/INFORMATION89/Motion-UI/actions/runs/45767829970), completed successfully on the exact `main` SHA above.
+- No open PRs or issues were returned by the repository searches at handoff time.
+- Current library platform baseline: Android / Jetpack Compose, min SDK 29, compile SDK 37, JDK 21.
+- Device/emulator interaction has not been validated in this handoff; continue to report it as `NOT TESTED` / `DEFERRED`.
 
-- Branch: `work/consolidated-docs-platforms`
-- Current implementation head before this correction: `0c5cdfa99f4ef87aaa54936ff5842c8d6c9ef03f`.
-- [Run #59](https://github.com/INFORMATION89/Motion-UI/actions/runs/45764340044) passed Spotless but one source-retarget continuity assertion failed. Unit tests stopped at 63 tests with one failure; library build was skipped.
-- The failure showed the test sampled before the close spring had reversed its inherited opening momentum. The corrected test waits until the closing trajectory is observably moving toward the source before retargeting, then verifies direction continuity and the final source anchor.
-- The trailing blank-line violation from run #57 was corrected in head `0c5cdfa`; run #58 confirmed Spotless now passes.
-- After this focused test correction, run the full required workflow once on the exact resulting head. Do not spend another full run for documentation-only changes.
-- PRs #1–#3 were consolidated into PR #4. Their old branch names, SHAs, and CI runs are historical only.
+## MOT0.1 — complete
 
-### Already implemented in MOT0.1
+Core reliability work is merged. Do not reopen it without a reproduced regression or a separate, scoped requirement. The historical acceptance plan remains in [docs/MOT0.1_PLAN.md](docs/MOT0.1_PLAN.md).
 
-- Validate finite `MotionValue` inputs and valid non-negative configuration.
-- Copy, sort, and deduplicate `restPoints`; reject empty or non-finite values.
-- Keep flick thresholds ordered and update them safely when the drag range changes.
-- Validate projection and target-selection inputs in `MotionPhysics`.
-- Include position as well as dimensions in `MorphMotion.progress`.
-- Retarget open morphs when the target changes, including after settling; retarget closing morphs when the source changes; defer anchor changes while caught or open as appropriate.
-- Keep gesture ownership visible during drag/scrub, preserve spring velocity when retargeting, and guard pending open/close placement continuations with command generations.
-- Validate finite drag/scrub/release input and anchor geometry, while allowing legitimate zero-size anchors.
-- Cover interruption/reversal, target/source retargeting, caught gestures, high-velocity release, scalar input contracts, rest-point updates, and same-target animation with deterministic frame-clock tests.
+## MOT0.2 — standalone Motion Lab
 
-### Remaining MOT0.1 work
+**Status:** planning; implementation not started.
 
-No additional feature work is planned for MOT0.1. The remaining gate is final verification on the exact branch head, review of the complete diff, and integration of PR #4.
+The next phase is to add a separate `:motion-lab` Android sample app that depends on `:motion` and demonstrates its public API using generic content and Material 3. This does not create the planned `:motion-ui` component library and does not change Motion Core behavior.
 
-1. Review the complete diff against `main`; verify no unrelated changes or stale documentation remain.
-2. Verify the final documentation-only synchronization with the required CI workflow.
-3. Confirm Spotless, `:motion:testDebugUnitTest`, and `:motion:assembleRelease` pass on the exact final PR head.
-4. Update the PR description with exact evidence, mark PR #4 ready, and merge it into `main` after all required checks pass.
-5. Keep physical-device checks marked `NOT TESTED` / `DEFERRED`; they are not part of this milestone's CI gate.
+Important discovery: `lab/` is not a Gradle module. Its prototype sources still use Solstice/Breezy packages, activities, resources, theme classes, and LGPL-3.0 notices. They are references, not code to bulk-move or mechanically rename. Reimplement demos cleanly against the public Motion API; preserve notices and verify provenance/license compatibility before reusing any implementation code.
+
+### Next implementation steps
+
+1. Add the `:motion-lab` Android application plugin/module and make it depend on `:motion`.
+2. Build a neutral Material 3 theme, entry activity, and basic gallery/navigation scaffold.
+3. Port one stable demo at a time, starting with public APIs already covered by Core tests.
+4. Add meaningful Compose/Material baseline comparisons for selected interactions, keeping state and input equivalent.
+5. Add safe slow-motion controls, sample-app build/run instructions, and a CI job for `:motion-lab:assembleDebug`.
+6. Run the complete workflow once on the final coherent branch head; report emulator/device checks separately.
+
+See [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md) for detailed scope and acceptance criteria. Follow [docs/MOTION_LAB_PLAN.md](docs/MOTION_LAB_PLAN.md) for the gallery and comparison direction; don't claim any of that design is implemented until it exists.
 
 ## Local setup and verification
 
@@ -62,24 +60,22 @@ On Windows PowerShell:
 
 ```powershell
 git fetch origin
-git switch work/consolidated-docs-platforms
+git switch main
 git pull --ff-only
 git status --short --branch
 java -version
-.\gradlew.bat --version
-.\gradlew.bat spotlessCheck
-.\gradlew.bat :motion:testDebugUnitTest
-.\gradlew.bat :motion:assembleRelease
+.\\gradlew.bat --version
+.\\gradlew.bat spotlessCheck
+.\\gradlew.bat :motion:testDebugUnitTest
+.\\gradlew.bat :motion:assembleRelease
 ```
 
 On macOS/Linux, use `./gradlew` instead of `gradlew.bat`.
 
-The complete GitHub Actions workflow runs:
+After MOT0.2 adds the app module, also run:
 
 ```bash
-./gradlew spotlessCheck
-./gradlew :motion:testDebugUnitTest
-./gradlew :motion:assembleRelease
+./gradlew :motion-lab:assembleDebug
 ```
 
-Use the exact branch-head SHA and its CI result as evidence. Physical-device checks are separate from CI and remain deferred while hardware is unavailable.
+Use the exact branch-head SHA and its CI result as evidence. Physical-device and emulator checks are separate from CI and remain deferred until actually run.
