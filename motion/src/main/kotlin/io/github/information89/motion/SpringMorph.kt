@@ -220,7 +220,7 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
     /**
      * The source's current bounds (e.g. a postcard on a page that's moving). While it's closing, the
      * springs re-aim at it from where they are, keeping their velocity, so it lands where the source is
-     * now, even off screen (agreed 2026-11-21: a closing window floated where its postcard had been).
+     * now, even off screen. While closed and settled, its hidden geometry snaps to the latest source.
      */
     internal fun updateSource(anchor: MorphAnchor) {
         if (anchor == source) return
@@ -235,8 +235,8 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
     }
 
     /**
-     * The target's current bounds. While opening, re-aim at the new target from the current
-     * geometry and velocity; while closed, the next opening uses it.
+     * The target's current bounds. Whenever open (including after settling), re-aim at the new target
+     * from the current geometry and velocity; while closed or caught, defer the change until motion resumes.
      */
     internal fun updateTarget(anchor: MorphAnchor) {
         if (anchor == target) return
@@ -298,7 +298,8 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
 
     /**
      * A finger moved by [delta] of the path (1 = from source to target): all five follow it at once,
-     * along the straight path, so the surface stays under the finger.
+     * along the straight path, so the surface stays under the finger. Drag takes gesture ownership
+     * until release, catch, or a new open/close command resumes spring motion.
      */
     fun drag(delta: Float) {
         require(delta.isFinite()) { "delta must be finite" }
@@ -320,7 +321,8 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
 
     /**
      * Puts it at [progress] along the path (0 = the source, 1 = the target) at once, e.g. following a
-     * predictive back gesture. Then [open] (cancelled) or [close] (committed) carries on from there.
+     * predictive back gesture. Scrubbing takes gesture ownership and keeps the surface visible.
+     * Then [open] (cancelled) or [close] (committed) carries on from there.
      */
     fun scrub(progress: Float) {
         require(progress.isFinite()) { "progress must be finite" }
