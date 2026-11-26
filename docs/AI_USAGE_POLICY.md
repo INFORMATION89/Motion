@@ -78,8 +78,8 @@ Do not ask both agents to independently perform the same implementation, read th
 ### Recommended division of work
 
 - **ChatGPT as coordinator:** maintain project context, break work into tasks, coordinate GitHub/repository operations, track decisions, and consolidate evidence.
-- **ChatGPT/Codex first, Opus when useful:** for most tasks, let ChatGPT/Codex own the work. For advanced or consequential tasks where a stronger independent pass could catch architectural, reasoning, or regression issues, flag Opus as recommended for a later review pass. ChatGPT/Codex can implement first; hand Opus a concise brief and the resulting diff at a useful checkpoint or before merge.
-- A recommendation to use Opus is not a requirement, a blocker, or permission to incur extra charges. If Opus is unavailable or would require unapproved paid usage, continue with proportionate ChatGPT/Codex review and verification, and disclose that the recommended specialist pass was not performed.
+- **ChatGPT/Codex first, Opus when useful:** for most tasks, let ChatGPT/Codex own the work. For advanced or consequential tasks where a stronger independent pass could catch architectural, reasoning, or regression issues, mark **“Opus review pending”** for a later review pass. ChatGPT/Codex can implement first; hand Opus a concise brief and the resulting diff at a useful checkpoint or before merge.
+- A recommendation to use Opus is not a requirement, a blocker, or permission to incur extra charges. If Opus is unavailable or would require unapproved paid usage, continue with proportionate ChatGPT/Codex review and verification, and disclose that the pending specialist pass was deferred or not performed.
 - **Claude Opus as specialist:** bring it in for high-complexity planning, architecture challenges, cross-repo reasoning, deep debugging, or independent review where justified.
 - Either tool may be primary. Choose based on repository access, tool reliability, available limits, and task fit—not brand loyalty.
 - A specialist should receive a concise task brief, relevant files/diff, constraints, and requested output. Do not repeatedly transmit the entire project history.
