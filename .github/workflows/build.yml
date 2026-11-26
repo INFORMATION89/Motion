@@ -35,3 +35,12 @@ jobs:
             :motion-ui:assembleRelease \
             :motion-lab:testDebugUnitTest \
             :motion-lab:assembleDebug
+
+      - name: Run Motion Lab Compose UI tests
+        uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        with:
+          api-level: 35
+          arch: x86_64
+          profile: pixel_7_pro
+          disable-animations: true
+          script: ./gradlew :motion-lab:connectedDebugAndroidTest

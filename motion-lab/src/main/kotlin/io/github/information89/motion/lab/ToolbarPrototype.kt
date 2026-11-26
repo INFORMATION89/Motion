@@ -115,7 +115,7 @@ private data class ToolbarDestination(
     val description: String,
 )
 
-private enum class ToolbarVisualProfile(val title: String) {
+internal enum class ToolbarVisualProfile(val title: String) {
     EXPRESSIVE("M3 Expressive"),
     CUSTOM("App-defined"),
 }
@@ -270,7 +270,7 @@ internal fun ToolbarPrototype() {
 }
 
 @Composable
-private fun ToolbarPrototypeBar(
+internal fun ToolbarPrototypeBar(
     selectedTabId: String,
     hostProgress: ToolbarHostProgress?,
     profile: ToolbarVisualProfile,
