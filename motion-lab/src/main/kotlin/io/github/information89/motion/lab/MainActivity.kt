@@ -45,6 +45,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -298,7 +299,9 @@ private fun SpringsDemo() {
 @Composable
 private fun MorphDemo() {
     val motion = rememberMotionValue(initial = 0f, overMin = 0.06f, overMax = 0.08f)
-    val visible = motion.value > 0.001f || motion.isRunning
+    val visible by remember(motion) {
+        derivedStateOf { motion.value > 0.001f || motion.isRunning }
+    }
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         MorphHost(
             Modifier
