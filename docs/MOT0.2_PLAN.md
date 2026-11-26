@@ -1,6 +1,6 @@
 # MOT0.2 — Standalone Motion Lab
 
-**Status:** planning  
+**Status:** implementation in progress  
 **Baseline:** `main` at `b5fb7892b0b63e6e180b365496804198269a739a`  
 **Milestone type:** sample app, documentation, and CI; no Motion Core behavior changes
 
@@ -36,6 +36,18 @@ The existing files include Solstice/Breezy packages, app-specific imports, and L
 - Do not remove copyright or license notices from code that is genuinely reused.
 - Before reusing any legacy implementation code, verify its provenance and license compatibility with the target module and repository licensing. When that is unclear, write a clean implementation instead.
 - Keep Solstice and other consumer repositories out of the Lab's dependency graph.
+
+## Current implementation
+
+The initial app foundation and gallery have been added on the MOT0.2 branch:
+
+- `:motion-lab` is included in Gradle as a standalone Android application and depends on `:motion`.
+- The app has its own namespace, application ID, launcher activity, and neutral Material 3 theme.
+- The home gallery links to spring/release, morph, page movement, dial, and scroll edge-blur examples.
+- Slow motion controls `MotionTime.scale` and resets to normal when the Lab leaves composition.
+- The CI workflow includes `:motion-lab:assembleDebug`.
+
+This is an initial implementation, not a completed milestone. Build and CI results must pass on the exact final PR head before the module is considered validated. Emulator and physical-device interactions remain `NOT TESTED` / `DEFERRED`.
 
 ## Delivery phases
 
