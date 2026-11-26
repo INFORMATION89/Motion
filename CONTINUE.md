@@ -25,7 +25,7 @@ This file is the working handoff for the next development session. Keep it curre
 - `main`: `b5fb7892b0b63e6e180b365496804198269a739a`.
 - MOT0.1 is complete and merged. Its core reliability changes and tests are on `main`.
 - The latest `main` workflow at the time of this handoff is [run #45767829970](https://github.com/INFORMATION89/Motion-UI/actions/runs/45767829970), completed successfully on the exact `main` SHA above.
-- No open PRs or issues were returned by the repository searches at handoff time.
+- No other open PRs or issues were returned before this work; the current MOT0.2 planning PR is #7 and remains a draft.
 - Current library platform baseline: Android / Jetpack Compose, min SDK 29, compile SDK 37, JDK 21.
 - Device/emulator interaction has not been validated in this handoff; continue to report it as `NOT TESTED` / `DEFERRED`.
 
@@ -64,10 +64,10 @@ git switch main
 git pull --ff-only
 git status --short --branch
 java -version
-.\\gradlew.bat --version
-.\\gradlew.bat spotlessCheck
-.\\gradlew.bat :motion:testDebugUnitTest
-.\\gradlew.bat :motion:assembleRelease
+.\gradlew.bat --version
+.\gradlew.bat spotlessCheck
+.\gradlew.bat :motion:testDebugUnitTest
+.\gradlew.bat :motion:assembleRelease
 ```
 
 On macOS/Linux, use `./gradlew` instead of `gradlew.bat`.
