@@ -88,7 +88,7 @@ It must not contain consumer screens, domain models, navigation policy, domain v
 |---|---|---|
 | Layout, measurement, drawing, pointer input, and animation runtime | Jetpack Compose UI, Foundation, and Animation | Use these primitives; do not reimplement them. |
 | Standard buttons, switches, sliders, text fields, dialogs, navigation bars, and accessibility semantics | Material 3 or another component library | Motion UI may compose these; it should not create competing replacements. |
-| Shared reusable page frames, configurable cards/sheets, header-action slots, and message surfaces | Planned Motion UI, when generic | Provide configurable building blocks, not app-specific screens. |
+| Shared reusable page frames, configurable cards/sheets, header-action slots, and message surfaces | Motion UI, as each component is designed and delivered | Provide configurable building blocks, not app-specific screens. |
 | Shared visual language: colors, typography, shape, spacing, component variants | The app's design system/theme, with neutral Motion UI token contracts where useful | The app supplies its values; Motion must not define an app's brand. |
 | Navigation routes, back stack, deep links, screen lifecycle | Navigation library or application architecture | Motion may animate transitions but does not own routing or navigation policy. |
 | Blur and advanced backdrop rendering | Haze or another specialized rendering library | Motion UI may wrap a dependency behind a configurable surface; it should not implement a competing blur engine. |
