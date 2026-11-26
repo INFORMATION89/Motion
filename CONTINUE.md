@@ -35,7 +35,7 @@ Core reliability work is merged. Do not reopen it without a reproduced regressio
 
 ## MOT0.2 — standalone Motion Lab
 
-**Status:** implementation in progress on [PR #7](https://github.com/INFORMATION89/Motion-UI/pull/7), still draft.
+**Status:** implementation in progress on [PR #7](https://github.com/INFORMATION89/Motion-UI/pull/7), still draft. Latest exact-head CI is green; device/emulator validation remains deferred.
 
 The separate `:motion-lab` Android sample app is now included in Gradle and depends on `:motion`. It has its own namespace, application ID, launcher activity, and neutral Material 3 theme. Its initial gallery links to six generic demonstrations:
 
@@ -61,7 +61,7 @@ The slow-motion control adjusts `MotionTime.scale` and the root composition rest
 1. Code review completed for module isolation, public API usage, comparison input parity, and dependency scope. The Compose controls expose their standard interactive semantics; confirm actual screen-reader behavior during the deferred emulator/device pass.
 2. Keep the sheet comparison deferred unless a fair Material 3 baseline can be built from existing APIs without expanding Core.
 3. Add sample-owned tests only where they protect a distinct Lab interaction contract not covered by Core tests.
-4. Workflow #96 passed on `5dfbb9b`, but the subsequent source changes require a fresh exact-head CI result.
+4. Workflow [#98](https://github.com/INFORMATION89/Motion-UI/actions/runs/45779868512) passed on exact PR head `22707a05abf857efdda902b9afcdb3c37d259ce5`; Spotless, Motion Core unit tests, library Release assembly, and Lab Debug assembly are green.
 5. Keep the PR draft until the acceptance criteria are reviewed and remaining manual checks are honestly marked.
 See [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md) for scope and acceptance criteria. Follow [docs/MOTION_LAB_PLAN.md](docs/MOTION_LAB_PLAN.md) for the longer-term gallery and comparison direction.
 
