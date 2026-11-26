@@ -85,6 +85,8 @@ On Windows, use `gradlew.bat` instead of `./gradlew`.
 - [Motion principles](docs/MOTION.md)
 - [Morph design study](docs/MORPH_STUDY.md)
 - [Repository instructions for AI agents](AGENTS.md)
+- [AI usage and cost policy](docs/AI_USAGE_POLICY.md)
+
 
 ## Project status
 
