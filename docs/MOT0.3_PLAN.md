@@ -38,7 +38,7 @@ If any of these decisions has changed, stop before implementation and revise thi
 - Haze is not currently declared in the version catalog or modules. Do not add it until its exact version, licence, maintenance, API compatibility, and fallback behavior are reviewed.
 - CI currently runs Spotless, `:motion:testDebugUnitTest`, `:motion:assembleRelease`, and `:motion-lab:assembleDebug`.
 - MOT0.1 and MOT0.2 are merged. PR #9 (rules), #7 (Lab foundation), #8 (Lab sections/theme), #10 (MOT0.2 documentation closeout), and #11 (repository baseline refresh) are merged. CI #108 passed on the exact PR #8 head; CI #110 passed for PR #10; CI #112 passed on the exact PR #11 head.
-- Latest repository main: `dac8df73387e87839192b867cfc2ed57b8df4561`. There are no open Motion PRs or issues at this handoff.
+- Latest repository main: `dac8df73387e87839192b867cfc2ed57b8df4561`. Before opening this proposal, there were no open Motion PRs or issues; this proposal is tracked by PR #12.
 - Solstice currently pins Motion submodule commit `25ffa862f503b482ed98671cd5eab66040f0d75f`, eight commits behind current Motion main. This is consumer state only: this proposal does not update Solstice's submodule, URL, or runtime code. Solstice's current documentation/CI work is tracked separately in its own PR.
 
 ## 4. Scope and delivery stages
