@@ -16,9 +16,9 @@ Read this file and [project rules](docs/RULES.md) before making changes. Then re
 
 MOT0.1 is complete and merged into `main`.
 
-MOT0.2 is the standalone Motion Lab phase. Its scope is the separate `:motion-lab` Android sample app, focused documentation, and CI integration as defined in [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md).
+MOT0.2 (standalone Motion Lab) is complete and merged into `main`. The delivered `:motion-lab` Android app, Components / Interactions tabs, and automatic system appearance are documented in [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md). Treat that plan as historical acceptance evidence, not an active implementation queue.
 
-Do not fold these into MOT0.2:
+The following remain outside the completed MOT0.2 scope and require separate planning/review:
 - Changes to Motion Core physics or existing user-visible motion contracts.
 - New public Core APIs without a separately reviewed reusable capability gap.
 - The planned `:motion-ui` component library.
@@ -56,7 +56,7 @@ The old `lab/` source tree is a prototype, not a Gradle module. Do not move or m
 
 - Verify the current branch, submodule commit (when relevant), open PRs, source tree, and latest CI before relying on earlier plans or chat context.
 - For Solstice adoption work, follow [docs/AI_SOLSTICE_ADOPTION.md](docs/AI_SOLSTICE_ADOPTION.md). The first deliverable is an evidence-based migration plan in Solstice, not an automatic code migration or submodule bump.
-- For MOT0.2, follow [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md). Keep the Lab as a consumer of Motion's public API; do not let the sample app dictate or leak app-only requirements into Core.
+- MOT0.2 is complete; use [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md) as historical acceptance evidence. Keep Motion Lab as a consumer of Motion's public API; do not let the sample app dictate or leak app-only requirements into Core.
 - Inspect existing APIs before proposing new ones. Classify each candidate as direct reuse, app-side composition, a reusable Motion gap, or app-specific behavior.
 - Prefer adapting existing components and libraries over rebuilding equivalents. Avoid duplicating spring constants, gesture physics, or component implementations in consuming apps.
 - Do not broaden platform support as incidental cleanup. A platform proposal must identify source-set boundaries, platform APIs, tests, and CI requirements first.
@@ -76,7 +76,7 @@ The old `lab/` source tree is a prototype, not a Gradle module. Do not move or m
 
 - Work on a focused branch and use a pull request; do not push development work directly to `main`.
 - Keep related changes together and commits understandable.
-- Keep MOT0.2 implementation work in draft until the app module builds, the required acceptance criteria are covered, and the complete CI workflow passes on the exact final branch head.
+- For any future milestone, keep implementation PRs in draft until their acceptance criteria are covered and the complete required CI workflow passes on the exact final branch head.
 - Do not merge, release, publish, tag, or bump a consuming app's submodule unless explicitly requested.
 - Update `CONTINUE.md`, implementation plans, and PR descriptions when branch state or remaining work materially changes.
 
