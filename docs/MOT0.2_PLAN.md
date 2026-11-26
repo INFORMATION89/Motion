@@ -14,7 +14,7 @@ The app is a showroom and test bench for the public Motion API. It is not the pl
 
 MOT0.1 completed the reliability baseline for Motion Core. The repository roadmap identifies an independently buildable Motion Lab as the next phase, before broader reusable-interaction extraction and consumer adoption work.
 
-The current `lab/` directory is only a source prototype. It is not included in Gradle settings or CI. Its Kotlin files still depend on legacy app-specific app classes, resources, packages, and theme tokens, so they cannot simply be moved into an independent app.
+At the time of this milestone, `lab/` was an unbuilt source prototype, not included in Gradle settings or CI. Its Kotlin files depended on application classes, resources, packages, and theme tokens, so they could not simply be moved into an independent app. The prototype was subsequently removed; see [legacy prototype disposition](LEGACY_PROTOTYPE_DISPOSITION.md).
 
 ## Architecture and boundaries
 
@@ -22,7 +22,7 @@ The current `lab/` directory is only a source prototype. It is not included in G
 - The app depends on `:motion`; `:motion` must never depend on the Lab.
 - Use Jetpack Compose and Material 3 for app structure, standard controls, semantics, and accessibility.
 - Use the public Motion API for the behavior being demonstrated. Do not reach into library internals or expose APIs solely to make a demo easier.
-- Keep the app visually neutral and generic. Use generic sample content; no domain-specific data, a consuming application names, assets, icons, screens, theme classes, navigation policy, or app dependencies.
+- Keep the app visually neutral and generic. Use sample content only; do not include domain-specific data, application names, assets, icons, screens, theme classes, navigation policy, or application dependencies.
 - Keep the current Android-only support boundary. This milestone does not add iOS, desktop, web, or Kotlin Multiplatform targets.
 - Do not create `:motion-ui` as part of this milestone.
 
@@ -30,12 +30,12 @@ The current `lab/` directory is only a source prototype. It is not included in G
 
 Treat `lab/` as a historical prototype and behavior reference, not as code ready to be compiled into the new app.
 
-The existing files include legacy app-specific packages, app-specific imports, and LGPL-3.0 notices. Therefore:
+The former prototype files included application-specific packages and imports, as well as LGPL-3.0 notices. The prototype has since been removed rather than ported. Therefore:
 
 - Reimplement the demonstrations against Motion's public API and standard Compose/Material 3 building blocks; do not bulk-move or mechanically rename the old files.
 - Do not remove copyright or license notices from code that is genuinely reused.
 - Before reusing any legacy implementation code, verify its provenance and license compatibility with the target module and repository licensing. When that is unclear, write a clean implementation instead.
-- Keep a consuming application and other consumer repositories out of the Lab's dependency graph.
+- Keep consumer applications and their repositories out of the Lab's dependency graph.
 
 ## Current implementation
 
@@ -134,8 +134,8 @@ The next Motion Lab design iteration should consider the two-section Components 
 - Changing the public behavior or physics of existing Motion Core APIs.
 - Adding new Motion Core APIs without a demonstrated reusable gap, contract, tests, and separate review.
 - Building the planned `:motion-ui` component layer.
-- Porting a consuming application screens, theme, assets, or product logic.
-- Changing a consuming application's submodule pointer or starting an app migration.
+- Porting application screens, themes, assets, or product logic.
+- Changing a consumer repository's dependency pin or starting an application migration.
 - Publishing Motion to Maven, changing its license, or broadening platform support.
 - Benchmarks, performance dashboards, or broad unrelated refactors.
 
