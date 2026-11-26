@@ -64,6 +64,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.github.information89.motion.Dial
+import io.github.information89.motion.Haptic
+import io.github.information89.motion.haptics
 import io.github.information89.motion.DialLook
 import io.github.information89.motion.DialScale
 import io.github.information89.motion.EdgeBand
@@ -101,6 +103,7 @@ private enum class LabPage(val title: String, val description: String) {
     MORPH("Morph", "Grow a surface from its source, then catch or drag it back."),
     PAGES("Page movement", "Swipe between pages or compare Motion with the Compose default."),
     DIAL("Dial", "Drag, flick, and snap a reusable dial with haptic feedback."),
+    HAPTICS("Haptics", "Try semantic haptic tokens."),
     EDGE_BLUR("Scroll edge blur", "Explore progressive blur and fade at the edges of a horizontal list."),
 }
 
@@ -183,6 +186,7 @@ private fun MotionLabApp() {
                     LabPage.MORPH -> MorphDemo()
                     LabPage.PAGES -> PageDemo()
                     LabPage.DIAL -> DialDemo()
+                    LabPage.HAPTICS -> HapticsDemo()
                     LabPage.EDGE_BLUR -> EdgeBlurDemo()
                     null -> Unit
                 }
@@ -646,6 +650,53 @@ private fun PageComparisonDemo(spring: MotionSpring) {
         }
         Text(
             "Tap a page number to drive both previews together. Motion uses the selected spring; Compose uses its default pager animation. Swiping is disabled here so the input stays identical.",
+            style = MaterialTheme.typography.bodySmall
+        )
+    }
+}
+
+@Composable
+private fun HapticsDemo() {
+    val feedback = haptics()
+    val tokens = remember { Haptic.all }
+    var intensity by remember { mutableFloatStateOf(Haptic.intensity) }
+
+    DisposableEffect(Unit) {
+        onDispose { Haptic.intensity = 1f }
+    }
+
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(
+            "Choose a token to play its semantic feedback. The token list is shared with Motion components.",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Text("Intensity · " + (intensity * 100).toInt() + "%", style = MaterialTheme.typography.titleSmall)
+        Slider(
+            value = intensity,
+            onValueChange = {
+                intensity = it
+                Haptic.intensity = it
+            },
+            valueRange = 0f..1f,
+            steps = 3
+        )
+        tokens.chunked(2).forEach { rowTokens ->
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                rowTokens.forEach { token ->
+                    Button(
+                        onClick = { feedback.perform(token) },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(token.name)
+                    }
+                }
+                if (rowTokens.size == 1) {
+                    Spacer(Modifier.weight(1f))
+                }
+            }
+        }
+        Text(
+            "Output depends on device hardware and the system touch-feedback setting. Unsupported primitives fall back to Android view feedback. Intensity resets to 100% when leaving this page.",
             style = MaterialTheme.typography.bodySmall
         )
     }
