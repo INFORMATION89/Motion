@@ -284,8 +284,11 @@ private fun ToolbarPrototypeBar(
     var dragTargetId by remember { mutableStateOf<String?>(null) }
     var settlingTargetId by remember { mutableStateOf<String?>(null) }
 
-    val committedProgress = if (dragging || settlingTargetId != null) null else hostProgress
-    val effectiveSelectedId = dragTargetId ?: settlingTargetId ?: selectedTabId
+    val activeSettlingTargetId = settlingTargetId?.takeUnless {
+        it == selectedTabId || hostProgress != null
+    }
+    val committedProgress = if (dragging || activeSettlingTargetId != null) null else hostProgress
+    val effectiveSelectedId = dragTargetId ?: activeSettlingTargetId ?: selectedTabId
     val ids = remember { toolbarDestinations.map { it.id } }
     val selectionFractions = toolbarSelectionFractions(
         tabIds = ids,
@@ -298,7 +301,7 @@ private fun ToolbarPrototypeBar(
         selectedTabId = effectiveSelectedId,
         hostProgress = committedProgress
     )
-    val indicator = if (dragging || settlingTargetId != null) {
+    val indicator = if (dragging || activeSettlingTargetId != null) {
         tabBounds[effectiveSelectedId] ?: hostIndicator
     } else {
         hostIndicator
@@ -307,19 +310,24 @@ private fun ToolbarPrototypeBar(
     val latestOnSelectionRequest by rememberUpdatedState(onSelectionRequest)
     val latestOnSelectionInteractionStarted by rememberUpdatedState(onSelectionInteractionStarted)
 
-    LaunchedEffect(selectedTabId, settlingTargetId) {
-        if (settlingTargetId == selectedTabId) settlingTargetId = null
+    LaunchedEffect(selectedTabId, hostProgress != null, settlingTargetId) {
+        if (
+            settlingTargetId != null &&
+            (settlingTargetId == selectedTabId || hostProgress != null)
+        ) {
+            settlingTargetId = null
+        }
     }
     LaunchedEffect(
         selectedTabId,
         hostProgress == null,
         dragging,
-        settlingTargetId,
+        activeSettlingTargetId,
         viewportWidthPx,
         tabBounds[selectedTabId],
         scrollState.maxValue
     ) {
-        if (hostProgress != null || dragging || settlingTargetId != null) return@LaunchedEffect
+        if (hostProgress != null || dragging || activeSettlingTargetId != null) return@LaunchedEffect
         val selected = tabBounds[selectedTabId] ?: return@LaunchedEffect
         if (viewportWidthPx <= 0f) return@LaunchedEffect
         val target = (selected.centerPx - viewportWidthPx / 2f)
