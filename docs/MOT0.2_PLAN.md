@@ -47,7 +47,7 @@ The initial app foundation and gallery have been added on the MOT0.2 branch:
 - Slow motion controls `MotionTime.scale` and resets to normal when the Lab leaves composition.
 - The CI workflow includes `:motion-lab:assembleDebug`.
 
-This is an initial implementation, not a completed milestone. The optimized required workflow [#90](https://github.com/INFORMATION89/Motion-UI/actions/runs/45776233393) passed on the exact PR head `a2186110b8ccb869b28d8c452cfd7e662831513a`, including Spotless, Motion Core unit tests, `:motion:assembleRelease`, and `:motion-lab:assembleDebug`. The workflow validates formatting, tests, and compilation; it does not validate visual behavior, touch interactions, or real vibration output. Emulator and physical-device interactions, including haptics, remain `NOT TESTED` / `DEFERRED`.
+This is an initial implementation, not a completed milestone. The optimized required workflow [#93](https://github.com/INFORMATION89/Motion-UI/actions/runs/45776789045) passed on the exact PR head `c99f6de9752e501824d55d0312afeb19ec470c94`, including Spotless, Motion Core unit tests, `:motion:assembleRelease`, and `:motion-lab:assembleDebug`. The workflow validates formatting, tests, and compilation; it does not validate visual behavior, touch interactions, or real vibration output. Emulator and physical-device interactions, including haptics, remain `NOT TESTED` / `DEFERRED`.
 
 ## Delivery phases
 
