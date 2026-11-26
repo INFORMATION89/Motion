@@ -60,6 +60,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -156,7 +157,7 @@ private fun MotionLabApp() {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { page = item },
+                            .clickable(role = Role.Button) { page = item },
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
                     ) {
                         Column(
@@ -352,7 +353,7 @@ private fun MorphMotionDemo() {
                         .morphAnchor("lab-source", 100.dp)
                         .morphSource("lab-source", 100.dp)
                 ) {
-                    Text("Open surface")
+                    Text(if (motion.target < 0.5f) "Open surface" else "Close surface")
                 }
                 if (visible) {
                     Morph(
