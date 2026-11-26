@@ -47,7 +47,7 @@ The initial app foundation and gallery have been added on the MOT0.2 branch:
 - Slow motion controls `MotionTime.scale` and resets to normal when the Lab leaves composition.
 - The CI workflow includes `:motion-lab:assembleDebug`.
 
-This is an initial implementation, not a completed milestone. The optimized required workflow [#93](https://github.com/INFORMATION89/Motion-UI/actions/runs/45776789045) passed on the exact PR head `c99f6de9752e501824d55d0312afeb19ec470c94`, including Spotless, Motion Core unit tests, `:motion:assembleRelease`, and `:motion-lab:assembleDebug`. The workflow validates formatting, tests, and compilation; it does not validate visual behavior, touch interactions, or real vibration output. Emulator and physical-device interactions, including haptics, remain `NOT TESTED` / `DEFERRED`.
+This is an initial implementation, not a completed milestone. The required workflow [#96](https://github.com/INFORMATION89/Motion-UI/actions/runs/45779170588) passed on exact head `5dfbb9b6950a5d5beeda1ad7b0b23ff50a503221`, including Spotless, Motion Core unit tests, `:motion:assembleRelease`, and `:motion-lab:assembleDebug`. Follow-up source changes clarify the Morph action label and expose gallery cards with button semantics; these changes require verification on the latest branch head. CI validates formatting, tests, and compilation, not visual behavior, touch interactions, screen-reader experience, or real vibration output. Emulator and physical-device interactions remain `NOT TESTED` / `DEFERRED`.
 
 ## Delivery phases
 
