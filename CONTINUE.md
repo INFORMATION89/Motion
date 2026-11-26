@@ -49,14 +49,14 @@ The slow-motion control adjusts `MotionTime.scale` and the root composition rest
 
 ### Current verification state
 
-- The complete implementation branch has not yet passed CI. Inspect the newest workflow run for the exact PR head before treating the app as buildable.
-- The CI workflow now includes `:motion-lab:assembleDebug` in addition to Spotless, Core unit tests, and library release assembly.
+- CI run [#76](https://github.com/INFORMATION89/Motion-UI/actions/runs/45770723926) passed Spotless (after applying the project formatter in the runner), Core unit tests, `:motion:assembleRelease`, and `:motion-lab:assembleDebug` on commit `7954255dbef675a5ec7554d259c143d233840370`. The formatted source from that run has since been committed; the workflow has been restored to check-only mode, so a final CI run is still required on the latest branch head.
+- The CI workflow includes `:motion-lab:assembleDebug` in addition to Spotless, Core unit tests, and library release assembly.
 - No local Gradle build was run in this workspace.
 - Emulator and physical-device interaction remain `NOT TESTED` / `DEFERRED`.
 
 ### Next steps
 
-1. Inspect the PR CI result on the exact latest branch SHA; fix any formatting, Kotlin compilation, or Gradle configuration failures.
+1. Confirm the final check-only workflow passes on the latest branch head after the formatter output and accessibility label were committed.
 2. Review the full diff for module isolation, accessibility, Motion API usage, and dependency scope.
 3. Add focused UI/sample tests only where they validate behavior not already covered by Motion Core tests.
 4. Keep comparison-mode and gallery refinement as the next implementation slice; don't claim A/B comparisons exist yet.
