@@ -29,6 +29,16 @@ Do not fold these into MOT0.2:
 
 The old `lab/` source tree is a prototype, not a Gradle module. Do not move or mechanically rename it into the new app: its code contains Solstice/Breezy app dependencies, packages, resources, theme classes, and LGPL notices. Reimplement generic demonstrations against the public Motion API and Compose/Material 3. Preserve notices and verify provenance/license compatibility before reusing any legacy implementation code.
 
+## Motion Lab product and UI rules
+
+- Treat Motion Lab as both a component showroom and an interaction test bench, not merely an animation gallery.
+- Organize the top-level experience into two clear destinations: **Components** and **Interactions**, presented through a familiar Material 3 top app bar / tab pattern. Keep navigation consistent with the rest of the app; do not invent a custom toolbar or navigation system.
+- **Components** are content-bearing UI building blocks that present information and context (for example cards, pages, and place-like content surfaces). **Interactions** are the controls and input patterns through which users act, provide input, or navigate (for example toolbars, buttons, dropdown menus, checkboxes, and gestures). Classify demos by what they teach; a component may contain interactions without making the categories interchangeable.
+- Support automatic system light/dark appearance. Any additional pure-black/AMOLED appearance must be an explicit optional choice, not a replacement for system-following behavior. Preserve readable contrast and semantic colors in every scheme.
+- Predictive-back blur is optional progressive enhancement only. Prefer platform/AndroidX predictive-back and Compose integration; use blur only where supported, keep it subtle, and provide a graceful no-blur fallback. Never build a custom back-navigation framework to demonstrate the effect.
+- Reuse Compose, Material 3, AndroidX, and existing Motion APIs before adding abstractions. Do not rebuild standard controls, navigation, blur, or animation primitives that the platform already provides. Add a new Motion abstraction only when a concrete reusable gap is demonstrated and separately justified.
+- Keep demo sections focused and independently understandable. Explain the component or interaction, show its context, and provide a direct way to exercise it.
+
 ## Implementation and test discipline
 
 - Prefer a failing regression test before changing production code.
