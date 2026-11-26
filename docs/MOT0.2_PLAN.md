@@ -43,12 +43,11 @@ The initial app foundation and gallery have been added on the MOT0.2 branch:
 
 - `:motion-lab` is included in Gradle as a standalone Android application and depends on `:motion`.
 - The app has its own namespace, application ID, launcher activity, and neutral Material 3 theme.
-- The home gallery links to spring/release, morph, page movement, dial, and scroll edge-blur examples. Page movement and Morph now have opt-in comparison modes. Page movement sends the same destination to Motion's `springToPage` and Compose's default `animateScrollToPage` concurrently; swiping is disabled in comparison mode. Morph uses one shared open/close state to drive Motion's measured-anchor container transform and Compose's default `AnimatedVisibility` transition.
+- The home gallery links to spring/release, morph, page movement, dial, and scroll edge-blur examples. Page movement and Morph now have opt-in comparison modes. Page movement sends the same destination to Motion's `springToPage` and Compose's default `animateScrollToPage` concurrently; swiping is disabled in comparison mode. Morph uses one shared open/close state to drive Motion's measured-anchor container transform and Compose's default `AnimatedVisibility` transition. The Haptics page exposes all nine existing `Haptic.all` tokens through `haptics().perform(token)` and a global intensity slider; it restores `Haptic.intensity` to `1f` when leaving the page.
 - Slow motion controls `MotionTime.scale` and resets to normal when the Lab leaves composition.
 - The CI workflow includes `:motion-lab:assembleDebug`.
 
-This is an initial implementation, not a completed milestone. CI run [#83](https://github.com/INFORMATION89/Motion-UI/actions/runs/45773131024) passed Spotless, Core unit tests, `:motion:assembleRelease`, and `:motion-lab:assembleDebug` on page-comparison head `704286b0fde56582b64996307035d1db87e7f643`. The new Morph comparison commit still requires CI on the exact updated PR head. Emulator and physical-device interactions remain `NOT TESTED` / `DEFERRED`.
-
+This is an initial implementation, not a completed milestone. CI run [#88](https://github.com/INFORMATION89/Motion-UI/actions/runs/45773917605) passed Spotless, Core unit tests, `:motion:assembleRelease`, and `:motion-lab:assembleDebug` on Haptics code head `54d22cf069e6670f9923741371bec7ffab178a00`. The CI build validates compilation, not real vibration output. Emulator and physical-device interactions, including haptics, remain `NOT TESTED` / `DEFERRED.
 ## Delivery phases
 
 ### 1. App foundation
@@ -76,7 +75,7 @@ Build focused examples for capabilities already present in the public API, start
 - Page spring and overshoot.
 - Dial interaction and snapping.
 - Scroll edge blur.
-- Haptic primitives where platform support exists.
+- Haptic primitives where platform support exists. The Lab exposes all nine public semantic tokens and a temporary global-intensity control; hardware output remains unverified.
 
 Every example must demonstrate a real public API contract, document its interaction, and handle unavailable platform behavior honestly. Do not invent a fake implementation for missing capabilities.
 
@@ -84,7 +83,7 @@ Every example must demonstrate a real public API contract, document its interact
 
 - Add side-by-side comparisons with reasonable Compose/Material defaults for the patterns where a comparison teaches something useful.
 - **Comparisons implemented:** page movement (a shared destination drives Motion's `springToPage` and Compose's default `animateScrollToPage`) and Morph (a shared open/close state drives Motion's measured-anchor container transform and Compose's default `AnimatedVisibility`). Independent gestures are disabled in comparison mode to keep the input equivalent.
-- **Next comparison:** sheet-like interaction, if it can be demonstrated cleanly with the existing public API.
+- **Deferred comparison:** a sheet-like interaction. Core provides motion state and gestures, not a dedicated sheet component; add this comparison only if Motion and the Material 3 baseline can share equivalent detents and input without a new Core API.
 - Ensure both sides receive equivalent input and state so the comparison is fair.
 - Expose only a small set of tuning controls that help users understand the effect of each parameter.
 - Avoid copying Motion's implementation into the baseline side; the baseline should use the standard Compose/Material approach.

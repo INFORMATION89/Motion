@@ -19,6 +19,7 @@ Use `gradlew.bat` on Windows.
 - **Morph:** open a surface from its measured source anchor, scrub it closed with a drag, or compare the container morph with Compose's default `AnimatedVisibility`.
 - **Page movement:** swipe pages with Motion's spring fling, or compare Motion's `springToPage` with Compose's default pager animation. The comparison sends the same selected destination to both previews.
 - **Dial:** drag, flick, and snap a dial across a finite range.
+- **Haptics:** try the nine semantic Motion feedback tokens and tune their global intensity. Intensity resets to 100% when leaving the page; unsupported primitives use Android view feedback.
 - **Scroll edge blur:** explore progressive blur and fade at the edges of a horizontal list.
 
 The slow-motion slider scales springs started after the setting changes. The Lab resets `MotionTime.scale` when its root composition is disposed.

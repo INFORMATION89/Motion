@@ -43,25 +43,26 @@ The separate `:motion-lab` Android sample app is now included in Gradle and depe
 - Source-to-target morph, with a shared-input comparison against Compose's default `AnimatedVisibility`.
 - Spring-driven pager movement and overshoot, with an opt-in synchronized Motion-vs-Compose comparison.
 - Dial interaction and snapping.
+- Semantic haptic token buttons with an intensity control; global intensity resets when leaving the page.
 - Horizontal scroll edge blur.
 
 The slow-motion control adjusts `MotionTime.scale` and the root composition restores it to `1f` on disposal. The old `lab/` source tree remains an unbuilt Solstice-era prototype; it is not a source dependency of the new app.
 
 ### Current verification state
 
-- CI run [#83](https://github.com/INFORMATION89/Motion-UI/actions/runs/45773131024) passed Spotless, Core unit tests, `:motion:assembleRelease`, and `:motion-lab:assembleDebug` on page-comparison head `704286b0fde56582b64996307035d1db87e7f643`. A synchronized Morph comparison has since been added and requires a fresh CI result on the updated head.
+- CI run [#88](https://github.com/INFORMATION89/Motion-UI/actions/runs/45773917605) passed Spotless, Core unit tests, `:motion:assembleRelease`, and `:motion-lab:assembleDebug` on Haptics code head `54d22cf069e6670f9923741371bec7ffab178a00`.
+- CI does not validate real vibration output; haptic behavior on emulator/physical devices remains `NOT TESTED` / `DEFERRED.
 - The CI workflow includes `:motion-lab:assembleDebug` in addition to Spotless, Core unit tests, and library release assembly.
 - No local Gradle build was run in this workspace.
 - Emulator and physical-device interaction remain `NOT TESTED` / `DEFERRED`.
 
 ### Next steps
 
-1. Run and inspect the check-only CI workflow on the updated Morph and page-comparison head; resolve any formatting or build issues.
-2. Review the full diff for module isolation, accessibility, Motion API usage, equivalent comparison inputs, and dependency scope.
-3. Assess whether a sheet-like comparison fits the existing public API without introducing a new Core API.
-4. Add focused UI/sample tests only where they validate behavior not already covered by Core tests.
-5. Keep the PR draft until the app and selected comparisons build and the required workflow passes.
-
+1. Review the complete PR diff for module isolation, accessibility, public API usage, comparison input parity, and dependency scope.
+2. Consider a sheet-like comparison only if it can use existing public primitives and a fair Material 3 baseline; otherwise keep it deferred.
+3. Decide whether additional sample-owned UI tests add coverage beyond the existing Core tests.
+4. Run the required workflow on the final coherent code/documentation head and record exact evidence.
+5. Keep the PR draft until the agreed MOT0.2 scope and acceptance criteria are complete.
 See [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md) for scope and acceptance criteria. Follow [docs/MOTION_LAB_PLAN.md](docs/MOTION_LAB_PLAN.md) for the longer-term gallery and comparison direction.
 
 ## Local setup and verification
