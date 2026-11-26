@@ -8,7 +8,7 @@ Proposal only. This document defines the reusable component contract and a stage
 
 ## 1. Goal
 
-Build an optional animated toolbar in Motion UI that preserves the interaction quality that makes the current Solstice toolbar valuable while allowing unrelated applications to choose a different visual identity.
+Build an optional animated toolbar in Motion UI that preserves the interaction quality that makes the current the consuming application toolbar valuable while allowing each consuming application to choose its own visual identity.
 
 The toolbar is a first-class Motion UI component, not a wrapper around a standard top app bar and not a navigation framework. Material 3 remains the preferred source for standard controls and semantics where appropriate.
 
@@ -18,7 +18,7 @@ The key invariant is:
 
 ## 2. What the existing consumer experience tells us
 
-The Solstice toolbar demonstrates several distinct capabilities worth preserving as generic, opt-in behaviours:
+The the consuming application toolbar demonstrates several distinct capabilities worth preserving as generic, opt-in behaviours:
 
 - Tabs have variable widths. The active tab unfolds its label while inactive tabs can remain compact.
 - Selection geometry, tab widths, and label visibility follow continuous pager progress, including a swipe that reverses direction.
@@ -27,9 +27,9 @@ The Solstice toolbar demonstrates several distinct capabilities worth preserving
 - The contextual action can represent a stateful action such as pin/unpin, with a small state-change animation and optional semantic haptic feedback.
 - The toolbar can adapt its available tabs and contextual action to different host configurations.
 
-These are behavioural requirements, not a mandate to reproduce Solstice's glass, colors, weather accent, iconography, dimensions, labels, or exact animation tuning.
+These are behavioural requirements, not a mandate to reproduce the consuming application's glass, colors, weather accent, iconography, dimensions, labels, or exact animation tuning.
 
-No Solstice/Breezy source, assets, strings, icons, theme classes, weather state, or app navigation code may be copied into Motion UI. Implement the generic contract independently from this description. The consumer remains responsible for its own styling and product semantics.
+No consumer-specific/upstream source, assets, strings, icons, theme classes, weather state, or app navigation code may be copied into Motion UI. Implement the generic contract independently from this description. The consumer remains responsible for its own styling and product semantics.
 
 ## 3. Ownership boundaries
 
@@ -55,7 +55,7 @@ Do not add a second animation engine or duplicate Core physics inside the toolba
 - Tab content, stable IDs, labels, icons, content descriptions, enabled/visible policy, and callbacks.
 - The mapping between pager progress and toolbar progress.
 - Contextual action meaning, enabled/checked state, icon, label, and callback.
-- Product-specific appearance, including Solstice's palette, glass renderer, weather-driven accent, icons, and branding.
+- Product-specific appearance, including the consuming application's palette, glass renderer, weather-driven accent, icons, and branding.
 
 Motion UI must not import a navigation library, own a back stack, or assume a pager is present.
 
@@ -173,9 +173,9 @@ The same behavioural component must support the following profiles without chang
 - Reuse the MotionUiTheme token foundation where it is a good fit; extend it only after the component demonstrates the exact missing semantic roles.
 - Keep layout/interaction code independent from style selection.
 
-### Solstice appearance
+### Consumer-defined appearance
 
-Solstice may configure the app-defined profile to recreate its expressive floating pill, glass material, weather-aware accent, icon set, and contextual action. All Solstice-specific renderers, colors, weather-derived state, icons, labels, and brand decisions remain in Solstice. There must be no bundled SolsticeStyle, Solstice palette, or Solstice asset in Motion UI.
+the consuming application may configure the app-defined profile to recreate its expressive floating pill, glass material, weather-aware accent, icon set, and contextual action. All consumer-specific renderers, colors, weather-derived state, icons, labels, and brand decisions remain in the consuming application. There must be no bundled the consuming applicationStyle, the consuming application palette, or the consuming application asset in Motion UI.
 
 ### Style invariants
 
@@ -240,14 +240,14 @@ Do not claim TalkBack, device, contrast, or haptic validation unless it has actu
 4. **Core integration:** reuse existing Motion Core primitives where appropriate; add a Core API only if the prototype identifies a generic missing capability.
 5. **Accessibility and resilience:** add semantics, keyboard/focus support, reduced-motion behavior, and focused UI tests.
 6. **Public API hardening:** document lifecycle, state ownership, list mutation, progress mapping, and compatibility before declaring the API stable.
-7. **Consumer adoption:** only in a separate Solstice PR, with Solstice supplying its appearance and product actions. Do not update the Solstice submodule or source in this workstream.
+7. **Consumer adoption:** only in a separate consumer-repository change, with the consumer supplying its appearance and product actions. Do not update the the consuming application submodule or source in this workstream.
 
 A reusable card/surface may follow this toolbar milestone; it must not delay or replace the toolbar work.
 
 ## 10. Explicit non-goals and guardrails
 
-- No changes to Solstice source, its submodule pointer, or its open pull requests in this workstream.
-- No copied Solstice/Breezy code, assets, icons, resources, strings, theme classes, or weather logic.
+- No changes to consumer source, its submodule pointer, or its open pull requests in this workstream.
+- No copied consumer-specific/upstream code, assets, icons, resources, strings, theme classes, or weather logic.
 - No navigation/back-stack ownership and no required pager dependency.
 - No Haze/blur dependency in the first toolbar milestone.
 - No requirement that every style use glass, gooey deformation, haptics, or long-press drag.
@@ -264,4 +264,4 @@ A reusable card/surface may follow this toolbar milestone; it must not delay or 
 - The contextual action is optional, independently accessible, and cannot intercept neighbouring tabs while hidden.
 - Reduced motion preserves all functionality.
 - Focused unit/UI tests cover the critical state, geometry, semantics, and cancellation paths.
-- No Solstice-specific source, styling, branding, or dependency enters Motion UI.
+- No consumer-specific source, styling, branding, or dependency enters Motion UI.
