@@ -2,15 +2,15 @@
 
 ## Product direction
 
-Motion UI components must not be locked to one visual identity. A component's interaction contract should remain stable while its visual treatment can be selected or customised by the consuming app.
+Motion UI components must not be locked to one visual identity. A component's interaction contract remains stable while its visual treatment can be selected or customized by the consuming application.
 
-The animated toolbar is a flagship example: keep its advanced interaction model instead of replacing it with a standard Material 3 top app bar simply because Material 3 is the default component library.
+The animated toolbar is a first-class component. Preserve its advanced interaction model rather than replacing it with a standard Material 3 top app bar simply because Material 3 is the default component library.
 
 ## Three independent concerns
 
-1. **Behaviour** — tab selection, pager synchronisation, drag/long-press gestures, velocity handling, interruptibility, spring choreography, contextual action expansion, and reduced-motion behaviour. Use Motion Core for reusable motion mechanics.
-2. **Style** — dimensions, shapes, colors, typography roles, surface treatment, elevation, icon treatment, and animation styling parameters that are genuinely visual.
-3. **Application configuration** — tab content, labels, icons, selected state, navigation callbacks, contextual actions, accessibility descriptions, and app-specific state.
+1. **Behavior** — tab selection, host-progress synchronization, drag/long-press gestures, velocity handling, interruptibility, spring choreography, contextual-action expansion, and reduced-motion behavior. Use Motion Core for reusable motion mechanics.
+2. **Style** — dimensions, shapes, colors, typography roles, surface treatment, elevation, icon treatment, and genuinely visual animation parameters.
+3. **Application configuration** — tab content, labels, icons, selected state, navigation callbacks, contextual actions, accessibility descriptions, and application-owned state.
 
 A style change must not silently change navigation semantics or remove toolbar capabilities.
 
@@ -18,40 +18,40 @@ A style change must not silently change navigation semantics or remove toolbar c
 
 The intended component API should support:
 
-- **Material 3 Expressive profile:** a familiar Material 3 visual treatment, using Material components and tokens where appropriate. It must not recreate standard controls unnecessarily.
+- **Material 3 Expressive-oriented profile:** a familiar Material 3 visual treatment, using Material components and tokens where appropriate. It must not recreate standard controls unnecessarily.
 - **App-defined profile:** consumers can supply their own tokens and component style values.
-- **Consumer-defined appearance:** each application can configure the reusable toolbar with its own palette, materials, iconography, and contextual actions. Consumer-specific renderers, colors, domain-derived accents, and branding remain in the consuming application.
+- **Consumer-defined appearance:** each application supplies its own visual tokens and optional content slots for the toolbar's container, selection indicator, tabs, and contextual action. Domain-derived accents, custom rendering, iconography, and branding remain in the application.
 
-The library should provide sensible neutral defaults and a clear extension point. Avoid putting the consuming application's brand assets or LGPL-derived implementation code into Motion-UI's Apache-2.0 codebase. Reimplement generic behaviour from documented requirements and independently authored code; keep the consumer visual preset in the the consuming application consumer if it contains product-specific styling.
+Motion UI should provide sensible neutral defaults and clear extension points. Do not include consumer-owned brand assets or third-party implementation code. Reimplement generic behavior from documented requirements and independently authored code; keep product-specific visual presets in the consuming application.
 
 ## Animated toolbar capability contract
 
-The reusable toolbar should be able to support, as opt-in/configurable capabilities:
+The reusable toolbar should support the following as opt-in/configurable capabilities:
 
-- variable-width tabs with a selection surface that follows pager progress continuously;
-- animated icon/label expansion and collapse;
-- tap, swipe, and optional long-press-and-drag tab switching;
-- interruptible transitions and velocity-aware release/retargeting;
-- optional contextual action that expands from or detaches from the toolbar;
-- optional secondary action state (for example pin/unpin), with semantic haptics when supported;
-- app-provided tab models, icons, labels, descriptions, and callbacks;
-- accessibility semantics and an alternative to gesture-only actions;
-- reduced-motion adaptations that preserve state and functionality.
+- Variable-width tabs with a selection surface that follows host progress continuously.
+- Animated icon/label expansion and collapse.
+- Tap activation, host-driven swipe progress, and optional long-press-and-drag tab switching.
+- Interruptible transitions and velocity-aware release/retargeting.
+- An optional contextual action that expands from or detaches from the toolbar.
+- Optional secondary action state, with semantic haptics when supported.
+- Application-provided tab models, icons, labels, descriptions, and callbacks.
+- Accessibility semantics and alternatives to gesture-only actions.
+- Reduced-motion adaptations that preserve state and functionality.
 
-Do not require every consumer to enable every effect. A simpler Material 3 Expressive profile may disable glass, elastic deformation, or the contextual bud while preserving core toolbar navigation and tab behaviour.
+Do not require every application to enable every effect. A simpler Material 3 Expressive profile may disable glass, elastic deformation, or contextual-action morphing while preserving core tab behavior and accessibility.
 
 ## Delivery plan
 
-1. Complete MOT0.3A theme/token foundation and its CI.
-2. Deliver a first reusable card/surface component using the style contract.
-3. Design the toolbar API as a separate proposal with behaviour/style/application configuration explicitly separated.
-4. Build a standalone toolbar demo in Motion Lab with at least two visual profiles applied to the same interaction model.
-5. Verify accessibility, reduced motion, gesture interruption, and app configuration before consumer adoption.
-6. Integrate into the consuming application only in a separate the consuming application PR after the generic component is independently tested.
+1. Complete and review the MOT0.3A theme/token foundation.
+2. Review the dedicated [MOT0.3B toolbar contract](MOT0.3B_TOOLBAR_PLAN.md).
+3. Prototype the toolbar in Motion Lab, applying at least two visual profiles to the same interaction state and callbacks.
+4. Verify accessibility, reduced motion, gesture interruption, and application configuration before public API hardening.
+5. Deliver reusable card/surface components after the toolbar contract and prototype are established.
+6. Consider integration into a consumer application only in a separate, independently reviewed change after the generic component is tested.
 
 ## Non-goals
 
-- Do not copy consumer-specific/upstream source files, icons, resources, domain logic, or branding into Motion UI.
+- Do not copy consumer or third-party source files, icons, resources, domain logic, or branding into Motion UI.
 - Do not make Material 3 Expressive the only supported visual identity.
 - Do not force all consumers to use glass, elastic motion, haptics, or long-press gestures.
 - Do not let visual style own navigation state or product-specific actions.
