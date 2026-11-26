@@ -4,12 +4,13 @@ This file is the working handoff for the next development session. Keep it curre
 
 ## Read first
 
-1. [Agent instructions](AGENTS.md) — repository-wide constraints for AI coding assistants.
-2. [Framework overview](docs/FRAMEWORK_OVERVIEW.md) — what belongs in Motion and what belongs in app/UI libraries.
-3. [Platform support](docs/PLATFORM_SUPPORT.md) — current Android integration and future platform requirements.
-4. [Solstice AI adoption guide](docs/AI_SOLSTICE_ADOPTION.md) — how to create the adoption plan without prematurely migrating code.
-5. [MOT0.1 plan](docs/MOT0.1_PLAN.md) — code tasks, tests, and acceptance criteria.
-6. [Motion rules](docs/MOTION.md), [morph study](docs/MORPH_STUDY.md), and [module API](motion/README.md).
+1. [Project rules](docs/RULES.md) — how Motion work is planned, implemented, reviewed, and accepted.
+2. [Agent instructions](AGENTS.md) — repository-wide constraints for AI coding assistants.
+3. [Framework overview](docs/FRAMEWORK_OVERVIEW.md) — what belongs in Motion and what belongs in app/UI libraries.
+4. [Platform support](docs/PLATFORM_SUPPORT.md) — current Android integration and future platform requirements.
+5. [Solstice AI adoption guide](docs/AI_SOLSTICE_ADOPTION.md) — how to create the adoption plan without prematurely migrating code.
+6. [MOT0.1 plan](docs/MOT0.1_PLAN.md) — code tasks, tests, and acceptance criteria.
+7. [Motion principles](docs/MOTION.md), [morph study](docs/MORPH_STUDY.md), and [module API](motion/README.md).
 
 ## Project guardrails
 
