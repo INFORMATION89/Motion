@@ -48,13 +48,14 @@ Follow the ordered tasks in [docs/MOT0.1_PLAN.md](docs/MOT0.1_PLAN.md). Start wi
 
 ## Cost-aware verification
 
-1. **Plan before running checks.** Identify changed modules, acceptance criteria, the smallest useful checks, expensive checks, and device/integration requirements.
-2. **Use focused checks while iterating.** Run the affected unit-test or Gradle task rather than the full workflow after every small edit. For documentation-only changes, do not run code builds that the change cannot affect.
-3. **Batch coherent changes.** Complete a related implementation/documentation batch before requesting the full pull-request CI workflow. The current CI workflow runs Spotless, `:motion:testDebugUnitTest`, and `:motion:assembleRelease`; run it once when a coherent code batch is ready.
-4. **Reuse valid results.** A passing result remains valid for the same commit and relevant environment. Do not rerun checks that the change cannot affect. When one job fails, inspect its logs and retry only that job where possible.
-5. **Limit infrastructure retries.** Diagnose the first failure. For a genuine infrastructure failure, allow at most one retry using a materially different setup. If it fails again, stop and report the blocker instead of repeatedly spending CI resources.
-6. **Keep device evidence separate.** Physical-device and Pixel checks are `NOT TESTED` / `DEFERRED` while hardware is unavailable. CI does not prove touch behavior or physical-device compatibility.
-7. **Report evidence precisely.** Record the exact commit SHA, CI run, checks, results, skipped checks, and blockers. Never claim a build, test, platform, or device check passed unless its result was inspected.
+1. **Plan before testing.** For each task, identify the changed modules, acceptance criteria, smallest relevant checks, expensive checks (full CI, emulators, device runs, and live integrations), and the evidence that would count as a pass.
+2. **Use focused checks during iteration.** Run the affected unit tests, lint target, or build task while implementing. Do not run the entire CI suite after every small change. For documentation-only changes, skip local code tests that cannot be affected.
+3. **Batch related changes.** Complete a coherent set of implementation and documentation changes before pushing or requesting the full pull-request CI workflow. Run the full required CI suite once when the batch is ready.
+4. **Reuse passing results.** Record the commit SHA and environment associated with each result. Do not repeat a check when neither relevant code nor its dependencies/configuration changed. If one job fails, inspect its logs and rerun only that job where possible; do not rerun successful jobs without a technical reason.
+5. **Limit infrastructure retries.** After an infrastructure/environment failure, inspect the evidence and allow at most one retry with a materially different setup. If the same requirement fails again, stop and mark it `BLOCKED`; report the evidence and the host/tool access needed. Do not repeatedly retry an unchanged setup.
+6. **Ask before expanding verification.** Before substantially widening the test matrix, adding a new expensive test layer, or spending another full CI run after a failed run, explain why it is needed and obtain the owner's approval when it exceeds the agreed task plan. A narrowly scoped rerun of only the failed job is preferred when supported.
+7. **Keep device checks separate.** CI is the routine acceptance gate when device access is unavailable. Real-device, live-source, and manual interaction checks remain `NOT TESTED` or `DEFERRED` until explicitly required and available. A passing CI workflow must never be described as device or live-integration validation.
+8. **Report exact evidence.** State the exact commands or workflow run, tested commit SHA, pass/fail results, checks not run, and blockers. Never claim an unrun or uninspected check passed.
 
 ## Git and pull request rules
 
