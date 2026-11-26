@@ -2,7 +2,7 @@
 
 This document records the interaction principles first established while building Solstice. The reusable behavior is intended for any app consuming Motion; it does not require consumers to copy Solstice's visual identity, screen composition, or product-specific choreography. Motion is the behavior layer, not a general-purpose UI component kit.
 
-The reusable base tokens live in `:motion` (`io.github.information89.motion.Motion`, expressed as response and damping). Solstice may map those tokens through an app-side scheme such as `SolsticeMotionScheme`; consumer-specific mappings stay in the consuming app. References to Solstice files below are examples from the first consumer, not dependencies or requirements for Motion.
+The reusable base tokens live in `:motion` (`io.github.information89.motion.Motion`, expressed as response and damping). Solstice may map those tokens through an app-side scheme such as `AppMotionScheme`; consumer-specific mappings stay in the consuming app. References to Solstice files below are examples from the first consumer, not dependencies or requirements for Motion.
 
 These principles guide implementation and review. Before changing user-visible motion behavior or adding a new public contract, record the proposal and obtain the owner's agreement.
 
@@ -17,19 +17,19 @@ nowhere: a sheet, card, menu or window grows out of the element that caused it, 
 what transforms and expands (as iOS buttons do), then folds back into it. No fade-in from nothing, no
 replacing one thing with another.
 
-**Scope of Motion:** it is the reusable behavior layer beneath interactions in any app, not only Solstice: button feedback, lists, menus, cards, sheets, page changes, drags, swipes, long presses, and related motion feedback. Motion should own generic mechanics; each app still owns its components, layout, content, styling, navigation policy, and domain behavior. A Solstice need is not automatically a Motion feature: extract it only when the behavior is generic and independent of the app.
+**Scope of Motion:** it is the reusable behavior layer beneath interactions in any app, not only Solstice: button feedback, lists, menus, cards, sheets, page changes, drags, swipes, long presses, and related motion feedback. Motion should own generic mechanics; each app still owns its components, layout, content, styling, navigation policy, and domain behavior. A consumer-specific need is not automatically a Motion feature: extract it only when the behavior is generic and independent of the app.
 
 | Use | Spring | In code |
 |---|---|---|
-| Responsive controls (buttons, toggles, sliders) | `dampingRatio = Spring.DampingRatioNoBouncy`, `stiffness = Spring.StiffnessMediumLow` | `SolsticeMotion.control` |
-| Morphing containers (menus, sheets, pill-style buttons) | `dampingRatio = 0.78f`, `stiffness = 380f` (subtle elasticity) | `SolsticeMotion.container` |
-| Inner content scale-in | `dampingRatio = 0.85f`, `stiffness = 400f` | `SolsticeMotion.content` |
-| Settling after a drag (no bounce) | `dampingRatio = 1f`, `stiffness = Spring.StiffnessMediumLow` | `SolsticeMotion.settle` |
-| Dismissing a container back into its source | `dampingRatio = 1f`, `stiffness = 260f` | `SolsticeMotion.dismiss` |
+| Responsive controls (buttons, toggles, sliders) | `dampingRatio = Spring.DampingRatioNoBouncy`, `stiffness = Spring.StiffnessMediumLow` | `AppMotion.control` |
+| Morphing containers (menus, sheets, pill-style buttons) | `dampingRatio = 0.78f`, `stiffness = 380f` (subtle elasticity) | `AppMotion.container` |
+| Inner content scale-in | `dampingRatio = 0.85f`, `stiffness = 400f` | `AppMotion.content` |
+| Settling after a drag (no bounce) | `dampingRatio = 1f`, `stiffness = Spring.StiffnessMediumLow` | `AppMotion.settle` |
+| Dismissing a container back into its source | `dampingRatio = 1f`, `stiffness = 260f` | `AppMotion.dismiss` |
 | Small controls only (switch thumbs, toggles, icon changes; Material's fast springs) | 0.2 s / 0.9 (`stiffness ≈ 987`) | `Motion.snappy` (added 2026-11-19) |
 
 Values live in the `:motion` module (`io.github.information89.motion.Motion`, written as response +
-damping). Material components get them through `SolsticeMotionScheme` (fast → `snappy`, default →
+damping). Material components get them through `AppMotionScheme` (fast → `snappy`, default →
 `container`, slow → `dismiss`; effects: fast → `snappy`, default → `settle`, slow → `dismiss`).
 
 The exception is a shared transition that's seeked. There, the parts follow the fraction
@@ -48,8 +48,8 @@ curve applies.
   touch is never swallowed. This applies to every animation, through `:motion`. **Exception, agreed
   2026-11-21:** page changes (swipes and tab taps) are the pager really scrolling, so a tap while the
   pages still move first stops them (the user chose one springy page motion over this rule).
-- Pick the target from momentum: project where a fling would come to rest (`SolsticeMotion.project`).
-- Over-dragging rubber-bands, like iOS, and never stops dead (`SolsticeMotion.rubberBand`, coefficient 0.55).
+- Pick the target from momentum: project where a fling would come to rest (`AppMotion.project`).
+- Over-dragging rubber-bands, like iOS, and never stops dead (`AppMotion.rubberBand`, coefficient 0.55).
 
 ### C. Continuous container morphing (`:motion` `Morph`; SharedTransitionLayout before M3)
 
@@ -93,7 +93,7 @@ squished while the container first stretches:
   - It's driven by a gesture `Animatable` with velocity.
   - Pulling down scrubs it back into the pill, and pulling up past open rubber-bands.
   - The content is choreographed.
-- **Search sheet** (2026-11-19): `SolsticeSheetState` (presence + detent), see PLAN.md log.
+- **Search sheet** (2026-11-19): `AppSheetState` (presence + detent), see PLAN.md log.
 - **Postcard window, Places drag, toolbar** (2026-11-19): on tokens; the window closes with a swipe
   down. See PLAN.md log.
 - **Everything else** (2026-11-19): on tokens. Exceptions: the sticker peel, the Forecast develop
