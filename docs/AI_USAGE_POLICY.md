@@ -199,7 +199,7 @@ Do not claim that a task is complete if its acceptance criteria or required veri
 - [ChatGPT models and model selection](https://learn.chatgpt.com/docs/models)
 - [ChatGPT Work and Codex pricing / usage](https://learn.chatgpt.com/docs/pricing)
 - [OpenAI API pricing](https://platform.openai.com/pricing/)
-- [Claude Opus 5.5 model overview](https://platform.claude.com/docs/en/models/opus-5-5/overview)
+- [Claude Opus 5.5 model overview](https://platform.claude.com/docs/en/about-claude/models/choosing-a-model)
 - [Claude API pricing](https://platform.claude.com/docs/en/about-claude/pricing)
 - [Claude plans and pricing](https://claude.com/pricing)
 
