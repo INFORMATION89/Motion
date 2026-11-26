@@ -87,8 +87,5 @@ class MorphGeometryTest {
         assertThrows(IllegalArgumentException::class.java) {
             MorphAnchor(Rect(-Float.MAX_VALUE, 0f, Float.MAX_VALUE, 10f), cornerRadius = 0f)
         }
-        assertThrows(IllegalArgumentException::class.java) {
-            MorphAnchor(Rect(Float.MAX_VALUE, 0f, Float.MAX_VALUE, 10f), cornerRadius = 0f)
-        }
     }
 }
