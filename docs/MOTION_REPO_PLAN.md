@@ -2,13 +2,13 @@
 
 This document preserves the original repository-extraction decisions from 2026-11-21. The repository is now [INFORMATION89/Motion-UI](https://github.com/INFORMATION89/Motion-UI); the current implementation state below takes precedence over historical target-state descriptions in the plan.
 
-## Current state — 2026-11-25
+## Current state — 2026-11-26
 
-- Motion is an independent Android library with a standalone Gradle build and a single included library module, `:motion`.
+- Motion is an independent Android/Jetpack Compose project with a standalone Gradle build and two included modules: the reusable library `:motion` and the standalone sample application `:motion-lab`.
 - The module uses the Android library Gradle plugin and Jetpack Compose Animation/Foundation. It is not a Kotlin Multiplatform project.
 - The current target is Android 10 / API 29+, compile SDK 37, Android Build Tools 37, and JDK 21.
-- `lab/` contains prototype sources; it is not currently included as a Gradle module or CI target.
-- CI runs Spotless, `:motion:testDebugUnitTest`, and `:motion:assembleRelease`.
+- `:motion-lab` is a built Gradle application module and is included in CI through `:motion-lab:assembleDebug`. The legacy `lab/` directory remains a separate, unbuilt prototype and is not the source of the new app.
+- CI runs Spotless, `:motion:testDebugUnitTest`, `:motion:assembleRelease`, and `:motion-lab:assembleDebug` in the required build workflow.
 - Solstice consumes Motion through a Git submodule and Gradle composite build. It pins the Motion commit through the submodule pointer.
 - Desktop (Windows/macOS/Linux) and iOS support are future design work, not supported targets.
 - Physical-device and Pixel validation remain `NOT TESTED` / `DEFERRED` while the required hardware is unavailable. Passing CI does not establish device behavior.
@@ -18,7 +18,7 @@ This document preserves the original repository-extraction decisions from 2026-1
 - **Workflow: Git submodule + Gradle composite build.** Solstice keeps Motion at `motion/` as a submodule pinned to an exact Motion commit and builds it from source through `includeBuild`. Nothing is currently published to Maven.
 - **Independence:** Motion must not import Solstice code or depend on any consuming app. Generic motion behavior belongs in Motion; app styling, screens, assets, and product logic remain in the consuming app.
 - **History:** the extracted Motion repository keeps the project-owned Motion history, not the upstream Breezy Weather history.
-- **Motion Lab direction:** a separate Material You Expressive app was planned to demonstrate Motion with standard Material 3 components rather than Solstice's visual styling. The lab is not yet a Gradle module.
+- **Motion Lab direction (historical):** a separate Material You Expressive app was planned to demonstrate Motion with standard Material 3 components rather than Solstice's visual styling. This plan has since been delivered as `:motion-lab`; the old `lab/` prototype remains separate.
 
 ## Intended repository structure
 
@@ -27,7 +27,8 @@ The intended structure remains:
 ```text
 Motion-UI/
   motion/       Android motion library (Gradle module :motion)
-  lab/          prototype sources; future standalone demo app/module
+  motion-lab/   standalone Android sample app (Gradle module :motion-lab)
+  lab/          legacy prototype sources; not built or included in CI
   docs/         architecture, motion rules, research, and plans
   gradle/       wrapper and version catalog
   .github/      CI
@@ -35,7 +36,7 @@ Motion-UI/
   README.md     project entry point
 ```
 
-Do not describe `lab/` as a built or CI-validated app until it is included in the Gradle build and has its own verification.
+Do not describe the legacy `lab/` directory as a built or CI-validated app. The current standalone app is `:motion-lab`, included in Gradle and verified by the required CI build.
 
 ## How changes reach Solstice
 
@@ -62,9 +63,9 @@ Treat this as a historical candidate list. Re-inspect current Solstice source, c
 
 ## Planned phases
 
-1. **Library reliability:** complete the core motion state, physics, validation, and interruption contracts with focused deterministic tests.
-2. **Motion Lab:** make the prototype a standalone, independently verifiable app using standard Material 3 components.
-3. **Reusable interaction extraction:** move generic behavior into Motion one piece at a time, each with tests and a corresponding Lab example when that improves validation.
-4. **Consumer workflow:** document contribution, version pinning, and the Solstice update process.
+1. **Library reliability — complete:** core motion state, physics, validation, and interruption contracts have focused deterministic tests.
+2. **Motion Lab — complete:** the standalone `:motion-lab` app is included in Gradle and required CI, with Material 3 Components / Interactions destinations and automatic system light/dark appearance.
+3. **Reusable interaction extraction — next engineering phase:** evaluate generic behavior from real consumer use cases, move one capability at a time, and add focused tests plus a Lab example when useful. Do not assume every UI interaction belongs in Motion Core.
+4. **Consumer workflow — documented:** contribution, exact-commit version pinning, and the Solstice update process are described. Actual Solstice submodule updates remain separate, explicitly reviewed consumer changes.
 
 Each phase should have a scoped plan, acceptance criteria, cost-aware verification, and an explicit list of deferred device checks. Do not expand a milestone into unrelated UI components, platform ports, or benchmarks.
