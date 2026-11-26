@@ -81,7 +81,7 @@ with a plain Material 3 look, and Solstice keeps its glass look on the same moti
 
 ## Phases
 
-Each phase: plan the details, agree, build, check on the Pixel, then the next one.
+Each phase: plan the details, agree, implement, run focused checks, and use one complete CI run when the batch is ready. Physical-device/Pixel checks are deferred while the required hardware is unavailable; record them as NOT TESTED or DEFERRED, and make them a gate only when the owner explicitly requires them for a milestone or release.
 
 1. **Bootstrap Motion with the library only.**
    - Install `git-filter-repo` (Homebrew; not installed yet). In a throwaway clone of Solstice, keep
