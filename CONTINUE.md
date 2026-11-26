@@ -6,9 +6,8 @@ This file is the working handoff for the next development session. Keep it align
 
 1. [Project rules](docs/RULES.md) and [agent instructions](AGENTS.md).
 2. [MOT0.3A execution plan](docs/MOT0.3A_PLAN.md).
-3. [MOT0.3B toolbar plan](docs/MOT0.3B_TOOLBAR_PLAN.md).
-4. [Framework overview](docs/FRAMEWORK_OVERVIEW.md) and [platform support](docs/PLATFORM_SUPPORT.md).
-5. [Motion UI theme API](motion-ui/README.md), [Core API](motion/README.md), and [consumer adoption guide](docs/AI_CONSUMER_ADOPTION.md).
+3. [Framework overview](docs/FRAMEWORK_OVERVIEW.md) and [platform support](docs/PLATFORM_SUPPORT.md).
+4. [Motion UI theme API](motion-ui/README.md), [Core API](motion/README.md), and [consumer adoption guide](docs/AI_CONSUMER_ADOPTION.md).
 
 ## Guardrails
 
