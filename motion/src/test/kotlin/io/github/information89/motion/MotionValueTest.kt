@@ -205,5 +205,4 @@ class MotionValueTest {
         v.target shouldBe 1f
         v.isRunning shouldBe false
     }
-
 }
