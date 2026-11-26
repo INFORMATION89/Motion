@@ -362,14 +362,19 @@ private fun ToolbarPrototypeBar(
     val latestOnSelectionRequest by rememberUpdatedState(onSelectionRequest)
     val latestOnSelectionInteractionStarted by rememberUpdatedState(onSelectionInteractionStarted)
 
-    LaunchedEffect(selectedTabId, toolbarHasFocus) {
-        if (!toolbarHasFocus) focusedTabId = selectedTabId
+    LaunchedEffect(selectedTabId, toolbarHasFocus, pendingFocusRequestId) {
+        if (!toolbarHasFocus && pendingFocusRequestId == null) {
+            focusedTabId = selectedTabId
+        }
     }
     LaunchedEffect(pendingFocusRequestId) {
         val targetId = pendingFocusRequestId ?: return@LaunchedEffect
         withFrameNanos { }
-        focusRequesters[targetId]?.requestFocus()
-        pendingFocusRequestId = null
+        val requested = focusRequesters[targetId]?.requestFocus() == true
+        if (!requested) {
+            pendingFocusRequestId = null
+            if (!toolbarHasFocus) focusedTabId = selectedTabId
+        }
     }
     LaunchedEffect(selectedTabId, hostProgress != null, settlingTargetId) {
         if (
@@ -517,8 +522,11 @@ private fun ToolbarPrototypeBar(
                                     .focusRequester(focusRequesters.getValue(destination.id))
                                     .focusProperties { canFocus = focusedTabId == destination.id }
                                     .onFocusChanged {
-                                        if (it.isFocused && focusedTabId != destination.id) {
+                                        if (it.isFocused) {
                                             focusedTabId = destination.id
+                                            if (pendingFocusRequestId == destination.id) {
+                                                pendingFocusRequestId = null
+                                            }
                                         }
                                     }
                                     .onPreviewKeyEvent { event ->
