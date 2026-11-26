@@ -8,7 +8,7 @@ This file is the working handoff for the next development session. Keep it curre
 2. [MOT0.3A execution plan](docs/MOT0.3A_PLAN.md).
 3. [Framework overview](docs/FRAMEWORK_OVERVIEW.md) and [platform support](docs/PLATFORM_SUPPORT.md).
 4. [Motion UI theme API](motion-ui/README.md) and [Core API](motion/README.md).
-5. [consumer adoption guide](docs/AI_SOLSTICE_ADOPTION.md).
+5. [consumer adoption guide](docs/AI_CONSUMER_ADOPTION.md).
 
 ## Guardrails
 
