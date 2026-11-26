@@ -30,7 +30,7 @@ For each behavior found in the consumer application, assign exactly one primary 
 | App-side composition | The motion is generic, but styling, content, state, or component structure is consumer-specific | Keep the component in the consuming application and compose it with Motion Core. |
 | Motion UI candidate | A component structure is reusable across apps, configurable, and not already better supplied by Material or a focused library | Propose it for the planned `:motion-ui` module; keep it in the consuming application until that module exists and its API is reviewed. |
 | Motion capability gap | A reusable behavior is missing from Motion and has value beyond the consuming application | Propose a separate Motion API/design issue with a contract and tests; do not implement it during planning. |
-| Keep in the consuming application | The behavior is domain-specific, tied to weather UX, product rules, visual identity, or app architecture | Leave it in the app. |
+| Keep in the consuming application | The behavior is domain-specific, tied to domain-specific UX, product rules, visual identity, or app architecture | Leave it in the app. |
 | Use another library | A standard component or platform capability is already solved by Compose, Material, or a specialized library | Reuse that library instead of duplicating it. |
 | Use another library | A standard component or platform capability is already solved by Compose, Material, or a specialized library | Reuse that library instead of duplicating it. |
 
