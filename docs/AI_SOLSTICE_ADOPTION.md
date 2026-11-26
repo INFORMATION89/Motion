@@ -6,7 +6,7 @@ Use this guide when an AI coding agent is asked to plan how Solstice should cons
 
 The first task is an evidence-based **adoption plan in the Solstice repository**. Do not begin a migration, change Solstice runtime code, or move the Motion submodule while producing that plan unless the owner explicitly approves implementation.
 
-The goal is to reuse Motion where it owns generic interaction behavior, keep Solstice-specific UI in Solstice, and avoid duplicating code or inventing new APIs unnecessarily.
+The goal is to reuse Motion Core for generic interaction behavior, identify reusable component building blocks for the future Motion UI layer, keep Solstice-specific UI in Solstice, and avoid duplicating Compose/Material or specialized libraries.
 
 ## Read and verify first
 
@@ -27,12 +27,14 @@ For each behavior found in Solstice, assign exactly one primary recommendation:
 | Classification | Meaning | Expected action |
 |---|---|---|
 | Direct reuse | Motion already exposes the required generic behavior | Use the existing API; no new Motion code. |
-| App-side composition | The motion is generic, but styling, content, state, or component structure is Solstice-specific | Keep the component in Solstice and compose it with Motion. |
+| App-side composition | The motion is generic, but styling, content, state, or component structure is Solstice-specific | Keep the component in Solstice and compose it with Motion Core. |
+| Motion UI candidate | A component structure is reusable across apps, configurable, and not already better supplied by Material or a focused library | Propose it for the planned `:motion-ui` module; keep it in Solstice until that module exists and its API is reviewed. |
 | Motion capability gap | A reusable behavior is missing from Motion and has value beyond Solstice | Propose a separate Motion API/design issue with a contract and tests; do not implement it during planning. |
 | Keep in Solstice | The behavior is domain-specific, tied to weather UX, product rules, visual identity, or app architecture | Leave it in the app. |
 | Use another library | A standard component or platform capability is already solved by Compose, Material, or a specialized library | Reuse that library instead of duplicating it. |
+| Use another library | A standard component or platform capability is already solved by Compose, Material, or a specialized library | Reuse that library instead of duplicating it. |
 
-Do not promote code to Motion merely because it contains animation calls. A reusable behavior must be separable from Solstice's visual design, screens, data, and business logic.
+Do not promote code to Motion merely because it contains animation calls. Motion Core is for generic motion mechanics; Motion UI is for reusable, configurable component building blocks; standard controls stay with Material/Compose; Solstice's visual design, screens, data, and business logic stay in Solstice.
 
 ## Motion capabilities to check before proposing new work
 
@@ -64,12 +66,12 @@ These are candidates for analysis, not automatic moves. A candidate may remain i
 
 ## Required adoption-plan output
 
-Create a document in Solstice, preferably `docs/MOTION_ADOPTION_PLAN.md`, containing:
+Create or update `docs/MOTION_ADOPTION_PLAN.md` in Solstice, containing:
 
 1. **Verified baseline:** Solstice commit, Motion submodule SHA, Motion branch/PR SHA considered, relevant CI runs, and platform/build constraints.
 2. **Current integration:** how the submodule and Gradle composite build work; any stale URL, checkout, or CI issue.
 3. **Inventory:** one row per candidate with file paths and call sites, current behavior, state owner, gesture owner, styling dependencies, and tests.
-4. **Classification:** one of the five classifications above, with a short evidence-based reason.
+4. **Classification:** one of the six classifications above, with a short evidence-based reason.
 5. **API fit/gap:** exact Motion API that can be reused, or the smallest missing generic contract. Do not invent APIs or copy source code into the plan as though it already exists.
 6. **Migration sequence:** small, independently reviewable phases ordered by dependency and risk. Identify which files change in Solstice and which would require a separate Motion PR.
 7. **Acceptance criteria:** observable interaction behavior, state/gesture ownership, interruption and velocity expectations, accessibility/reduced-motion requirements, and regression tests.
