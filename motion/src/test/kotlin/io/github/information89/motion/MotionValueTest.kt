@@ -100,6 +100,9 @@ class MotionValueTest {
         assertIllegalArgument { v.slowFlick = -1f }
         assertIllegalArgument { v.fastFlick = Float.NaN }
         assertIllegalArgument { v.slowFlick = 3f }
+        assertIllegalArgument { v.fastFlick = 0.25f }
+        v.slowFlick shouldBe 0.5f
+        v.fastFlick shouldBe 2f
     }
 
     @Test
@@ -170,4 +173,37 @@ class MotionValueTest {
         v.value shouldBe (1f plusOrMinus 0.001f)
         v.isRunning shouldBe false
     }
+
+    @Test
+    fun `changing rest points does not retarget an animation already in flight`() = motionTest {
+        val v = value()
+        v.animateTo(1f, velocity = 0f)
+        frames(6)
+        (v.value > 0f && v.value < 1f) shouldBe true
+
+        v.restPoints = listOf(0f, 2f)
+        v.target shouldBe 1f
+        frames(200)
+
+        v.value shouldBe (1f plusOrMinus 0.001f)
+        v.target shouldBe 1f
+        v.isRunning shouldBe false
+    }
+
+    @Test
+    fun `reissuing the current animation target still settles from current position`() = motionTest {
+        val v = value()
+        v.animateTo(1f, velocity = 0f)
+        frames(6)
+        val current = v.value
+        (current > 0f && current < 1f) shouldBe true
+
+        v.animateTo(1f, velocity = v.velocity)
+        frames(200)
+
+        v.value shouldBe (1f plusOrMinus 0.001f)
+        v.target shouldBe 1f
+        v.isRunning shouldBe false
+    }
+
 }
