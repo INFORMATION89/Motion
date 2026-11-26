@@ -324,7 +324,6 @@ class MorphMotionTest {
         motion.isMoving shouldBe false
     }
 
-
     @Test
     fun `target retargeting after opening has settled follows the new anchor`() = morphMotionTest {
         val motion = MorphMotion(this)
@@ -387,6 +386,51 @@ class MorphMotionTest {
         advanceMorphFrames(240)
         motion.isOpen shouldBe true
         motion.bounds.center.x shouldBe (200f plusOrMinus 0.1f)
+    }
+
+
+    @Test
+    fun `drag takes over a closing morph and release resumes from its current path`() = morphMotionTest {
+        val motion = MorphMotion(this)
+        motion.source = sourceAnchor()
+        motion.target = targetAnchor()
+        motion.open()
+        advanceMorphFrames(240)
+        motion.close()
+        advanceMorphFrames(5)
+
+        motion.drag(0.1f)
+        advanceMorphFrames(3)
+        motion.isVisible shouldBe true
+        motion.isMoving shouldBe false
+        val draggedBounds = motion.bounds
+
+        motion.release(0f)
+        advanceMorphFrames(240)
+        motion.isOpen shouldBe true
+        motion.bounds.center.x shouldBe (200f plusOrMinus 0.1f)
+        (motion.bounds.center.x != draggedBounds.center.x) shouldBe true
+    }
+
+    @Test
+    fun `source update while caught is deferred until the next close`() = morphMotionTest {
+        val motion = MorphMotion(this)
+        motion.source = sourceAnchor()
+        motion.target = targetAnchor()
+        motion.open()
+        advanceMorphFrames(240)
+        motion.catch()
+        advanceMorphFrames(40)
+        val caughtBounds = motion.bounds
+
+        motion.updateSource(alternateSourceAnchor())
+        motion.bounds shouldBe caughtBounds
+        motion.isVisible shouldBe true
+
+        motion.close()
+        advanceMorphFrames(240)
+        motion.bounds.center.x shouldBe (80f plusOrMinus 0.1f)
+        motion.bounds.center.y shouldBe (90f plusOrMinus 0.1f)
     }
 
 }
