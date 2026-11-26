@@ -37,7 +37,7 @@ Core reliability work is merged. Do not reopen it without a reproduced regressio
 
 **Status:** implementation in progress on [PR #7](https://github.com/INFORMATION89/Motion-UI/pull/7), still draft.
 
-The separate `:motion-lab` Android sample app is now included in Gradle and depends on `:motion`. It has its own namespace, application ID, launcher activity, and neutral Material 3 theme. Its initial gallery links to five generic demonstrations:
+The separate `:motion-lab` Android sample app is now included in Gradle and depends on `:motion`. It has its own namespace, application ID, launcher activity, and neutral Material 3 theme. Its initial gallery links to six generic demonstrations:
 
 - Spring tokens and gesture release.
 - Source-to-target morph, with a shared-input comparison against Compose's default `AnimatedVisibility`.
