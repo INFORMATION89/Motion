@@ -92,7 +92,6 @@ On Windows, use `gradlew.bat` instead of `./gradlew`.
 
 The `:motion` Android library is part of the Gradle build. The old `lab/` directory contains Solstice-era prototypes and is not a Gradle module or CI target. MOT0.2 plans a separate, generic `:motion-lab` app; it has not been implemented yet.
 
-Motion is under active development. The sources in `lab/` are prototypes and are not currently included as a Gradle module.
 
 ## License
 
