@@ -72,7 +72,10 @@ Run from the repository root:
 ./gradlew spotlessCheck
 ./gradlew :motion:testDebugUnitTest
 ./gradlew :motion:assembleRelease
+./gradlew :motion-lab:assembleDebug
 ```
+
+Install the sample on a connected Android device or emulator with `./gradlew :motion-lab:installDebug`.
 
 On Windows, use `gradlew.bat` instead of `./gradlew`.
 
@@ -87,10 +90,11 @@ On Windows, use `gradlew.bat` instead of `./gradlew`.
 - [Repository instructions for AI agents](AGENTS.md)
 - [AI usage and cost policy](docs/AI_USAGE_POLICY.md)
 - [MOT0.2 standalone Motion Lab plan](docs/MOT0.2_PLAN.md)
+- [Motion Lab app module](motion-lab/)
 
 ## Project status
 
-The `:motion` Android library is part of the Gradle build. The old `lab/` directory contains Solstice-era prototypes and is not a Gradle module or CI target. MOT0.2 plans a separate, generic `:motion-lab` app; it has not been implemented yet.
+The `:motion` Android library and the standalone `:motion-lab` sample app are Gradle modules. Motion Lab currently includes a generic gallery and initial spring, morph, page, dial, and edge-blur demonstrations. The old `lab/` directory remains an unbuilt Solstice-era prototype and is not part of the new app.
 
 
 ## License
