@@ -81,4 +81,15 @@ class MorphGeometryTest {
             MorphAnchor(Rect(0f, 0f, 10f, 10f), cornerRadius = -1f)
         }
     }
+
+    @Test
+    fun `overflowing derived anchor geometry is rejected`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            MorphAnchor(Rect(-Float.MAX_VALUE, 0f, Float.MAX_VALUE, 10f), cornerRadius = 0f)
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            MorphAnchor(Rect(Float.MAX_VALUE, 0f, Float.MAX_VALUE, 10f), cornerRadius = 0f)
+        }
+    }
+
 }
