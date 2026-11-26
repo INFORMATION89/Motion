@@ -64,3 +64,14 @@ Follow the ordered tasks in [docs/MOT0.1_PLAN.md](docs/MOT0.1_PLAN.md). Start wi
 - Keep MOT0.1 in draft until every acceptance criterion in `docs/MOT0.1_PLAN.md` is covered by tests and the complete CI workflow passes on the exact final branch head.
 - Do not merge, release, publish, tag, or bump a consuming app's submodule unless explicitly requested.
 - Update `CONTINUE.md`, implementation plans, and PR descriptions when branch state or remaining work materially changes.
+
+
+## AI usage and cost policy
+
+Follow [docs/AI_USAGE_POLICY.md](docs/AI_USAGE_POLICY.md) for model selection, ChatGPT and Claude workflows, multi-agent coordination, context/token efficiency, tool usage, budget controls, privacy, and cost-aware verification.
+
+Repository-specific rules in this file supplement the shared policy; they do not replace it. In particular:
+- Use one primary owner agent per coherent task. Bring in a second model only for a clearly independent review or specialist contribution.
+- Choose the smallest capable model and escalate based on task risk or demonstrated difficulty. Claude Opus 5.5 is for demanding work, not routine edits.
+- Treat subscription allowances and API billing as separate. Do not enable paid API usage, buy credits, or incur open-ended spend without owner approval.
+- Keep context focused, reuse valid evidence, and stop repetitive or unproductive agent/tool loops.
