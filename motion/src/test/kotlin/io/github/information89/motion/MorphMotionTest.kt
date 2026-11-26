@@ -24,8 +24,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
 
 private class MorphStepClock : MonotonicFrameClock {
     private var time = 0L
@@ -112,5 +112,4 @@ class MorphMotionTest {
 
         motion.bounds shouldBe before
     }
-
 }
