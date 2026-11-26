@@ -21,12 +21,12 @@ import kotlin.math.abs
 internal data class ToolbarHostProgress(
     val fromTabId: String,
     val toTabId: String,
-    val fraction: Float
+    val fraction: Float,
 )
 
 internal data class ToolbarTabBounds(
     val leftPx: Float,
-    val widthPx: Float
+    val widthPx: Float,
 ) {
     init {
         require(leftPx.isFinite() && leftPx >= 0f) { "leftPx must be finite and non-negative" }
@@ -49,7 +49,7 @@ private fun ToolbarHostProgress.isValidFor(tabIds: List<String>): Boolean {
 internal fun toolbarSelectionFractions(
     tabIds: List<String>,
     selectedTabId: String,
-    hostProgress: ToolbarHostProgress?
+    hostProgress: ToolbarHostProgress?,
 ): Map<String, Float> {
     require(tabIds.distinct().size == tabIds.size) { "tab IDs must be unique" }
 
@@ -65,7 +65,7 @@ internal fun toolbarSelectionFractions(
 internal fun interpolateToolbarBounds(
     from: ToolbarTabBounds,
     to: ToolbarTabBounds,
-    fraction: Float
+    fraction: Float,
 ): ToolbarTabBounds? {
     if (!fraction.isFinite() || fraction !in 0f..1f) return null
     return ToolbarTabBounds(
@@ -78,7 +78,7 @@ internal fun toolbarIndicatorBounds(
     tabIds: List<String>,
     boundsById: Map<String, ToolbarTabBounds>,
     selectedTabId: String,
-    hostProgress: ToolbarHostProgress?
+    hostProgress: ToolbarHostProgress?,
 ): ToolbarTabBounds? {
     require(tabIds.distinct().size == tabIds.size) { "tab IDs must be unique" }
     val progress = hostProgress ?: return boundsById[selectedTabId]
@@ -91,7 +91,7 @@ internal fun toolbarIndicatorBounds(
 internal fun nearestToolbarTabId(
     tabIds: List<String>,
     boundsById: Map<String, ToolbarTabBounds>,
-    positionPx: Float
+    positionPx: Float,
 ): String? {
     if (!positionPx.isFinite()) return null
     return tabIds
