@@ -26,9 +26,9 @@ This file is the working handoff for the next development session. Keep it curre
 
 - Branch: `work/consolidated-docs-platforms`
 - Current implementation head before this correction: `0c5cdfa99f4ef87aaa54936ff5842c8d6c9ef03f`.
-- [Run #58](https://github.com/INFORMATION89/Motion-UI/actions/runs/45764177687) passed Spotless but one source-retarget continuity assertion failed. Unit tests stopped at 63 tests with one failure; library build was skipped.
-- The failed assertion incorrectly assumed the morph must move left immediately after retargeting. The corrected test compares post-retarget movement with the actual pre-retarget direction, then checks the final source anchor.
-- The trailing blank-line violation from run #57 was corrected in head `0c5cdfa`; run #58 confirms Spotless now passes.
+- [Run #59](https://github.com/INFORMATION89/Motion-UI/actions/runs/45764340044) passed Spotless but one source-retarget continuity assertion failed. Unit tests stopped at 63 tests with one failure; library build was skipped.
+- The failure showed the test sampled before the close spring had reversed its inherited opening momentum. The corrected test waits until the closing trajectory is observably moving toward the source before retargeting, then verifies direction continuity and the final source anchor.
+- The trailing blank-line violation from run #57 was corrected in head `0c5cdfa`; run #58 confirmed Spotless now passes.
 - After this focused test correction, run the full required workflow once on the exact resulting head. Do not spend another full run for documentation-only changes.
 - PRs #1–#3 were consolidated into PR #4. Their old branch names, SHAs, and CI runs are historical only.
 

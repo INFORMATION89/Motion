@@ -241,22 +241,17 @@ class MorphMotionTest {
         motion.open()
         advanceMorphFrames(240)
         motion.close()
-        advanceMorphFrames(5)
+        advanceMorphFrames(30)
         val previous = motion.bounds
         advanceMorphFrames(3)
         val before = motion.bounds
-        val directionBeforeRetarget = before.center.x - previous.center.x
+        (before.center.x < previous.center.x) shouldBe true
 
         motion.updateSource(alternateSourceAnchor())
         motion.bounds shouldBe before
         advanceMorphFrames(3)
-        val afterRetarget = motion.bounds
-        if (directionBeforeRetarget > 0f) {
-            (afterRetarget.center.x >= before.center.x) shouldBe true
-        } else if (directionBeforeRetarget < 0f) {
-            (afterRetarget.center.x <= before.center.x) shouldBe true
-        }
-        advanceMorphFrames(234)
+        (motion.bounds.center.x <= before.center.x) shouldBe true
+        advanceMorphFrames(204)
 
         motion.bounds.center.x shouldBe (80f plusOrMinus 0.1f)
         motion.bounds.center.y shouldBe (90f plusOrMinus 0.1f)

@@ -11,8 +11,8 @@ Finish the reliability work around `MotionValue`, `MotionPhysics`, and especiall
 - Work branch: `work/consolidated-docs-platforms`.
 - PR: [#4](https://github.com/INFORMATION89/Motion-UI/pull/4) — draft, open, not merged. PRs #1–#3 were consolidated into it.
 - Last checked implementation head: `0c5cdfa99f4ef87aaa54936ff5842c8d6c9ef03f`.
-- [Run #58](https://github.com/INFORMATION89/Motion-UI/actions/runs/45764177687) passed Spotless; one source-retarget continuity assertion failed in the unit tests (63 tests completed, one failed), so the library build was skipped.
-- The failed assertion assumed an immediate leftward movement despite inherited velocity. The regression now compares the actual direction before and after retargeting, then verifies the final anchor.
+- [Run #59](https://github.com/INFORMATION89/Motion-UI/actions/runs/45764340044) passed Spotless; one source-retarget continuity assertion failed in the unit tests (63 tests completed, one failed), so the library build was skipped.
+- The failure showed the close spring was still carrying opening momentum at the test's initial sample. The corrected test waits until closing direction is observable before retargeting, then verifies that direction continues and the final source anchor is reached.
 - The baseline includes input validation and normalization in `MotionValue` / `MotionPhysics`, geometric progress in `MorphMotion`, target retargeting, command-generation protection for pending placement, and initial regression tests.
 - This is a baseline, not completion: interruption, retargeting, and MorphMotion input-boundary coverage remains insufficient.
 
