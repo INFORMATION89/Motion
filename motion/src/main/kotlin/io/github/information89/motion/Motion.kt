@@ -69,9 +69,8 @@ object MotionTime {
 }
 
 /**
- * The only springs in the app (agreed 2026-11-19; `snappy`, `playful` and `wobble` added the same day).
- * Anything new becomes a token first.
- * Values match the ones Solstice used before the framework, written as response + damping.
+ * The shared spring tokens for reusable motion behaviours. New shared behaviours should use a named
+ * token where appropriate. Values are expressed as response + damping.
  */
 object Motion {
     /** Morphing containers (sheets, menus, pills): start at once, a touch of bounce. ≈ 0.32 s / 0.78. */
