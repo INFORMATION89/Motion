@@ -72,7 +72,7 @@ Motion UI should:
 
 - separate component behaviour and interaction mechanics from visual styling and app configuration;
 - allow the same component (especially the animated toolbar) to use different style profiles, including a Material 3 Expressive-like profile or an app-defined profile;
-- keep the consuming application's distinctive palette, glass treatment, icons, weather context, and product branding in the consuming application; a consumer may recreate that look through its own style configuration without importing consumer code or assets;
+- keep the consuming application's distinctive palette, glass treatment, icons, domain context, and product branding in the consuming application; a consumer may recreate that look through its own style configuration without importing consumer code or assets;
 - expose slots and configuration rather than hardcode a consuming app's content;
 - provide neutral defaults that apps can override;
 - use Motion Core for movement and interaction mechanics;
@@ -80,7 +80,7 @@ Motion UI should:
 - depend on focused libraries such as Haze for specialized rendering instead of reimplementing them;
 - remain optional, so an app can use Motion Core without adopting Motion UI.
 
-It must not contain the consuming application screens, weather models, forecasts, navigation policy, sky rendering, weather icons, or a fixed the consuming application brand palette.
+It must not contain the consuming application screens, domain models, forecasts, navigation policy, sky rendering, weather icons, or a fixed the consuming application brand palette.
 
 ## What belongs in other UI libraries
 
