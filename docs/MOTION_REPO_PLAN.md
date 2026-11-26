@@ -4,14 +4,22 @@ This document preserves the original repository-extraction decisions from 2026-1
 
 ## Current state — 2026-11-26
 
-- Motion is an independent Android/Jetpack Compose project with a standalone Gradle build and two included modules: the reusable library `:motion` and the standalone sample application `:motion-lab`.
+- Motion is an independent Android/Jetpack Compose project with a standalone Gradle build and three included modules: the reusable library `:motion`, optional UI library `:motion-ui`, and standalone sample application `:motion-lab`.
 - The module uses the Android library Gradle plugin and Jetpack Compose Animation/Foundation. It is not a Kotlin Multiplatform project.
 - The current target is Android 10 / API 29+, compile SDK 37, Android Build Tools 37, and JDK 21.
 - `:motion-lab` is a built Gradle application module and is included in CI through `:motion-lab:assembleDebug`. The legacy `lab/` directory remains a separate, unbuilt prototype and is not the source of the new app.
-- CI runs Spotless, `:motion:testDebugUnitTest`, `:motion:assembleRelease`, and `:motion-lab:assembleDebug` in the required build workflow.
+- CI runs Spotless, Core unit tests/release build, Motion UI unit tests/release build, and the Motion Lab debug build in the required build workflow.
 - Solstice consumes Motion through a Git submodule and Gradle composite build. It pins the Motion commit through the submodule pointer.
 - Desktop (Windows/macOS/Linux) and iOS support are future design work, not supported targets.
 - Physical-device and Pixel validation remain `NOT TESTED` / `DEFERRED` while the required hardware is unavailable. Passing CI does not establish device behavior.
+
+## MOT0.3A status — in progress
+
+- The optional `:motion-ui` Android library is now included in Gradle and depends on `:motion`; Core has no dependency on UI.
+- Its initial public API is `MotionUiTheme`, `MotionUiThemeTokens.current`, and configurable semantic shape, spacing, and surface-material tokens.
+- Neutral defaults derive surface colors from the caller's Material 3 color scheme. Apps can inject their own Material 3 theme values and replace Motion UI tokens.
+- No Haze dependency, glass rendering implementation, component surfaces, Solstice code, or submodule changes are included in this first foundation batch.
+- Exact acceptance remains pending required CI on the final PR head.
 
 ## Original decisions (2026-11-21)
 
