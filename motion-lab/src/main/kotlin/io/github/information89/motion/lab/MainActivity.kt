@@ -58,6 +58,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.github.information89.motion.Dial
 import io.github.information89.motion.DialLook
@@ -120,7 +122,10 @@ private fun MotionLabApp() {
                 title = { Text(page?.title ?: "Motion Lab") },
                 navigationIcon = {
                     if (page != null) {
-                        IconButton(onClick = { page = null }) {
+                        IconButton(
+                            onClick = { page = null },
+                            modifier = Modifier.semantics { contentDescription = "Navigate back" }
+                        ) {
                             Text("‹", style = MaterialTheme.typography.headlineMedium)
                         }
                     }
