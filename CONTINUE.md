@@ -27,7 +27,7 @@ This file is the working handoff for the next development session. Keep it curre
 - `main`: `dac8df73387e87839192b867cfc2ed57b8df4561` (PR #11 squash merge).
 - MOT0.1 is complete and merged.
 - MOT0.2 is complete and merged through PR #7; its follow-up gallery organization and automatic system theme are merged through PR #8.
-- PR #9 (Project Rules), PR #7 (Standalone Motion Lab), PR #8 (Components / Interactions and system theme), PR #10 (MOT0.2 documentation closeout), and PR #11 (repository baseline refresh) are all merged. There are no open Motion PRs or open issues at this handoff.
+- PR #9 (Project Rules), PR #7 (Standalone Motion Lab), PR #8 (Components / Interactions and system theme), PR #10 (MOT0.2 documentation closeout), and PR #11 (repository baseline refresh) are all merged. PR #12 is the only open Motion PR at this handoff; there are no open issues.
 - Latest verification: CI #112 passed on PR #11's exact head `c4656f6da9317ae4a80f29948721bbc6a70b6560`, including the complete `Verify and build` step. PR #11's squash merge commit is `dac8df73387e87839192b867cfc2ed57b8df4561`. CI #108 passed on the exact PR #8 head; CI #110 passed for PR #10.
 - Current library platform baseline: Android / Jetpack Compose, min SDK 29, compile SDK 37, JDK 21. iOS and desktop (Windows, macOS, Linux) remain unsupported.
 - Emulator and physical-device validation, TalkBack runtime behavior, contrast inspection, and real haptic output remain `NOT TESTED` / `DEFERRED`. CI success is not device validation.
