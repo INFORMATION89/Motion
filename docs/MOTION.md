@@ -1,8 +1,10 @@
-# Solstice motion
+# Motion principles
 
-How Solstice moves. This is the user's reference (2026-11-19) and the rules every animation follows.
-The values live in code in `app/src/main/kotlin/org/breezyweather/ui/expressive/components/SolsticeMotion.kt`.
-Any new or changed motion is still proposed to the user and agreed before it's built.
+This document records the interaction principles first established while building Solstice. The reusable behavior is intended for any app consuming Motion; it does not require consumers to copy Solstice's visual identity, screen composition, or product-specific choreography. Motion is the behavior layer, not a general-purpose UI component kit.
+
+The reusable base tokens live in `:motion` (`io.github.information89.motion.Motion`, expressed as response and damping). Solstice may map those tokens through an app-side scheme such as `SolsticeMotionScheme`; consumer-specific mappings stay in the consuming app. References to Solstice files below are examples from the first consumer, not dependencies or requirements for Motion.
+
+These principles guide implementation and review. Before changing user-visible motion behavior or adding a new public contract, record the proposal and obtain the owner's agreement.
 
 ## Pillars
 
@@ -15,11 +17,7 @@ nowhere: a sheet, card, menu or window grows out of the element that caused it, 
 what transforms and expands (as iOS buttons do), then folds back into it. No fade-in from nothing, no
 replacing one thing with another.
 
-**Scope of `:motion`** (the user, 2026-11-21): it is the framework for **every interaction in any app**,
-not only Solstice: pressing buttons, opening lists, menus, cards and sheets, page changes, the page
-receding behind a sheet, drags, swipes, long presses and their haptics. The goal is clean, controlled,
-refined interactions like never seen on Android. Anything Solstice needs that moves or responds to touch
-is built as a `:motion` piece first, then used in the app.
+**Scope of Motion:** it is the reusable behavior layer beneath interactions in any app, not only Solstice: button feedback, lists, menus, cards, sheets, page changes, drags, swipes, long presses, and related motion feedback. Motion should own generic mechanics; each app still owns its components, layout, content, styling, navigation policy, and domain behavior. A Solstice need is not automatically a Motion feature: extract it only when the behavior is generic and independent of the app.
 
 | Use | Spring | In code |
 |---|---|---|
