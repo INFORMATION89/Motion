@@ -8,8 +8,7 @@ plugins {
     alias(libs.plugins.spotless)
 }
 
-// Its coordinates: Solstice builds it from source with `includeBuild` and substitutes
-// `io.github.information89:motion` with this project.
+// These coordinates support Gradle composite-build consumers through dependency substitution.
 group = "io.github.information89"
 
 android {
