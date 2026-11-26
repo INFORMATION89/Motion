@@ -294,6 +294,13 @@ private fun SpringsDemo() {
                 )
             }
         }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(onClick = {
+                scope.launch { value.animateTo(if (value.target < 0.5f) 1f else 0f) }
+            }) {
+                Text(if (value.target < 0.5f) "Animate release" else "Return to start")
+            }
+        }
         Text(
             "position ${"%.2f".format(value.value)} · target ${"%.1f".format(value.target)}",
             style = MaterialTheme.typography.bodySmall
@@ -721,7 +728,10 @@ private fun DialDemo() {
             onDoubleTap = { it.value.animateTo(0f) },
             modifier = Modifier.fillMaxWidth().height(88.dp)
         )
-        Text("Double-tap the dial to return to zero. Drag or flick to move between steps.")
+        Button(onClick = { state.value.animateTo(0f) }) {
+            Text("Reset dial")
+        }
+        Text("Double-tap the dial to return to zero. Drag or flick to move between steps; use Reset dial as a button alternative.")
     }
 }
 
