@@ -103,7 +103,6 @@ internal fun toolbarAdjacentTabId(
     return tabIds[targetIndex]
 }
 
-
 internal fun toolbarContentPosition(
     viewportPositionPx: Float,
     scrollOffsetPx: Float,
@@ -148,7 +147,7 @@ internal fun toolbarEdgeScrollDelta(
     val leftStrength = ((edge - pointerViewportX) / edge).coerceIn(0f, 1f)
     val rightStrength = (
         (pointerViewportX - (viewportWidthPx - edge)) / edge
-    ).coerceIn(0f, 1f)
+        ).coerceIn(0f, 1f)
     val velocity = (rightStrength * rightStrength - leftStrength * leftStrength) *
         maxSpeedPxPerSecond
     val direction = if (reverseDirection) -1f else 1f

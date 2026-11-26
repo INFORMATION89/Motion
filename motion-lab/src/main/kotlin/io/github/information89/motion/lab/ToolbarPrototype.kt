@@ -412,7 +412,7 @@ private fun ToolbarPrototypeBar(
             if (previousFrameNanos != 0L) {
                 val frameSeconds = (
                     (frameNanos - previousFrameNanos) / 1_000_000_000f
-                ).coerceIn(0f, 0.05f)
+                    ).coerceIn(0f, 0.05f)
                 val delta = toolbarEdgeScrollDelta(
                     pointerViewportX = dragPointerViewportX,
                     viewportWidthPx = viewportWidthPx,
