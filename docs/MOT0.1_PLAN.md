@@ -35,7 +35,7 @@ Finish the reliability work around `MotionValue`, `MotionPhysics`, and especiall
 - **Task 3 — gesture supersession:** covered for scrub, drag, catch, release, visibility while gesture-owned, and resumption by a newer command.
 - **Task 4 — numeric and geometry boundaries:** finite drag/scrub/release validation with state-preservation assertions, high-velocity clamp, identical and zero-size anchors, inverted/non-finite/overflowing geometry.
 - **Task 5 — scalar contracts:** defensive rest-point normalization, threshold ordering on construction and mutation, invalid finite-input boundaries, rest-point changes not retargeting active animation, and same-target `animateTo` behavior.
-- **Task 6 — final gate:** trailing Spotless formatting correction, final exact-head CI, complete diff review, and merge of PR #4 remain.
+- **Task 6 — final gate:** complete diff review, documentation-only synchronization, final exact-head CI, and merge of PR #4 remain.
 
 ## Work sequence
 
@@ -128,7 +128,7 @@ Add only any missing regression test discovered during implementation. Keep `Mot
 Before marking PR #4 ready:
 - Review the complete diff against `main`; remove accidental or unrelated changes.
 - Confirm public KDoc describes the actual validation and retargeting semantics.
-- Run the entire repository CI workflow on the final branch head:
+- Run the entire repository CI workflow on the final branch head (the implementation head above has passed; rerun after this documentation-only synchronization):
   - `./gradlew spotlessCheck`
   - `./gradlew :motion:testDebugUnitTest`
   - `./gradlew :motion:assembleRelease`
