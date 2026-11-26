@@ -10,7 +10,7 @@ Finish the reliability work around `MotionValue`, `MotionPhysics`, and especiall
 
 - Work branch: `work/consolidated-docs-platforms`.
 - PR: [#4](https://github.com/INFORMATION89/Motion-UI/pull/4) — draft, open, not merged. PRs #1–#3 were consolidated into it.
-- Last checked PR head: `ab02bbb6d2a627802e4f1c428fef3247e59bb335`.
+- Last inspected code head: `ab02bbb6d2a627802e4f1c428fef3247e59bb335`. Subsequent branch commits only synchronize documentation and do not change the code covered by run #38.
 - Latest checked CI: [run #38](https://github.com/INFORMATION89/Motion-UI/actions/runs/45737129108) failed at Spotless due to one missing blank line in `MorphMotionTest.kt`; unit tests and library build were skipped. This is not a passing baseline for the consolidated head.
 - The baseline includes input validation and normalization in `MotionValue` / `MotionPhysics`, geometric progress in `MorphMotion`, target retargeting, command-generation protection for pending placement, and initial regression tests.
 - This is a baseline, not completion: interruption, retargeting, and MorphMotion input-boundary coverage remains insufficient.
@@ -136,7 +136,7 @@ MOT0.1 is ready to integrate only when:
 5. CI passes on the exact final branch head.
 6. PR #4 has an accurate description and is no longer draft.
 
-## Saturday session opening checklist
+## Next session opening checklist
 
 1. Open PR #4 and confirm the head is `work/consolidated-docs-platforms`; fetch the latest branch.
 2. Check the current head SHA and latest Actions run. If CI is not green, diagnose that before starting feature work.
