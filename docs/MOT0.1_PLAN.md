@@ -8,10 +8,10 @@ Finish the reliability work around `MotionValue`, `MotionPhysics`, and especiall
 
 ## Current baseline
 
-- Work branch: `mot-0.1/core-validation`
-- PR: [#1](https://github.com/INFORMATION89/Motion-UI/pull/1) — draft, open, not merged.
-- Baseline commit: `c636413e1e4790675c38ea36e8c3c22ac84d0aa7`.
-- CI run `45674503787` passed on that exact commit: Spotless, unit tests, and `:motion:assembleRelease`.
+- Work branch: `work/consolidated-docs-platforms`.
+- PR: [#4](https://github.com/INFORMATION89/Motion-UI/pull/4) — draft, open, not merged. PRs #1–#3 were consolidated into it.
+- Last checked PR head: `ab02bbb6d2a627802e4f1c428fef3247e59bb335`.
+- Latest checked CI: [run #38](https://github.com/INFORMATION89/Motion-UI/actions/runs/45737129108) failed at Spotless due to one missing blank line in `MorphMotionTest.kt`; unit tests and library build were skipped. This is not a passing baseline for the consolidated head.
 - The baseline includes input validation and normalization in `MotionValue` / `MotionPhysics`, geometric progress in `MorphMotion`, target retargeting, command-generation protection for pending placement, and initial regression tests.
 - This is a baseline, not completion: interruption, retargeting, and MorphMotion input-boundary coverage remains insufficient.
 
@@ -115,7 +115,7 @@ Add only any missing regression test discovered during implementation. Keep `Mot
 
 ### 6. Final review and PR readiness
 
-Before marking PR #1 ready:
+Before marking PR #4 ready:
 - Review the complete diff against `main`; remove accidental or unrelated changes.
 - Confirm public KDoc describes the actual validation and retargeting semantics.
 - Run the entire repository CI workflow on the final branch head:
@@ -123,7 +123,7 @@ Before marking PR #1 ready:
   - `./gradlew :motion:testDebugUnitTest`
   - `./gradlew :motion:assembleRelease`
 - Confirm all three checks pass on the exact latest commit, not merely on the earlier baseline.
-- Update `CONTINUE.md` and the PR body with the final SHA and CI result.
+- Update `CONTINUE.md` and the PR #4 body with the final SHA and CI result.
 - Only then remove draft status / request review. Do not merge automatically.
 
 ## Definition of done
@@ -134,11 +134,11 @@ MOT0.1 is ready to integrate only when:
 3. Non-finite `MorphMotion` inputs cannot mutate state or poison animation geometry.
 4. Retargeting does not create a visible jump and carries forward current spring velocity.
 5. CI passes on the exact final branch head.
-6. PR #1 has an accurate description and is no longer draft.
+6. PR #4 has an accurate description and is no longer draft.
 
 ## Saturday session opening checklist
 
-1. Open PR #1 and confirm the head is still `mot-0.1/core-validation`; fetch the latest branch.
+1. Open PR #4 and confirm the head is `work/consolidated-docs-platforms`; fetch the latest branch.
 2. Check the current head SHA and latest Actions run. If CI is not green, diagnose that before starting feature work.
 3. Open this plan and `CONTINUE.md`.
 4. Start with **Task 1: deterministic interruption tests**, not implementation guesses.
