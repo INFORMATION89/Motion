@@ -61,7 +61,7 @@ The slow-motion control adjusts `MotionTime.scale` and the root composition rest
 1. Code review completed for module isolation, public API usage, comparison input parity, and dependency scope. The Compose controls expose their standard interactive semantics; confirm actual screen-reader behavior during the deferred emulator/device pass.
 2. Keep the sheet comparison deferred unless a fair Material 3 baseline can be built from existing APIs without expanding Core.
 3. Add sample-owned tests only where they protect a distinct Lab interaction contract not covered by Core tests.
-4. The required workflow passed on exact head `c99f6de9752e501824d55d0312afeb19ec470c94`; rerun only if implementation or build configuration changes.
+4. Workflow #96 passed on `5dfbb9b`, but the subsequent source changes require a fresh exact-head CI result.
 5. Keep the PR draft until the acceptance criteria are reviewed and remaining manual checks are honestly marked.
 See [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md) for scope and acceptance criteria. Follow [docs/MOTION_LAB_PLAN.md](docs/MOTION_LAB_PLAN.md) for the longer-term gallery and comparison direction.
 
