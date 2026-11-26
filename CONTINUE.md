@@ -8,7 +8,7 @@ This file is the working handoff for the next development session. Keep it curre
 2. [MOT0.3A execution plan](docs/MOT0.3A_PLAN.md).
 3. [Framework overview](docs/FRAMEWORK_OVERVIEW.md) and [platform support](docs/PLATFORM_SUPPORT.md).
 4. [Motion UI theme API](motion-ui/README.md) and [Core API](motion/README.md).
-5. [Solstice adoption guide](docs/AI_SOLSTICE_ADOPTION.md).
+5. [consumer adoption guide](docs/AI_SOLSTICE_ADOPTION.md).
 
 ## Guardrails
 
@@ -16,9 +16,8 @@ This file is the working handoff for the next development session. Keep it curre
 - `:motion-ui` is optional and depends on `:motion`; Core must never depend on UI.
 - Apps own their brand values, domain, screens, routing, and product behavior. Motion UI provides configurable reusable building blocks only.
 - Material 3 remains the source for standard controls, typography, and accessibility semantics.
-- Do not copy Solstice / Breezy source, assets, resources, or branding into Motion.
+- Do not copy consumer-app or third-party source, assets, resources, or branding into Motion.
 - Do not add Haze until its exact version, licence, maintenance, compatibility, and fallback are reviewed.
-- Do not update Solstice's submodule or touch its consumer PR as part of this milestone.
 - Android API 29+, compile SDK 37, JDK 21. iOS and desktop are unsupported.
 - Use focused checks during iteration and one complete required CI run on the final PR head. Report device, TalkBack, contrast, and haptic checks as deferred unless actually run.
 
@@ -42,7 +41,7 @@ This file is the working handoff for the next development session. Keep it curre
 - [ ] Theme defaults and app overrides pass focused tests.
 - [ ] Spotless and full required CI pass on the exact final PR head.
 - [ ] README, API docs, and CI reflect the delivered module.
-- [ ] No Solstice code, submodule pointer, Haze dependency, or unsupported platform work is introduced.
+- [ ] No consumer-specific code, submodule pointer, Haze dependency, or unsupported platform work is introduced.
 
 ## Next steps
 
