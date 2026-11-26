@@ -14,6 +14,7 @@ module, and meant for any Compose app.
 |---|---|
 | `motion/` | The library (Gradle module `:motion`, package `io.github.information89.motion`). What each piece does: [motion/README.md](motion/README.md). |
 | `lab/` | Motion Lab, a Material You Expressive app to try every piece. Moving in from Solstice; not built yet (phase 2 of [docs/MOTION_REPO_PLAN.md](docs/MOTION_REPO_PLAN.md)). |
+| `AGENTS.md` | Repository and AI-agent instructions, including the cost-aware verification policy. |
 | `docs/` | The motion rules ([MOTION.md](docs/MOTION.md)), the morph study, the lab plan, and the plan for this repo. |
 
 Build and test: `./gradlew :motion:testDebugUnitTest :motion:assembleRelease` (JDK 21, Android SDK 37).
