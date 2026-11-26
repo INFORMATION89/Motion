@@ -51,7 +51,7 @@ Do not require every consumer to enable every effect. A simpler Material 3 Expre
 
 ## Non-goals
 
-- Do not copy consumer-specific/upstream source files, icons, resources, weather logic, or branding into Motion UI.
+- Do not copy consumer or third-party source files, icons, resources, domain logic, or branding into Motion UI.
 - Do not make Material 3 Expressive the only supported visual identity.
 - Do not force all consumers to use glass, elastic motion, haptics, or long-press gestures.
 - Do not let visual style own navigation state or product-specific actions.
