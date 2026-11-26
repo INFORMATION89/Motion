@@ -20,9 +20,9 @@ The intended component API should support:
 
 - **Material 3 Expressive profile:** a familiar Material 3 visual treatment, using Material components and tokens where appropriate. It must not recreate standard controls unnecessarily.
 - **App-defined profile:** consumers can supply their own tokens and component style values.
-- **Consumer-defined appearance:** the consuming application can configure the reusable toolbar to match its expressive floating pill, morphing selection, glass treatment, and contextual bud. consumer-specific palette, glass renderer, icons, weather-derived accent, and branding remain in the consuming application.
+- **Consumer-defined appearance:** the consuming application supplies its own visual tokens and optional content slots for the toolbar's container, selection indicator, tabs, and contextual action. Domain-derived accents, custom rendering, iconography, and branding remain in the consuming application.
 
-The library should provide sensible neutral defaults and a clear extension point. Avoid putting the consuming application's brand assets or LGPL-derived implementation code into Motion-UI's Apache-2.0 codebase. Reimplement generic behaviour from documented requirements and independently authored code; keep the consumer visual preset in the the consuming application consumer if it contains product-specific styling.
+The library should provide sensible neutral defaults and a clear extension point. Do not include consumer-owned brand assets or third-party implementation code in Motion UI. Reimplement generic behaviour from documented requirements and independently authored code; keep product-specific visual presets in the consuming application.
 
 ## Animated toolbar capability contract
 
