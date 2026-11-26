@@ -35,7 +35,7 @@ Core reliability work is merged. Do not reopen it without a reproduced regressio
 
 ## MOT0.2 — standalone Motion Lab
 
-**Status:** implementation is ready for review on [PR #7](https://github.com/INFORMATION89/Motion-UI/pull/7). Latest exact head is `5c8e7b4f97ac7b139382f5c942f775ab41878d17`; CI #99 passed on that exact SHA. PR remains open and has not been merged. Device/emulator validation remains deferred.
+**Status:** implementation is ready for review on [PR #7](https://github.com/INFORMATION89/Motion-UI/pull/7). Latest source-verification head was `5c8e7b4f97ac7b139382f5c942f775ab41878d17`; CI #99 passed on that exact SHA. Subsequent commits update documentation only (Motion Lab direction and agent rules), so no additional code CI run was necessary. PR remains open and has not been merged. Device/emulator validation remains deferred.
 
 The separate `:motion-lab` Android sample app is now included in Gradle and depends on `:motion`. It has its own namespace, application ID, launcher activity, and neutral Material 3 theme. Its initial gallery links to six generic demonstrations:
 
@@ -50,7 +50,7 @@ The slow-motion control adjusts `MotionTime.scale` and the root composition rest
 
 ### Current verification state
 
-- The latest optimized required workflow [#99](https://github.com/INFORMATION89/Motion-UI/actions/runs/45780374403) passed on exact PR head `5c8e7b4f97ac7b139382f5c942f775ab41878d17`: Spotless, Motion Core unit tests, `:motion:assembleRelease`, and `:motion-lab:assembleDebug`. Earlier successful runs are historical evidence only.
+- The optimized required workflow [#99](https://github.com/INFORMATION89/Motion-UI/actions/runs/45780374403) passed on source-verification SHA `5c8e7b4f97ac7b139382f5c942f775ab41878d17`: Spotless, Motion Core unit tests, `:motion:assembleRelease`, and `:motion-lab:assembleDebug`. Later commits changed documentation only; no code or build configuration changed, so the passing code checks remain applicable. Earlier successful runs are historical evidence only.
 - CI does not validate visual behavior, touch interactions, or real vibration output; haptic behavior on emulator/physical devices remains `NOT TESTED` / `DEFERRED`.
 - The CI workflow includes `:motion-lab:assembleDebug` in addition to Spotless, Core unit tests, and library release assembly.
 - No local Gradle build or emulator/physical-device run was performed in this workspace.
