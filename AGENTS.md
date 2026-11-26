@@ -1,6 +1,6 @@
 # Repository instructions for AI agents
 
-Read this file and [project rules](docs/RULES.md) before making changes. Then read [README.md](README.md), [the framework overview](docs/FRAMEWORK_OVERVIEW.md), [platform support](docs/PLATFORM_SUPPORT.md), [the consumer adoption guide](docs/AI_CONSUMER_ADOPTION.md), [motion principles](docs/MOTION.md), and the relevant implementation or design documents under `docs/`.
+Read this file and [project rules](docs/RULES.md) before making changes. Then read [README.md](README.md), [the framework overview](docs/FRAMEWORK_OVERVIEW.md), [platform support](docs/PLATFORM_SUPPORT.md), [the consumer adoption guide](docs/AI_CONSUMER_ADOPTION.md), [legacy prototype disposition](docs/LEGACY_PROTOTYPE_DISPOSITION.md), [motion principles](docs/MOTION.md), and the relevant implementation or design documents under `docs/`.
 
 ## Project boundaries
 
@@ -16,13 +16,13 @@ Read this file and [project rules](docs/RULES.md) before making changes. Then re
 
 MOT0.1 is complete and merged into `main`.
 
-MOT0.2 (standalone Motion Lab) is complete and merged into `main`. The delivered `:motion-lab` Android app, Components / Interactions tabs, and automatic system appearance are documented in [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md). Treat that plan as historical acceptance evidence, not an active implementation queue.
+MOT0.2 (standalone Motion Lab) is complete and merged into `main`. The delivered `:motion-lab` Android app, Components / Interactions tabs, and automatic system appearance are documented in [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md). Treat that plan as historical acceptance evidence, not an active implementation queue. The former unbuilt `lab/` prototype was removed after a provenance and license review; see [the disposition record](docs/LEGACY_PROTOTYPE_DISPOSITION.md).
 
 The following remain outside the completed MOT0.2 scope and require separate planning/review:
 - Changes to Motion Core physics or existing user-visible motion contracts.
 - New public Core APIs without a separately reviewed reusable capability gap.
-- The planned `:motion-ui` component library.
-- consumer-specific UI, consumer migrations, or submodule updates.
+- New Motion UI components beyond the MOT0.3A theme/token foundation; each requires a scoped contract and review.
+- Consumer-specific UI, consumer migrations, or dependency-pin updates.
 - Kotlin Multiplatform, iOS, desktop, web, or platform expansion.
 - Benchmarks or performance dashboards.
 - Broad refactors unrelated to making the standalone Lab work.
