@@ -12,13 +12,13 @@ These principles guide implementation and review. Before changing user-visible m
 
 Motion is interruptible and driven by velocity, not by duration. Use `spring()`, not `tween()`.
 
-**Things morph, they never pop** (owner requirement, 2026-11-21). New content should emerge from a meaningful source or container where the interaction calls for a morph; avoid arbitrary replacement or unrelated fade-ins.
+**Things morph, they never pop** (owner requirement, 2026-11-21). Avoid abrupt appearance or replacement. When one UI element expands or changes into another, preserve visual continuity with a morph rather than an unrelated fade or swap.
 
 **Scope of Motion:** Motion provides reusable behavior beneath interactions across applications: button feedback, lists, menus, cards, sheets, page changes, drags, swipes, long presses, and related motion feedback. Motion owns generic mechanics; each application owns its components, layout, content, styling, navigation policy, and domain behavior. An application-specific need is not automatically a Motion feature: extract it only when the behavior is generic and independent of the application.
 
 | Use | Spring | In code |
 |---|---|---|
-| Responsive controls (buttons, toggles, sliders) | `dampingRatio = Spring.DampingRatioNoBouncy`, `stiffness = Spring.StiffnessMediumLow` | Application-side token |
+| Responsive controls (buttons, toggles, sliders) | `dampingRatio = Spring.DampingRatioNoBouncy`, `stiffness = Spring.StiffnessMediumLow` | `Motion.control` |
 | Morphing containers (menus, sheets, pill-style controls) | `dampingRatio = 0.78f`, `stiffness = 380f` (subtle elasticity) | `Motion.container` |
 | Inner content scale-in | `dampingRatio = 0.85f`, `stiffness = 400f` | `Motion.content` |
 | Settling after a drag (no bounce) | `dampingRatio = 1f`, `stiffness = Spring.StiffnessMediumLow` | `Motion.settle` |
