@@ -29,9 +29,9 @@ This file is the working handoff for the next development session. Keep it align
 - Focused unit tests cover default light/dark values and custom token overrides.
 - Required CI includes Motion UI tests and release assembly.
 - The obsolete, unbuilt prototype directory was removed because it contained app-coupled source under LGPL-3.0 notices; no implementation from it was carried into Motion.
-- PR #13 contains the MOT0.3A foundation and the main repository cleanup.
-- PR #19 is the toolbar-contract proposal, intentionally stacked on PR #13. Recheck its base/head relationship after any changes to PR #13.
-- Both PRs remain drafts until their final diffs and exact-head CI have been reviewed. Do not merge without explicit owner approval.
+- The MOT0.3A foundation and main repository cleanup are under review in an open draft PR.
+- The MOT0.3B toolbar-contract proposal is in a separate draft PR stacked on MOT0.3A. Recheck its base/head relationship after any changes to the foundation branch.
+- Keep both proposals in draft until their final diffs and exact-head CI have been reviewed. Do not merge without explicit owner approval.
 
 ## MOT0.3A acceptance
 
