@@ -81,14 +81,16 @@ The API must define what happens when a selected tab becomes disabled or is remo
 
 ### Controlled selection and progress
 
-Support two clear usage modes:
+The consumer is always the source of truth for the committed selection. The public contract should support two usage modes:
 
-1. **Discrete selection:** consumer supplies selected tab ID and receives selection requests.
-2. **Continuous host progress:** consumer may additionally supply a normalized fractional position/progress source so the indicator and tab expansion can track an external pager during a swipe.
+1. **Discrete selection:** the consumer supplies `selectedTabId`; a tap, keyboard activation, or completed drag emits `onSelectionRequest(tabId)`. Motion UI never changes application selection itself.
+2. **Continuous host progress:** the consumer may additionally supply a temporary visual progress value while an external transition (such as a pager swipe) is in flight.
 
-The toolbar must not own a PagerState. It should not require HorizontalPager or any particular navigation solution.
+Represent continuous progress by stable endpoints—conceptually `fromTabId`, `toTabId`, and a finite fraction in the inclusive range 0..1—not by a raw fractional list index. The consumer maps its own pager/page state to the two tab IDs and the fraction. This keeps progress meaningful when tabs are filtered, reordered, or inserted and avoids making Motion UI infer a navigation model.
 
-Progress must be validated/clamped and mapped against the current visible, enabled tab order. Define behavior for interrupted updates, list changes, and non-adjacent jumps. Stable IDs must remain the semantic identity even though interpolation uses measured positions.
+The endpoint IDs must identify adjacent, currently visible and enabled tabs. An invalid, non-finite, or stale progress value is ignored and the component presents the committed `selectedTabId`; it must not silently map progress to an unrelated tab. If the selected ID is removed, hidden, or disabled, the consumer must resolve and publish the replacement selection. Motion UI must not choose an arbitrary destination.
+
+The toolbar must not own a `PagerState`. It should not require `HorizontalPager` or any particular navigation solution. Host progress changes only presentation; it never commits selection or emits callbacks for every animation frame.
 
 ### Contextual action slot
 
@@ -120,17 +122,27 @@ Do not expose dozens of raw animation constants in the first public API. Start w
 ### Selection geometry
 
 - Measure tabs and interpolate the active selection surface across their actual bounds; do not assume equal widths.
-- Interpolate both horizontal position and width continuously from fractional progress.
+- Interpolate both horizontal position and width continuously between the measured bounds associated with the progress endpoint IDs.
 - Animate label expansion and collapse without shifting the icon unpredictably.
 - Keep geometry stable when labels have different lengths, font scaling changes, layout direction is RTL, or the available width is constrained.
+- Key cached geometry by stable tab ID and invalidate it when order, visibility, enabled state, density, font scale, layout direction, or available constraints change.
 - Define deterministic behavior for one tab, zero tabs, and a tab list that changes while an animation is in flight.
 
-### Tap and host swipe
+### Layout and overflow
 
-- Tapping a tab emits a selection request; it does not mutate app navigation internally.
-- Host swipe progress may drive the visual selection continuously.
-- If the host changes target mid-transition, retarget smoothly without snapping or leaving stale animation jobs.
-- A consumer may notify the toolbar that another transition should be interrupted; this must not become a hard dependency on a particular navigation system.
+- The first implementation should use one horizontal tab row that scrolls when its contents do not fit; do not shrink interactive targets below their minimum size, wrap tabs onto another row, or silently hide tabs.
+- Keep focus and selected-tab visibility coherent when the row scrolls. Bring the selected or keyboard-focused tab into view after an externally controlled selection change.
+- The consumer controls which tabs exist and their order; Motion UI does not add an overflow menu or infer hidden destinations.
+
+### Tap, host progress, and gesture ownership
+
+- Tapping a tab or activating it from the keyboard emits `onSelectionRequest(tabId)`; it does not mutate application navigation or committed selection internally.
+- When no local pointer gesture is active, valid host progress may drive the visual selection continuously. Rapid direction reversals and changed endpoints must retarget without snapping or leaving stale animation jobs.
+- When optional long-press drag is enabled, the pointer gesture owns the temporary visual preview from drag start until release or cancellation. Host progress is ignored while that pointer is captured.
+- At drag start, emit one optional `onSelectionInteractionStarted` notification so the consumer can pause or cancel an in-flight host transition. Do not emit repeated notifications during movement.
+- On release, request the nearest valid enabled tab once through `onSelectionRequest`; do not commit the selection locally. On cancellation, discard the preview and emit no selection request.
+- As soon as the gesture ends, controlled inputs regain authority. The consumer must clear or reconcile stale host progress when handling the interaction-start notification; Motion UI must not guess how the host navigation should change.
+- Disabled or removed tabs are never drag targets. If the tab set changes during a gesture, cancel or retarget deterministically using stable IDs, without selecting a different tab by index.
 
 ### Optional long-press-and-drag selection
 
@@ -148,10 +160,13 @@ Do not expose dozens of raw animation constants in the first public API. Start w
 - The hit target must not intercept taps intended for an adjacent tab while the action is visually tucked away.
 - When the action is disabled or absent, no invisible hit target may remain.
 - The component may expose progress/bounds for coordinated consumer transitions, but must not own the resulting screen or overlay.
+- Keep one logical semantic/focus target for the action through its expand/detach morph; do not create duplicate focusable nodes during the transition.
+- When absent or disabled, the action must not remain in the semantics tree, focus order, or hit-testing region.
 
 ### Haptics
 
 - Haptics are optional, semantic, and capability-aware.
+- Reuse the existing Motion Core haptic abstraction and semantic tokens where appropriate; do not call platform vibrator APIs from Motion UI or introduce new Core tokens without a separately reviewed generic need.
 - No haptic feedback is required for correctness.
 - Respect system/user settings and avoid firing repeatedly during continuous progress.
 - Keep the callback/semantic boundary testable without physical hardware.
@@ -170,7 +185,8 @@ The same behavioural component must support the following profiles without chang
 ### App-defined profile
 
 - Allow a consumer to supply tokens or a style implementation for container, selected indicator, tab sizes, shape, typography, icon treatment, contextual action, and motion emphasis.
-- Reuse the MotionUiTheme token foundation where it is a good fit; extend it only after the component demonstrates the exact missing semantic roles.
+- Reuse the existing MotionUiTheme token foundation where it is a good fit; extend it only after the component demonstrates the exact missing semantic roles.
+- The current foundation provides shape, spacing, and surface-material tokens; do not assume it already provides toolbar-specific or typography roles. Prefer MaterialTheme roles and a narrowly scoped toolbar style contract before expanding global tokens.
 - Keep layout/interaction code independent from style selection.
 
 ### Consumer-defined appearance
@@ -189,10 +205,11 @@ Changing style must not:
 
 ## 7. Accessibility, input, and resilience
 
-- Expose tab semantics with role, selected state, enabled state, and meaningful labels/descriptions.
-- Ensure each tab and contextual action has an accessible focus target and a practical touch target (target at least 48 dp where platform guidance applies).
-- Support TalkBack/semantics traversal, keyboard activation, focus indication, and directional navigation.
-- Ensure labels remain available to assistive technology when visually collapsed.
+- Expose each item with tab semantics, selected/enabled state, and a meaningful label/description; expose the row as a coherent selectable group.
+- Ensure each tab and the contextual action has an accessible focus target and a practical touch target (target at least 48 dp where platform guidance applies).
+- Support TalkBack/semantics traversal, keyboard activation, visible focus indication, and directional navigation. Directional movement must follow logical order in both LTR and RTL.
+- Ensure collapsed visual labels remain available to assistive technology and that icon-only presentation has a meaningful accessible label.
+- A contextual action that morphs visually must remain one logical action in focus and semantics; it must not be announced twice during expansion or detachment.
 - Do not use animation alone to communicate selection or checked state.
 - Respect font scaling, RTL, contrast, and dynamic layout constraints.
 - Provide a reduced-motion mode that preserves the same final states and actions while removing or simplifying elastic deformation, overshoot, wobble, and nonessential scaling.
@@ -205,8 +222,9 @@ Keep tests focused on distinct failure modes; avoid duplicating exhaustive permu
 
 ### Pure/unit tests
 
-- Stable ID and tab-list reconciliation.
-- Fractional progress clamping and mapping.
+- Stable ID and tab-list reconciliation, including reorder, filtering, removal, and disabled-state changes.
+- Host progress endpoint validation, fraction clamping, and mapping by stable IDs rather than raw indices.
+- Host-progress versus local-gesture ownership, pause/resume, interruption, and cancellation.
 - Variable-width selection geometry and interpolation.
 - Retargeting and interruption.
 - Release/cancel target resolution, including RTL and disabled tabs.
