@@ -9,6 +9,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -40,8 +41,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -99,19 +103,33 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private enum class LabPage(val title: String, val description: String) {
-    SPRINGS("Springs and release", "Compare Motion spring tokens and try gesture-to-spring release."),
-    MORPH("Morph", "Grow a surface from its source, then catch or drag it back."),
-    PAGES("Page movement", "Swipe between pages or compare Motion with the Compose default."),
-    DIAL("Dial", "Drag, flick, and snap a reusable dial with haptic feedback."),
-    HAPTICS("Haptics", "Try semantic haptic tokens."),
-    EDGE_BLUR("Scroll edge blur", "Explore progressive blur and fade at the edges of a horizontal list."),
+private enum class LabSection(val title: String) {
+    COMPONENTS("Components"),
+    INTERACTIONS("Interactions"),
+}
+
+private enum class LabPage(val title: String, val description: String, val section: LabSection) {
+    MORPH("Morph", "Grow a surface from its source, then catch or drag it back.", LabSection.COMPONENTS),
+    PAGES("Page movement", "Swipe between pages or compare Motion with the Compose default.", LabSection.COMPONENTS),
+    EDGE_BLUR(
+        "Scroll edge blur",
+        "Explore progressive blur and fade at the edges of a horizontal list.",
+        LabSection.COMPONENTS
+    ),
+    SPRINGS(
+        "Springs and release",
+        "Compare Motion spring tokens and try gesture-to-spring release.",
+        LabSection.INTERACTIONS
+    ),
+    DIAL("Dial", "Drag, flick, and snap a reusable dial with haptic feedback.", LabSection.INTERACTIONS),
+    HAPTICS("Haptics", "Try semantic haptic tokens.", LabSection.INTERACTIONS),
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MotionLabApp() {
     var page by rememberSaveable { mutableStateOf<LabPage?>(null) }
+    var section by rememberSaveable { mutableStateOf(LabSection.COMPONENTS) }
     var slowMotion by rememberSaveable { mutableFloatStateOf(1f) }
     BackHandler(enabled = page != null) { page = null }
 
@@ -124,19 +142,32 @@ private fun MotionLabApp() {
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(page?.title ?: "Motion Lab") },
-                navigationIcon = {
-                    if (page != null) {
-                        IconButton(
-                            onClick = { page = null },
-                            modifier = Modifier.semantics { contentDescription = "Navigate back" }
-                        ) {
-                            Text("‹", style = MaterialTheme.typography.headlineMedium)
+            Column {
+                TopAppBar(
+                    title = { Text(page?.title ?: "Motion Lab") },
+                    navigationIcon = {
+                        if (page != null) {
+                            IconButton(
+                                onClick = { page = null },
+                                modifier = Modifier.semantics { contentDescription = "Navigate back" }
+                            ) {
+                                Text("‹", style = MaterialTheme.typography.headlineMedium)
+                            }
+                        }
+                    }
+                )
+                if (page == null) {
+                    TabRow(selectedTabIndex = LabSection.entries.indexOf(section)) {
+                        LabSection.entries.forEach { item ->
+                            Tab(
+                                selected = section == item,
+                                onClick = { section = item },
+                                text = { Text(item.title) }
+                            )
                         }
                     }
                 }
-            )
+            }
         }
     ) { insets ->
         Column(
@@ -153,7 +184,7 @@ private fun MotionLabApp() {
                     style = MaterialTheme.typography.bodyLarge
                 )
                 SlowMotionControl(slowMotion) { slowMotion = it }
-                LabPage.entries.forEach { item ->
+                LabPage.entries.filter { it.section == section }.forEach { item ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -770,12 +801,19 @@ private fun EdgeBlurDemo() {
 
 @Composable
 private fun MotionLabTheme(content: @Composable () -> Unit) {
-    MaterialTheme(
-        colorScheme = lightColorScheme(
+    val dark = isSystemInDarkTheme()
+    val colors = if (dark) {
+        darkColorScheme(
+            primary = Color(0xFFB5CBE0),
+            secondary = Color(0xFFB7D0C2),
+            tertiary = Color(0xFFE0B99F)
+        )
+    } else {
+        lightColorScheme(
             primary = Color(0xFF465D72),
             secondary = Color(0xFF526B61),
             tertiary = Color(0xFF805B45)
-        ),
-        content = content
-    )
+        )
+    }
+    MaterialTheme(colorScheme = colors, content = content)
 }
