@@ -33,7 +33,7 @@ Establish the optional Motion UI Android library and its app-configurable theme/
 - Animated toolbar implementation and consumer migration (planned separately in MOT0.3B).
 - Reusable card/page/sheet components until the toolbar contract and prototype are established.
 - Glass rendering and Haze dependency (requires a separate review).
-- Solstice integration or submodule changes.
+- the consuming application integration or submodule changes.
 - Motion Core changes, publishing, and platform expansion.
 - Device/TalkBack validation unless separately scheduled and available.
 
