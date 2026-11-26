@@ -1,8 +1,8 @@
 # Motion principles
 
-This document records the interaction principles first established while building Solstice. The reusable behavior is intended for any app consuming Motion; it does not require consumers to copy Solstice's visual identity, screen composition, or product-specific choreography. Motion is the behavior layer, not a general-purpose UI component kit.
+This document defines Motion's reusable interaction principles. They apply across consuming applications and do not prescribe any consumer's visual identity, screen composition, or product-specific choreography. Motion is the behavior layer, not a general-purpose UI component kit.
 
-The reusable base tokens live in `:motion` (`io.github.information89.motion.Motion`, expressed as response and damping). Solstice may map those tokens through an app-side scheme such as `AppMotionScheme`; consumer-specific mappings stay in the consuming app. References to Solstice files below are examples from the first consumer, not dependencies or requirements for Motion.
+The reusable base tokens live in `:motion` (`io.github.information89.motion.Motion`, expressed as response and damping). A consuming application may map those tokens through its own app-side scheme; consumer-specific mappings stay in the consuming app. App-side names in examples are illustrative, not dependencies or requirements for Motion.
 
 These principles guide implementation and review. Before changing user-visible motion behavior or adding a new public contract, record the proposal and obtain the owner's agreement.
 
@@ -17,7 +17,7 @@ nowhere: a sheet, card, menu or window grows out of the element that caused it, 
 what transforms and expands (as iOS buttons do), then folds back into it. No fade-in from nothing, no
 replacing one thing with another.
 
-**Scope of Motion:** it is the reusable behavior layer beneath interactions in any app, not only Solstice: button feedback, lists, menus, cards, sheets, page changes, drags, swipes, long presses, and related motion feedback. Motion should own generic mechanics; each app still owns its components, layout, content, styling, navigation policy, and domain behavior. A consumer-specific need is not automatically a Motion feature: extract it only when the behavior is generic and independent of the app.
+**Scope of Motion:** it is the reusable behavior layer beneath interactions across consuming applications: button feedback, lists, menus, cards, sheets, page changes, drags, swipes, long presses, and related motion feedback. Motion should own generic mechanics; each app still owns its components, layout, content, styling, navigation policy, and domain behavior. A consumer-specific need is not automatically a Motion feature: extract it only when the behavior is generic and independent of the app.
 
 | Use | Spring | In code |
 |---|---|---|
