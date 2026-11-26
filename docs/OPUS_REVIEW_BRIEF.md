@@ -5,14 +5,14 @@
 
 ## Review package
 
-| Repository | PR | Review head |
+| Repository | PR | Policy change commit inspected |
 |---|---:|---|
 | [Motion-UI](https://github.com/INFORMATION89/Motion-UI/pull/15) | #15 | `9c4b95700df910db09303082b9aa2868e412e7e5` |
 | [Solstice](https://github.com/INFORMATION89/Solstice/pull/16) | #16 | `ad812b1579ea244a830cf6af6d782d61c4d9257d` |
 | [Meridian-Engine](https://github.com/INFORMATION89/Meridian-Engine/pull/17) | #17 | `be85ef0ed58c2e09f8568de2540a2e7a381223f9` |
 | [Smartspacer Plugins](https://github.com/INFORMATION89/infooo-Smartspacer-Plugins/pull/5) | #5 | `517aec13a213b9ed0f000196ecf81856fde8f6b3` |
 
-Review the exact PR head commits above. If any head has moved, inspect the latest diff and update this brief before review.
+The hashes above identify the policy-change commits inspected during this pass. The consolidated brief was subsequently added to Motion as a separate commit; inspect each PR's current head (including that brief commit) before conducting the independent review.
 
 ## Intended policy
 
