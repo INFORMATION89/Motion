@@ -29,3 +29,6 @@ jobs:
 
       - name: Build the library
         run: ./gradlew :motion:assembleRelease
+
+      - name: Build Motion Lab sample
+        run: ./gradlew :motion-lab:assembleDebug
