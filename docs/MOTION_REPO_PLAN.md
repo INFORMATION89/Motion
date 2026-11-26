@@ -25,7 +25,7 @@ This document preserves the original repository-extraction decisions from 2026-1
 
 - **Workflow: Git submodule + Gradle composite build.** the consuming application keeps Motion at `motion/` as a submodule pinned to an exact Motion commit and builds it from source through `includeBuild`. Nothing is currently published to Maven.
 - **Independence:** Motion must not import consumer code or depend on any consuming app. Generic motion behavior belongs in Motion; app styling, screens, assets, and product logic remain in the consuming app.
-- **History:** the extracted Motion repository keeps the project-owned Motion history, not the upstream upstream project Weather history.
+- **History:** the extracted Motion repository keeps the project-owned Motion history, not the upstream project's history.
 - **Motion Lab direction (historical):** a separate Material You Expressive app was planned to demonstrate Motion with standard Material 3 components rather than the consuming application's visual styling. This plan has since been delivered as `:motion-lab`; the old `lab/` prototype remains separate.
 
 ## Intended repository structure
@@ -63,7 +63,7 @@ The 2026-11-21 inventory identified these areas for review:
 | the consuming application area | Potential reusable behavior | App-specific boundary |
 |---|---|---|
 | Shell/page navigation | page movement, settle, and generic gesture mechanics | route policy, screens, page content |
-| Toolbar interaction | pill movement, press, and transitions between states | toolbar composition, glass/sky look, icons, app state |
+| Toolbar interaction | pill movement, press, and transitions between states | toolbar composition, visual treatment, icons, and app state |
 | Segmented-row press morph | reusable press/morph behavior | row content, labels, settings semantics |
 | Sheet state | detents, drag, and source-to-sheet mechanics | search UI, screen state, product-specific content |
 
