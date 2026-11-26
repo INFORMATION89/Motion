@@ -14,7 +14,7 @@ This file is the working handoff for the next development session. Keep it curre
 ## Project guardrails
 
 - Motion is an independent, reusable Android/Jetpack Compose motion framework. It must not depend on Solstice or import application code.
-- Motion is not a UI kit. Reusable interaction mechanics belong here; app components, styling, navigation policy, and product behavior remain with the app or its UI libraries.
+- Motion Core is not a UI kit. Reusable interaction mechanics belong in Core; the planned optional Motion UI layer may provide configurable components, while app branding, navigation policy, screens, and product behavior remain with consuming apps.
 - Compose remains the animation and interaction foundation. Do not introduce a separate universal physics engine.
 - Prioritize interruptible motion, continuous velocity, predictable gesture ownership, and explicit input contracts.
 - Desktop and iOS are not currently supported. A multiplatform port requires a separate design and verification plan.
@@ -22,14 +22,14 @@ This file is the working handoff for the next development session. Keep it curre
 
 ## Consolidated work
 
-**Status:** PR #4 is open as a draft; not merged. The consolidated branch contains the MOT0.1 implementation work plus the README, AI-agent, framework-boundary, platform, Solstice-planning, and cost-aware verification guidance.
+**Integration:** PR #4 is the integration vehicle for MOT0.1. Check its live GitHub status before taking action; this handoff does not assume whether it is open, ready, or merged. The branch contains the MOT0.1 implementation work plus framework, platform, Solstice-planning, AI-agent, and cost-aware verification documentation.
 
 - Branch: `work/consolidated-docs-platforms`
-- MOT0.1 remains draft until the MorphMotion interruption, reversal, target/source retargeting, gesture supersession, and non-finite input contracts are covered by deterministic tests.
-- Last inspected code head: `ab02bbb6d2a627802e4f1c428fef3247e59bb335`. Later commits in this branch only synchronize documentation; they do not change the code covered by run #38.
-- Latest inspected GitHub Actions run [#40](https://github.com/INFORMATION89/Motion-UI/actions/runs/45762377072) failed at `:motion:spotlessKotlinCheck` for the same known issue: `MorphMotionTest.kt` needs one blank line between test methods. Unit tests and library build were skipped. Run #38 had the same failure. The docs-only synchronization did not alter the code under test.
-- Fix the exact formatting issue as part of the next coherent batch. Do not rerun the full workflow just for documentation edits; after the remaining MOT0.1 code/test batch is complete, run the required workflow once on its exact final head.
-- PRs #1–#3 were consolidated into PR #4. Do not treat their old branch names, SHAs, or CI runs as current evidence.
+- Current implementation head: `75f58a4d323bf1cc179f677c2af03bf16ce6e282`.
+- Latest checked CI: [run #57](https://github.com/INFORMATION89/Motion-UI/actions/runs/45764028890) failed only at Spotless because `MorphMotionTest.kt` has one extra blank line before its final class brace. Unit tests and library build were skipped on that run.
+- Previous code head `ccbcc16680a8471842af53e0ff06a3d168df1500` passed Spotless, all 62 unit tests, and `:motion:assembleRelease` in [run #56](https://github.com/INFORMATION89/Motion-UI/actions/runs/45763845704). The current head adds one more pending-placement/retarget-continuity regression test; run #57 did not execute it.
+- Remove the exact trailing blank line in the test file, then run the complete required workflow once on the resulting coherent head. Do not spend another full run for documentation-only changes; include documentation synchronization before that final run.
+- PRs #1–#3 were consolidated into PR #4. Their old branch names, SHAs, and CI runs are historical only.
 
 ### Already implemented in MOT0.1
 
@@ -38,33 +38,20 @@ This file is the working handoff for the next development session. Keep it curre
 - Keep flick thresholds ordered and update them safely when the drag range changes.
 - Validate projection and target-selection inputs in `MotionPhysics`.
 - Include position as well as dimensions in `MorphMotion.progress`.
-- Retarget an active morph when its destination changes and guard pending open/close continuations against stale commands.
-- Add focused tests for validation, rest-point normalization, physics inputs, and geometry-based morph progress.
+- Retarget open morphs when the target changes, including after settling; retarget closing morphs when the source changes; defer anchor changes while caught or open as appropriate.
+- Keep gesture ownership visible during drag/scrub, preserve spring velocity when retargeting, and guard pending open/close placement continuations with command generations.
+- Validate finite drag/scrub/release input and anchor geometry, while allowing legitimate zero-size anchors.
+- Cover interruption/reversal, target/source retargeting, caught gestures, high-velocity release, scalar input contracts, rest-point updates, and same-target animation with deterministic frame-clock tests.
 
 ### Remaining MOT0.1 work
 
-Start with deterministic interruption tests in `MorphMotionTest.kt`:
+No additional feature work is planned for MOT0.1. The remaining gate is final verification on the exact branch head, review of the complete diff, and integration of PR #4.
 
-1. Open→close and close→open reversals; repeated commands must leave the latest intent in control.
-2. Commands issued before initial placement finishes must not be overwritten by stale continuations.
-3. Visibility must remain correct while closing or caught.
-4. Target changes while opening/closed/open/settled/caught must follow the contracts in `docs/MOT0.1_PLAN.md`.
-5. Source changes while closing must retarget; source changes while open must be deferred until close.
-6. Drag, scrub, catch, and release must supersede stale work and preserve gesture ownership.
-7. Reject non-finite `MorphMotion` drag/scrub/release inputs before mutating state or launching work.
-8. Validate anchor geometry while allowing legitimate zero-size/transient anchors.
-
-Use deterministic frame-clock tests. Do not use wall-clock sleeps, expose public velocity test hooks, or weaken assertions to make CI pass.
-
-## Next work session
-
-1. Confirm the current branch head and inspect the exact CI run before changing code.
-2. Fix the known Spotless violation in `MorphMotionTest.kt` (one blank line between test methods) in the next coherent change batch.
-3. Continue with Task 1 in [the MOT0.1 plan](docs/MOT0.1_PLAN.md): deterministic interruption/reversal tests.
-4. Add a failing regression test before changing production code; implement the smallest fix that satisfies the documented contract.
-5. Complete retargeting, source deferral, gesture supersession, numeric-boundary, and scalar-contract audits.
-6. Review the complete diff, update this handoff and the PR description, then run the full required CI workflow once on the final coherent code batch.
-7. Keep device checks marked `NOT TESTED` / `DEFERRED` while hardware access is unavailable.
+1. Remove the single trailing blank line reported by run #57 in `MorphMotionTest.kt`.
+2. Run the complete required CI workflow once on the final code-and-documentation head.
+3. Confirm Spotless, `:motion:testDebugUnitTest`, and `:motion:assembleRelease` all pass on that exact SHA.
+4. Update the PR description with the exact evidence, mark it ready, and merge PR #4 into `main` after all required checks pass.
+5. Keep physical-device checks marked `NOT TESTED` / `DEFERRED`; they are not part of this milestone's CI gate.
 
 ## Local setup and verification
 

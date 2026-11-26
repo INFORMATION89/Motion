@@ -10,8 +10,9 @@ Finish the reliability work around `MotionValue`, `MotionPhysics`, and especiall
 
 - Work branch: `work/consolidated-docs-platforms`.
 - PR: [#4](https://github.com/INFORMATION89/Motion-UI/pull/4) — draft, open, not merged. PRs #1–#3 were consolidated into it.
-- Current PR head: `ad9ca7438684af24eaaf868abc92535f57113cad`; last inspected code head: `ab02bbb6d2a627802e4f1c428fef3247e59bb335`. The intervening commits are documentation-only.
-- Latest checked CI: [run #40](https://github.com/INFORMATION89/Motion-UI/actions/runs/45762377072) failed at Spotless due to one missing blank line in `MorphMotionTest.kt`; unit tests and library build were skipped. Run #38 had the same failure. The code has not yet received passing unit-test/build evidence on this head.
+- Current implementation head: `75f58a4d323bf1cc179f677c2af03bf16ce6e282`.
+- Latest checked CI: [run #57](https://github.com/INFORMATION89/Motion-UI/actions/runs/45764028890) failed only at Spotless because `MorphMotionTest.kt` has one extra blank line before its final class brace; tests and build were skipped.
+- Previous head `ccbcc16680a8471842af53e0ff06a3d168df1500` passed Spotless, all 62 unit tests, and `:motion:assembleRelease` in [run #56](https://github.com/INFORMATION89/Motion-UI/actions/runs/45763845704). The current head adds one pending-placement/retarget-continuity regression test that run #57 did not execute.
 - The baseline includes input validation and normalization in `MotionValue` / `MotionPhysics`, geometric progress in `MorphMotion`, target retargeting, command-generation protection for pending placement, and initial regression tests.
 - This is a baseline, not completion: interruption, retargeting, and MorphMotion input-boundary coverage remains insufficient.
 
@@ -26,6 +27,15 @@ Finish the reliability work around `MotionValue`, `MotionPhysics`, and especiall
 | Morph tests | `motion/src/test/kotlin/io/github/information89/motion/MorphMotionTest.kt` | Deterministic frame-clock tests for `MorphMotion` |
 | Existing geometry tests | `motion/src/test/kotlin/io/github/information89/motion/MorphGeometryTest.kt` | Pure interpolation and geometry boundaries |
 | Existing motion tests | `motion/src/test/kotlin/io/github/information89/motion/MotionValueTest.kt`, `MotionPhysicsTest.kt` | Scalar state and physics contracts |
+
+## Implementation status
+
+- **Task 1 — interruption and reversal:** covered by immediate open/close, close/open, repeated-command, and initial-placement supersession tests.
+- **Task 2 — retargeting and continuity:** covered for opening, closed, settled-open, closing-source, deferred-open-source, and caught target/source changes. Behavioral assertions check no immediate geometry jump and no reversal during retargeting; production springs retain `Animatable.velocity`.
+- **Task 3 — gesture supersession:** covered for scrub, drag, catch, release, visibility while gesture-owned, and resumption by a newer command.
+- **Task 4 — numeric and geometry boundaries:** finite drag/scrub/release validation, high-velocity clamp, zero-size anchors, inverted/non-finite/overflowing geometry.
+- **Task 5 — scalar contracts:** defensive rest-point normalization, threshold ordering on construction and mutation, invalid finite-input boundaries, rest-point changes not retargeting active animation, and same-target `animateTo` behavior.
+- **Task 6 — final gate:** trailing Spotless formatting correction, final exact-head CI, complete diff review, and merge of PR #4 remain.
 
 ## Work sequence
 
@@ -138,8 +148,8 @@ MOT0.1 is ready to integrate only when:
 
 ## Next session opening checklist
 
-1. Open PR #4 and confirm the head is `work/consolidated-docs-platforms`; fetch the latest branch.
-2. Check the current head SHA and latest Actions run. If CI is not green, diagnose that before starting feature work.
-3. Open this plan and `CONTINUE.md`.
-4. Start with **Task 1: deterministic interruption tests**, not implementation guesses.
-5. Change production code only in response to a failing regression test or a concrete contract gap.
+1. Confirm PR #4's live head and exact final Actions run.
+2. Confirm Spotless, unit tests, and library build pass on that exact SHA.
+3. Review the complete diff against `main` and verify no unrelated changes.
+4. Mark PR #4 ready and merge it into `main` after all checks pass.
+5. Keep physical-device checks explicitly `NOT TESTED` / `DEFERRED`.

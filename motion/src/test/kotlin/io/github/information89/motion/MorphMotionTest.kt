@@ -476,5 +476,4 @@ class MorphMotionTest {
         motion.isMoving shouldBe false
         motion.isVisible shouldBe false
     }
-
 }
