@@ -98,7 +98,7 @@ class MainActivity : ComponentActivity() {
 private enum class LabPage(val title: String, val description: String) {
     SPRINGS("Springs and release", "Compare Motion spring tokens and try gesture-to-spring release."),
     MORPH("Morph", "Grow a surface from its source, then catch or drag it back."),
-    PAGES("Page movement", "Swipe between pages or choose a page; both use the same spring motion."),
+    PAGES("Page movement", "Swipe between pages or compare Motion with the Compose default."),
     DIAL("Dial", "Drag, flick, and snap a reusable dial with haptic feedback."),
     EDGE_BLUR("Scroll edge blur", "Explore progressive blur and fade at the edges of a horizontal list."),
 }
@@ -364,53 +364,156 @@ private fun PageDemo() {
     val pager = rememberPagerState(initialPage = 0) { 3 }
     val overshoot = remember { PageOvershoot() }
     var springIndex by rememberSaveable { mutableIntStateOf(0) }
+    var compare by rememberSaveable { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val springs = listOf("momentum" to Motion.momentum, "gentle" to Motion.gentle, "playful" to Motion.playful)
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             springs.forEachIndexed { index, item ->
-                FilterChip(selected = springIndex == index, onClick = {
-                    springIndex = index
-                }, label = { Text(item.first) })
+                FilterChip(
+                    selected = springIndex == index,
+                    onClick = { springIndex = index },
+                    label = { Text(item.first) }
+                )
             }
         }
-        HorizontalPager(
-            state = pager,
-            flingBehavior = remember(pager, springIndex) {
-                pageSpringFling(pager, overshoot) { springs[springIndex].second }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(220.dp)
-                .clip(RoundedCornerShape(24.dp))
-                .pageOvershoot(overshoot)
-        ) { index ->
-            Surface(
-                modifier = Modifier.fillMaxSize().padding(6.dp),
-                shape = RoundedCornerShape(20.dp),
-                color = listOf(
-                    MaterialTheme.colorScheme.primaryContainer,
-                    MaterialTheme.colorScheme.secondaryContainer,
-                    MaterialTheme.colorScheme.tertiaryContainer
-                )[index]
+        FilterChip(
+            selected = compare,
+            onClick = { compare = !compare },
+            label = { Text("Compare with Compose") }
+        )
+        if (compare) {
+            PageComparisonDemo(springs[springIndex].second)
+        } else {
+            HorizontalPager(
+                state = pager,
+                flingBehavior = remember(pager, springIndex) {
+                    pageSpringFling(pager, overshoot) { springs[springIndex].second }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(220.dp)
+                    .clip(RoundedCornerShape(24.dp))
+                    .pageOvershoot(overshoot)
+            ) { index ->
+                Surface(
+                    modifier = Modifier.fillMaxSize().padding(6.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    color = listOf(
+                        MaterialTheme.colorScheme.primaryContainer,
+                        MaterialTheme.colorScheme.secondaryContainer,
+                        MaterialTheme.colorScheme.tertiaryContainer
+                    )[index]
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text("Page ${index + 1}", style = MaterialTheme.typography.headlineLarge)
+                    }
+                }
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                repeat(3) { index ->
+                    Button(onClick = {
+                        scope.launch { pager.springToPage(index, overshoot, springs[springIndex].second) }
+                    }) {
+                        Text("${index + 1}")
+                    }
+                }
+            }
+            Text(
+                "Swipe, or tap a page number. The pages use the selected Motion spring.",
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+    }
+}
+
+@Composable
+private fun PageComparisonDemo(spring: MotionSpring) {
+    val motionPager = rememberPagerState(initialPage = 0) { 3 }
+    val composePager = rememberPagerState(initialPage = 0) { 3 }
+    val overshoot = remember { PageOvershoot() }
+    val scope = rememberCoroutineScope()
+    val pageColors = listOf(
+        MaterialTheme.colorScheme.primaryContainer,
+        MaterialTheme.colorScheme.secondaryContainer,
+        MaterialTheme.colorScheme.tertiaryContainer
+    )
+
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(
+            "Both previews receive the same destination at the same time.",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Card(
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+        ) {
+            Column(
+                Modifier.fillMaxWidth().padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Text("Page ${index + 1}", style = MaterialTheme.typography.headlineLarge)
+                Text("Motion · springToPage", style = MaterialTheme.typography.titleMedium)
+                HorizontalPager(
+                    state = motionPager,
+                    userScrollEnabled = false,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(124.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                        .pageOvershoot(overshoot)
+                ) { index ->
+                    Surface(
+                        modifier = Modifier.fillMaxSize().padding(4.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        color = pageColors[index]
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Text("Page ${index + 1}", style = MaterialTheme.typography.headlineMedium)
+                        }
+                    }
+                }
+            }
+        }
+        Card(
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+        ) {
+            Column(
+                Modifier.fillMaxWidth().padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text("Compose · default animateScrollToPage", style = MaterialTheme.typography.titleMedium)
+                HorizontalPager(
+                    state = composePager,
+                    userScrollEnabled = false,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(124.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                ) { index ->
+                    Surface(
+                        modifier = Modifier.fillMaxSize().padding(4.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        color = pageColors[index]
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Text("Page ${index + 1}", style = MaterialTheme.typography.headlineMedium)
+                        }
+                    }
                 }
             }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             repeat(3) { index ->
                 Button(onClick = {
-                    scope.launch { pager.springToPage(index, overshoot, springs[springIndex].second) }
+                    scope.launch { motionPager.springToPage(index, overshoot, spring) }
+                    scope.launch { composePager.animateScrollToPage(index) }
                 }) {
-                    Text("${index + 1}")
+                    Text("Page ${index + 1}")
                 }
             }
         }
         Text(
-            "Swipe, or tap a page number. The pages use the same spring-based movement.",
+            "Tap a page number to drive both previews together. Motion uses the selected spring; Compose uses its default pager animation. Swiping is disabled here so the input stays identical.",
             style = MaterialTheme.typography.bodySmall
         )
     }
