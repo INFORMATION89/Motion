@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,14 +25,10 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5.0.2
 
-      - name: Lint (spotless)
-        run: ./gradlew spotlessCheck
-
-      - name: Unit tests
-        run: ./gradlew :motion:testDebugUnitTest
-
-      - name: Build the library
-        run: ./gradlew :motion:assembleRelease
-
-      - name: Build Motion Lab sample
-        run: ./gradlew :motion-lab:assembleDebug
+      - name: Verify and build
+        run: |
+          ./gradlew \
+            spotlessCheck \
+            :motion:testDebugUnitTest \
+            :motion:assembleRelease \
+            :motion-lab:assembleDebug
