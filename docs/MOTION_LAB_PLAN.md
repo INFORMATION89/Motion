@@ -40,6 +40,8 @@ Use standard Material 3 tabs/navigation and platform conventions. Do not invent 
 
 - Standalone `:motion-lab` app module with a neutral Material 3 shell and gallery.
 - Separate demos for spring/release, Morph, page movement, dial, haptics, and scroll edge blur.
+- Two top-level Material 3 destinations: Components (Morph, Page movement, Scroll edge blur) and Interactions (Springs and release, Dial, Haptics).
+- Automatic light/dark appearance following the system setting with semantic Material 3 color schemes.
 - Optional synchronized comparisons for Morph and page movement.
 - Slow-motion control with restoration of `MotionTime.scale` on root composition disposal.
 - Nine semantic haptic tokens with a temporary intensity control that resets when leaving the Haptics page.
@@ -48,8 +50,6 @@ See [MOT0.2_PLAN.md](MOT0.2_PLAN.md) for exact acceptance criteria and verificat
 
 ## Follow-up roadmap ideas — not MOT0.2 blockers
 
-- Reorganize the gallery into the two top-level **Components** and **Interactions** tabs, using the standard app toolbar and Material 3 navigation patterns.
-- Add automatic system light/dark appearance.
 - Consider an explicit pure-black/AMOLED theme option.
 - Explore predictive-back blur as an optional, capability-gated enhancement with a no-blur fallback.
 - Live miniature previews in gallery tiles and a morphing tile-to-page transition.

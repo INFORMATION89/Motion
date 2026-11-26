@@ -23,50 +23,43 @@ This file is the working handoff for the next development session. Keep it curre
 
 ## Current verified baseline
 
-- `main`: `b5fb7892b0b63e6e180b365496804198269a739a`.
-- MOT0.1 is complete and merged. Its core reliability changes and tests are on `main`.
-- The latest `main` workflow remains [run #45767829970](https://github.com/INFORMATION89/Motion-UI/actions/runs/45767829970), completed successfully on the exact `main` SHA above; MOT0.2's PR workflow is tracked separately below.
-- No other open PRs or issues were returned before this work; MOT0.2 is tracked in PR #7, which is open and ready for review (not merged).
-- Current library platform baseline: Android / Jetpack Compose, min SDK 29, compile SDK 37, JDK 21.
-- Device/emulator interaction has not been validated in this handoff; continue to report it as `NOT TESTED` / `DEFERRED`.
+- `main`: `130c8abb7a1ca6613d70796255f9385362bb0f41` (PR #8 squash merge).
+- MOT0.1 is complete and merged.
+- MOT0.2 is complete and merged through PR #7; its follow-up gallery organization and automatic system theme are merged through PR #8.
+- PR #9 (Project Rules), PR #7 (Standalone Motion Lab), and PR #8 (Components / Interactions and system theme) are all merged. There are no open PRs or open issues at this handoff.
+- Latest exact-head PR verification: CI #108 passed on `88a97e625d1aead19bc2a00bd36f1ff92eb90f2c`, including the `Verify and build` step. The squash merge commit is `130c8abb7a1ca6613d70796255f9385362bb0f41`.
+- Current library platform baseline: Android / Jetpack Compose, min SDK 29, compile SDK 37, JDK 21. iOS and desktop (Windows, macOS, Linux) remain unsupported.
+- Emulator and physical-device validation, TalkBack runtime behavior, contrast inspection, and real haptic output remain `NOT TESTED` / `DEFERRED`. CI success is not device validation.
 
 ## MOT0.1 — complete
 
 Core reliability work is merged. Do not reopen it without a reproduced regression or a separate, scoped requirement. The historical acceptance plan remains in [docs/MOT0.1_PLAN.md](docs/MOT0.1_PLAN.md).
 
-## MOT0.2 — standalone Motion Lab
+## MOT0.2 — complete
 
-**Status:** implementation is ready for review on [PR #7](https://github.com/INFORMATION89/Motion-UI/pull/7). Latest source-verification head was `5c8e7b4f97ac7b139382f5c942f775ab41878d17`; CI #99 passed on that exact SHA. Subsequent commits update documentation only (Motion Lab direction and agent rules), so no additional code CI run was necessary. PR remains open and has not been merged. Device/emulator validation remains deferred.
+The standalone `:motion-lab` Android sample is merged into `main`. It depends on `:motion`, has its own application identity and launcher activity, and remains independent of Solstice and the planned `:motion-ui` module.
 
-The separate `:motion-lab` Android sample app is now included in Gradle and depends on `:motion`. It has its own namespace, application ID, launcher activity, and neutral Material 3 theme. Its initial gallery links to six generic demonstrations:
+The Lab currently includes:
+- Components and Interactions top-level Material 3 tabs.
+- Automatic light/dark appearance following the system setting.
+- Spring/release, Morph, page movement, dial, semantic haptics, and scroll edge-blur demonstrations.
+- Synchronized Motion-vs-Compose comparisons for Morph and page movement.
+- Slow-motion control that restores `MotionTime.scale` when the root composition is disposed.
 
-- Spring tokens and gesture release.
-- Source-to-target morph, with a shared-input comparison against Compose's default `AnimatedVisibility`.
-- Spring-driven pager movement and overshoot, with an opt-in synchronized Motion-vs-Compose comparison.
-- Dial interaction and snapping.
-- Semantic haptic token buttons with an intensity control; global intensity resets when leaving the page.
-- Horizontal scroll edge blur.
+PR #7 delivered the standalone app foundation and demos. PR #8 added the two-section navigation and system theme. Both are merged. The exact PR #8 head passed CI #108 before squash merge. See [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md) for milestone scope and [docs/MOTION_LAB_PLAN.md](docs/MOTION_LAB_PLAN.md) for the longer-term Lab direction.
 
-The slow-motion control adjusts `MotionTime.scale` and the root composition restores it to `1f` on disposal. The old `lab/` source tree remains an unbuilt Solstice-era prototype; it is not a source dependency of the new app.
+### Remaining validation
 
-### Current verification state
+- Install and exercise the Lab on an emulator and a physical Android device.
+- Verify tab navigation, demo interactions, light/dark transitions, screen-reader labels and traversal, and contrast.
+- Verify real haptic output on supported hardware and record device/API details.
+- Keep all of the above marked deferred until actually performed.
 
-- The optimized required workflow [#99](https://github.com/INFORMATION89/Motion-UI/actions/runs/45780374403) passed on source-verification SHA `5c8e7b4f97ac7b139382f5c942f775ab41878d17`: Spotless, Motion Core unit tests, `:motion:assembleRelease`, and `:motion-lab:assembleDebug`. Later commits changed documentation only; no code or build configuration changed, so the passing code checks remain applicable. Earlier successful runs are historical evidence only.
-- CI does not validate visual behavior, touch interactions, or real vibration output; haptic behavior on emulator/physical devices remains `NOT TESTED` / `DEFERRED`.
-- The CI workflow includes `:motion-lab:assembleDebug` in addition to Spotless, Core unit tests, and library release assembly.
-- No local Gradle build or emulator/physical-device run was performed in this workspace.
-- Emulator and physical-device interaction remain `NOT TESTED` / `DEFERRED`.
+## Next milestone
 
-### Next steps
+MOT0.2 is closed. Do not silently expand it. The next engineering step is to review [docs/MOTION_REPO_PLAN.md](docs/MOTION_REPO_PLAN.md), [docs/FRAMEWORK_OVERVIEW.md](docs/FRAMEWORK_OVERVIEW.md), and [docs/PLATFORM_SUPPORT.md](docs/PLATFORM_SUPPORT.md) together, then prepare a narrowly scoped proposal for the next reusable Motion capability. Keep `:motion-ui` optional and separate from Core; do not begin a multiplatform port or add public APIs without a documented gap, contract, tests, and owner agreement.
 
-1. Code review completed for module isolation, public API usage, comparison input parity, and dependency scope. The Compose controls expose their standard interactive semantics; confirm actual screen-reader behavior during the deferred emulator/device pass.
-2. Keep the sheet comparison deferred unless a fair Material 3 baseline can be built from existing APIs without expanding Core.
-3. Add sample-owned tests only where they protect a distinct Lab interaction contract not covered by Core tests.
-4. Workflow [#98](https://github.com/INFORMATION89/Motion-UI/actions/runs/45779868512) passed on exact PR head `22707a05abf857efdda902b9afcdb3c37d259ce5`; Spotless, Motion Core unit tests, library Release assembly, and Lab Debug assembly are green.
-5. PR #7 is already marked ready for review. Do not merge without explicit owner authorization.
-6. Fold the newly recorded Motion Lab direction into the next scoped UI iteration; do not silently expand MOT0.2: two top-level tabs (Components / Interactions), automatic system light/dark, optional pure-black theme, and optional predictive-back blur. See [docs/MOTION_LAB_PLAN.md](docs/MOTION_LAB_PLAN.md).
-7. Opus review is **optional and pending only if warranted** for a later high-complexity/high-risk implementation or an independent specialist pass. It is not a current blocker; do not wait for it to continue routine work.
-See [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md) for scope and acceptance criteria. Follow [docs/MOTION_LAB_PLAN.md](docs/MOTION_LAB_PLAN.md) for the longer-term gallery and comparison direction.
+Opus review remains optional for a later high-complexity or high-risk task; it is not a blocker for routine work.
 
 ## Local setup and verification
 

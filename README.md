@@ -95,7 +95,7 @@ On Windows, use `gradlew.bat` instead of `./gradlew`.
 
 ## Project status
 
-The `:motion` Android library and the standalone `:motion-lab` sample app are Gradle modules. Motion Lab currently includes a generic gallery, spring/release, morph, page, dial, edge-blur, and semantic haptics demonstrations. Morph and page movement have opt-in comparisons driven by shared input. The haptics page exposes the existing semantic tokens and a temporary intensity control; real device vibration remains unverified. The old `lab/` directory remains an unbuilt Solstice-era prototype and is not part of the new app.
+The `:motion` Android library and the standalone `:motion-lab` sample app are Gradle modules. Motion Lab currently includes a generic gallery organized into Components and Interactions tabs, automatic system light/dark appearance, and spring/release, morph, page, dial, edge-blur, and semantic haptics demonstrations. Morph and page movement have opt-in comparisons driven by shared input. The haptics page exposes the existing semantic tokens and a temporary intensity control. CI passed on the final PR head; emulator/physical-device behavior, TalkBack, contrast, and real vibration remain unverified. The old `lab/` directory remains an unbuilt Solstice-era prototype and is not part of the new app.
 
 
 ## License
