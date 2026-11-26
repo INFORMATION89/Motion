@@ -65,7 +65,7 @@ Treat this as a historical candidate list. Re-inspect current Solstice source, c
 
 1. **Library reliability — complete:** core motion state, physics, validation, and interruption contracts have focused deterministic tests.
 2. **Motion Lab — complete:** the standalone `:motion-lab` app is included in Gradle and required CI, with Material 3 Components / Interactions destinations and automatic system light/dark appearance.
-3. **Reusable interaction extraction — next engineering phase:** evaluate generic behavior from real consumer use cases, move one capability at a time, and add focused tests plus a Lab example when useful. Do not assume every UI interaction belongs in Motion Core.
-4. **Consumer workflow — documented:** contribution, exact-commit version pinning, and the Solstice update process are described. Actual Solstice submodule updates remain separate, explicitly reviewed consumer changes.
+3. **Motion UI foundations — proposed next milestone:** create the optional `:motion-ui` layer only after owner review of [docs/MOT0.3_PLAN.md](MOT0.3_PLAN.md). Core remains the behavior engine; UI supplies configurable building blocks using app-provided theme values.
+4. **Consumer adoption — separate:** the Solstice integration guide and consumer-owned adoption plan govern any submodule bump or runtime migration. Do not combine consumer changes with Motion module implementation.
 
 Each phase should have a scoped plan, acceptance criteria, cost-aware verification, and an explicit list of deferred device checks. Do not expand a milestone into unrelated UI components, platform ports, or benchmarks.
