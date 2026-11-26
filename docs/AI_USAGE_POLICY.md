@@ -40,7 +40,7 @@ A task's tier is determined by its risk, uncertainty, scope, and reasoning deman
 
 Use the best currently available ChatGPT model for the tier, considering the actual product surface:
 
-Treat model selection as a recommendation, not a gate. ChatGPT/ Codex may start and carry a task as far as its available capabilities allow. When a task would benefit from Claude Opus 5.5, explicitly mark **“Opus review recommended”** in the task brief or handoff; do not block the initial work while waiting for Opus.
+Treat model selection as a recommendation, not a gate. ChatGPT/Codex may start and carry a task as far as its available capabilities allow. When a task would benefit from Claude Opus 5.5, explicitly mark **“Opus review recommended”** in the task brief or handoff; do not block the initial work while waiting for Opus.
 
 - Efficient models are the default for routine, bounded work.
 - Balanced models are preferred for ordinary implementation and debugging.
