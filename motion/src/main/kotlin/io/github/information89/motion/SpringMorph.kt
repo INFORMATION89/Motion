@@ -225,7 +225,13 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
     internal fun updateSource(anchor: MorphAnchor) {
         if (anchor == source) return
         source = anchor
-        if (!isOpen && isMoving && !caught) animate(anchor, lastSprings)
+        if (!isOpen && !caught) {
+            if (isMoving) {
+                animate(anchor, lastSprings)
+            } else if (placed) {
+                scope.launch(start = CoroutineStart.UNDISPATCHED) { placeAtSource() }
+            }
+        }
     }
 
     /**
@@ -235,7 +241,8 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
     internal fun updateTarget(anchor: MorphAnchor) {
         if (anchor == target) return
         target = anchor
-        if (isOpen && isMoving && !caught) animate(anchor, lastSprings)
+        // An open surface remains attached to its anchor even after its first spring has settled.
+        if (isOpen && !caught) animate(anchor, lastSprings)
     }
 
     /** Springs every property to [to] with [springs], each from its current velocity plus [kick]. */
@@ -255,7 +262,9 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
             // Settled within Compose's own pixel threshold (the default 0.01 for a bare Float kept a resting
             // surface "moving" for a long tail of invisible motion, so a touch on an open card was caught as
             // a tap that closed it).
-            scope.launch { a.animateTo(v[i], spring.spec(PIXEL_THRESHOLD), initialVelocity = velocity) }
+            scope.launch(start = CoroutineStart.UNDISPATCHED) {
+                a.animateTo(v[i], spring.spec(PIXEL_THRESHOLD), initialVelocity = velocity)
+            }
         }
     }
 
@@ -296,6 +305,7 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
         moveGeneration++
         val s = source ?: return
         val t = target ?: return
+        caught = true
         val p = (progress + delta).coerceIn(-0.05f, 1.08f)
         val a = values(s)
         val b = values(t)
@@ -317,6 +327,7 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
         moveGeneration++
         val s = source ?: return
         val t = target ?: return
+        caught = true
         val p = progress.coerceIn(-0.05f, 1.08f)
         val a = values(s)
         val b = values(t)
