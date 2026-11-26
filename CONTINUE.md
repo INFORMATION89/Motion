@@ -4,12 +4,13 @@ This file is the working handoff for the next development session. Keep it curre
 
 ## Read first
 
-1. [Agent instructions](AGENTS.md) — repository-wide constraints for AI coding assistants.
-2. [MOT0.2 plan](docs/MOT0.2_PLAN.md) — current milestone scope, phases, and acceptance criteria.
-3. [Framework overview](docs/FRAMEWORK_OVERVIEW.md) — what belongs in Motion and what belongs in app/UI libraries.
-4. [Platform support](docs/PLATFORM_SUPPORT.md) — current Android integration and future platform requirements.
-5. [Solstice AI adoption guide](docs/AI_SOLSTICE_ADOPTION.md) — how to create the adoption plan without prematurely migrating code.
-6. [Motion principles](docs/MOTION.md), [Morph study](docs/MORPH_STUDY.md), [Motion Lab design](docs/MOTION_LAB_PLAN.md), and [module API](motion/README.md).
+1. [Project rules](docs/RULES.md) — how Motion work is planned, implemented, reviewed, and accepted.
+2. [Agent instructions](AGENTS.md) — repository-wide constraints for AI coding assistants.
+3. [MOT0.2 plan](docs/MOT0.2_PLAN.md) — current milestone scope, phases, and acceptance criteria.
+4. [Framework overview](docs/FRAMEWORK_OVERVIEW.md) — what belongs in Motion and what belongs in app/UI libraries.
+5. [Platform support](docs/PLATFORM_SUPPORT.md) — current Android integration and future platform requirements.
+6. [Solstice AI adoption guide](docs/AI_SOLSTICE_ADOPTION.md) — how to create the adoption plan without prematurely migrating code.
+7. [Motion principles](docs/MOTION.md), [Morph study](docs/MORPH_STUDY.md), [Motion Lab design](docs/MOTION_LAB_PLAN.md), and [module API](motion/README.md).
 
 ## Project guardrails
 
