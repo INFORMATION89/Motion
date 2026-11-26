@@ -50,7 +50,7 @@ The slow-motion control adjusts `MotionTime.scale` and the root composition rest
 
 ### Current verification state
 
-- The optimized required workflow [#90](https://github.com/INFORMATION89/Motion-UI/actions/runs/45776233393) passed on the exact PR head `a2186110b8ccb869b28d8c452cfd7e662831513a`: Spotless, Motion Core unit tests, `:motion:assembleRelease`, and `:motion-lab:assembleDebug`.
+- The optimized required workflow [#93](https://github.com/INFORMATION89/Motion-UI/actions/runs/45776789045) passed on the exact PR head `c99f6de9752e501824d55d0312afeb19ec470c94`: Spotless, Motion Core unit tests, `:motion:assembleRelease`, and `:motion-lab:assembleDebug`.
 - CI does not validate visual behavior, touch interactions, or real vibration output; haptic behavior on emulator/physical devices remains `NOT TESTED` / `DEFERRED`.
 - The CI workflow includes `:motion-lab:assembleDebug` in addition to Spotless, Core unit tests, and library release assembly.
 - No local Gradle build or emulator/physical-device run was performed in this workspace.
@@ -58,10 +58,10 @@ The slow-motion control adjusts `MotionTime.scale` and the root composition rest
 
 ### Next steps
 
-1. Finish the acceptance review: verify module isolation, accessibility semantics, public API usage, comparison input parity, and dependency scope.
+1. Code review completed for module isolation, public API usage, comparison input parity, and dependency scope. The Compose controls expose their standard interactive semantics; confirm actual screen-reader behavior during the deferred emulator/device pass.
 2. Keep the sheet comparison deferred unless a fair Material 3 baseline can be built from existing APIs without expanding Core.
 3. Add sample-owned tests only where they protect a distinct Lab interaction contract not covered by Core tests.
-4. After any remaining code/documentation batch, run the required workflow on the exact final head and record its evidence.
+4. The required workflow passed on exact head `c99f6de9752e501824d55d0312afeb19ec470c94`; rerun only if implementation or build configuration changes.
 5. Keep the PR draft until the acceptance criteria are reviewed and remaining manual checks are honestly marked.
 See [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md) for scope and acceptance criteria. Follow [docs/MOTION_LAB_PLAN.md](docs/MOTION_LAB_PLAN.md) for the longer-term gallery and comparison direction.
 
