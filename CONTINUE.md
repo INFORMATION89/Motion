@@ -1,90 +1,56 @@
 # Continue
 
-This file is the working handoff for the next development session. Keep it current when the milestone, branch, CI state, or immediate next steps change. It is an execution guide, not a substitute for the design documents.
+This file is the working handoff for the next development session. Keep it current with the branch, CI state, verified evidence, and immediate next actions.
 
 ## Read first
 
-1. [Project rules](docs/RULES.md) — how Motion work is planned, implemented, reviewed, and accepted.
-2. [Agent instructions](AGENTS.md) — repository-wide constraints for AI coding assistants.
-3. [MOT0.2 plan](docs/MOT0.2_PLAN.md) — current milestone scope, phases, and acceptance criteria.
-4. [Framework overview](docs/FRAMEWORK_OVERVIEW.md) — what belongs in Motion and what belongs in app/UI libraries.
-5. [Platform support](docs/PLATFORM_SUPPORT.md) — current Android integration and future platform requirements.
-6. [Solstice AI adoption guide](docs/AI_SOLSTICE_ADOPTION.md) — how to create the adoption plan without prematurely migrating code.
-7. [Motion principles](docs/MOTION.md), [Morph study](docs/MORPH_STUDY.md), [Motion Lab design](docs/MOTION_LAB_PLAN.md), and [module API](motion/README.md).
+1. [Project rules](docs/RULES.md) and [agent instructions](AGENTS.md).
+2. [MOT0.3A execution plan](docs/MOT0.3A_PLAN.md).
+3. [Framework overview](docs/FRAMEWORK_OVERVIEW.md) and [platform support](docs/PLATFORM_SUPPORT.md).
+4. [Motion UI theme API](motion-ui/README.md) and [Core API](motion/README.md).
+5. [Solstice adoption guide](docs/AI_SOLSTICE_ADOPTION.md).
 
-## Project guardrails
+## Guardrails
 
-- Motion is an independent, reusable Android/Jetpack Compose framework. It must not depend on Solstice or import application code.
-- Motion Core owns behavior. The planned optional Motion UI layer may provide configurable components; app branding, navigation policy, screens, and product behavior remain with consuming apps.
-- Compose remains the animation and interaction foundation. Do not introduce a separate universal physics engine.
-- Prioritize interruptible motion, continuous velocity, predictable gesture ownership, and explicit input contracts.
-- Desktop and iOS are not currently supported. A multiplatform port requires a separate design and verification plan.
-- Do not change agreed, user-visible motion behavior or add a new public Core API without a documented proposal and owner agreement.
+- Motion is an independent Android / Jetpack Compose framework.
+- `:motion-ui` is optional and depends on `:motion`; Core must never depend on UI.
+- Apps own their brand values, domain, screens, routing, and product behavior. Motion UI provides configurable reusable building blocks only.
+- Material 3 remains the source for standard controls, typography, and accessibility semantics.
+- Do not copy Solstice / Breezy source, assets, resources, or branding into Motion.
+- Do not add Haze until its exact version, licence, maintenance, compatibility, and fallback are reviewed.
+- Do not update Solstice's submodule or touch its consumer PR as part of this milestone.
+- Android API 29+, compile SDK 37, JDK 21. iOS and desktop are unsupported.
+- Use focused checks during iteration and one complete required CI run on the final PR head. Report device, TalkBack, contrast, and haptic checks as deferred unless actually run.
 
-## Current verified baseline
+## Verified project state
 
-- `main`: `130c8abb7a1ca6613d70796255f9385362bb0f41` (PR #8 squash merge).
-- MOT0.1 is complete and merged.
-- MOT0.2 is complete and merged through PR #7; its follow-up gallery organization and automatic system theme are merged through PR #8.
-- PR #9 (Project Rules), PR #7 (Standalone Motion Lab), and PR #8 (Components / Interactions and system theme) are all merged. There are no open PRs or open issues at this handoff.
-- Latest exact-head PR verification: CI #108 passed on `88a97e625d1aead19bc2a00bd36f1ff92eb90f2c`, including the `Verify and build` step. The squash merge commit is `130c8abb7a1ca6613d70796255f9385362bb0f41`.
-- Current library platform baseline: Android / Jetpack Compose, min SDK 29, compile SDK 37, JDK 21. iOS and desktop (Windows, macOS, Linux) remain unsupported.
-- Emulator and physical-device validation, TalkBack runtime behavior, contrast inspection, and real haptic output remain `NOT TESTED` / `DEFERRED`. CI success is not device validation.
+- MOT0.1 and MOT0.2 are complete.
+- MOT0.3 has owner approval to begin MOT0.3A.
+- Implementation branch: `feat/mot03a-theme-foundation`.
+- MOT0.3A creates the optional `:motion-ui` Android library and includes it in Gradle.
+- Initial API: `MotionUiTheme`, `MotionUiThemeTokens.current`, `MotionUiTokens`, `MotionUiShapes`, `MotionUiSpacing`, and `MotionUiMaterials`.
+- Token defaults are derived from the caller's Material 3 color scheme; app overrides are supported.
+- Focused unit tests cover default light/dark material values and custom token overrides.
+- Required CI has been updated to run Motion UI tests and release assembly.
+- Verification of the implementation branch is pending; do not treat source creation as a passing build.
+- The earlier documentation proposal remains tracked separately in PR #12 until its disposition is decided.
 
-## MOT0.1 — complete
+## MOT0.3A acceptance
 
-Core reliability work is merged. Do not reopen it without a reproduced regression or a separate, scoped requirement. The historical acceptance plan remains in [docs/MOT0.1_PLAN.md](docs/MOT0.1_PLAN.md).
+- [ ] `:motion-ui` builds as an independent Android library.
+- [ ] Dependency direction is UI → Core only.
+- [ ] Theme defaults and app overrides pass focused tests.
+- [ ] Spotless and full required CI pass on the exact final PR head.
+- [ ] README, API docs, and CI reflect the delivered module.
+- [ ] No Solstice code, submodule pointer, Haze dependency, or unsupported platform work is introduced.
 
-## MOT0.2 — complete
+## Next steps
 
-The standalone `:motion-lab` Android sample is merged into `main`. It depends on `:motion`, has its own application identity and launcher activity, and remains independent of Solstice and the planned `:motion-ui` module.
+1. Inspect and fix the first CI run for compile, formatting, or dependency issues.
+2. Confirm the module API and tests against the exact branch head.
+3. Keep the PR in draft until acceptance checks pass.
+4. After MOT0.3A is stable, plan the first card-surface component as a separate small delivery. Do not start sheet, page-frame, or glass work in this batch.
 
-The Lab currently includes:
-- Components and Interactions top-level Material 3 tabs.
-- Automatic light/dark appearance following the system setting.
-- Spring/release, Morph, page movement, dial, semantic haptics, and scroll edge-blur demonstrations.
-- Synchronized Motion-vs-Compose comparisons for Morph and page movement.
-- Slow-motion control that restores `MotionTime.scale` when the root composition is disposed.
+## Deferred validation
 
-PR #7 delivered the standalone app foundation and demos. PR #8 added the two-section navigation and system theme. Both are merged. The exact PR #8 head passed CI #108 before squash merge. See [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md) for milestone scope and [docs/MOTION_LAB_PLAN.md](docs/MOTION_LAB_PLAN.md) for the longer-term Lab direction.
-
-### Remaining validation
-
-- Install and exercise the Lab on an emulator and a physical Android device.
-- Verify tab navigation, demo interactions, light/dark transitions, screen-reader labels and traversal, and contrast.
-- Verify real haptic output on supported hardware and record device/API details.
-- Keep all of the above marked deferred until actually performed.
-
-## Next milestone
-
-MOT0.2 is closed. Do not silently expand it. The next engineering step is to review [docs/MOTION_REPO_PLAN.md](docs/MOTION_REPO_PLAN.md), [docs/FRAMEWORK_OVERVIEW.md](docs/FRAMEWORK_OVERVIEW.md), and [docs/PLATFORM_SUPPORT.md](docs/PLATFORM_SUPPORT.md) together, then prepare a narrowly scoped proposal for the next reusable Motion capability. Keep `:motion-ui` optional and separate from Core; do not begin a multiplatform port or add public APIs without a documented gap, contract, tests, and owner agreement.
-
-Opus review remains optional for a later high-complexity or high-risk task; it is not a blocker for routine work.
-
-## Local setup and verification
-
-The repository specifies JDK 21 and Android SDK / Build Tools 37.
-
-On Windows PowerShell:
-
-```powershell
-git fetch origin
-git switch main
-git pull --ff-only
-git status --short --branch
-java -version
-.\gradlew.bat --version
-.\gradlew.bat spotlessCheck
-.\gradlew.bat :motion:testDebugUnitTest
-.\gradlew.bat :motion:assembleRelease
-```
-
-On macOS/Linux, use `./gradlew` instead of `gradlew.bat`.
-
-For MOT0.2, also run:
-
-```bash
-./gradlew :motion-lab:assembleDebug
-```
-
-Use the exact branch-head SHA and its CI result as evidence. Physical-device and emulator checks are separate from CI and remain deferred until actually run.
+Emulator / physical-device behavior, TalkBack traversal, contrast inspection, and hardware haptics remain NOT TESTED until run on real supported environments.
