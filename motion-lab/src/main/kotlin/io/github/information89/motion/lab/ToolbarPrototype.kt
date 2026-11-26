@@ -187,7 +187,8 @@ internal fun ToolbarPrototype() {
             }
         )
         Text(
-            "Long-press the selected tab and drag across the row. A tap or keyboard activation requests a destination; the pager remains the source of truth.",
+            "Long-press the selected tab and drag across the row. " +
+                "A tap or keyboard action requests a destination; the pager remains the source of truth.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -373,6 +374,11 @@ private fun ToolbarPrototypeBar(
                             val labelWidth = with(density) { labelLayout.size.width.toDp() }
                             val isCommittedSelection = selectedTabId == destination.id
                             val isVisuallySelected = fraction >= 0.5f
+                            val tabContentColor = if (isVisuallySelected) {
+                                appearance.selectedContent
+                            } else {
+                                appearance.unselectedContent
+                            }
                             Row(
                                 modifier = Modifier
                                     .onGloballyPositioned { coordinates ->
@@ -442,7 +448,7 @@ private fun ToolbarPrototypeBar(
                                 Text(
                                     destination.symbol,
                                     style = MaterialTheme.typography.titleMedium,
-                                    color = if (isVisuallySelected) appearance.selectedContent else appearance.unselectedContent
+                                    color = tabContentColor
                                 )
                                 Spacer(Modifier.width(8.dp * fraction))
                                 Box(
