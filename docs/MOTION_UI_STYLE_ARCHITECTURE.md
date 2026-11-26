@@ -43,7 +43,7 @@ Do not require every application to enable every effect. A simpler Material 3 Ex
 ## Delivery plan
 
 1. Complete and review the MOT0.3A theme/token foundation.
-2. Review the dedicated [MOT0.3B toolbar contract](MOT0.3B_TOOLBAR_PLAN.md).
+2. Define and review the dedicated MOT0.3B toolbar contract.
 3. Prototype the toolbar in Motion Lab, applying at least two visual profiles to the same interaction state and callbacks.
 4. Verify accessibility, reduced motion, gesture interruption, and application configuration before public API hardening.
 5. Deliver reusable card/surface components after the toolbar contract and prototype are established.
