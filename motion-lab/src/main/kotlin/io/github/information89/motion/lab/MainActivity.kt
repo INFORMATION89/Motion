@@ -64,11 +64,10 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.github.information89.motion.Dial
-import io.github.information89.motion.Haptic
-import io.github.information89.motion.haptics
 import io.github.information89.motion.DialLook
 import io.github.information89.motion.DialScale
 import io.github.information89.motion.EdgeBand
+import io.github.information89.motion.Haptic
 import io.github.information89.motion.Morph
 import io.github.information89.motion.MorphHost
 import io.github.information89.motion.Motion
@@ -76,6 +75,7 @@ import io.github.information89.motion.MotionSpring
 import io.github.information89.motion.MotionTime
 import io.github.information89.motion.PageOvershoot
 import io.github.information89.motion.edgeBlur
+import io.github.information89.motion.haptics
 import io.github.information89.motion.morphAnchor
 import io.github.information89.motion.morphSource
 import io.github.information89.motion.motionDrag
