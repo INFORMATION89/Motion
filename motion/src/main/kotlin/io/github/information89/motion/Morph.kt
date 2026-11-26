@@ -73,6 +73,10 @@ data class MorphAnchor(val bounds: Rect, val cornerRadius: Float) {
         require(bounds.right >= bounds.left && bounds.bottom >= bounds.top) {
             "MorphAnchor bounds must not be inverted"
         }
+        require(
+            bounds.width.isFinite() && bounds.height.isFinite() &&
+                bounds.center.x.isFinite() && bounds.center.y.isFinite()
+        ) { "MorphAnchor derived geometry must be finite" }
         require(cornerRadius.isFinite() && cornerRadius >= 0f) {
             "MorphAnchor cornerRadius must be finite and non-negative"
         }
