@@ -94,7 +94,6 @@ On Windows, use `gradlew.bat` instead of `./gradlew`.
 - [AI usage and cost policy](docs/AI_USAGE_POLICY.md)
 - [MOT0.2 standalone Motion Lab plan](docs/MOT0.2_PLAN.md)
 - [MOT0.3A Motion UI foundation](docs/MOT0.3A_PLAN.md)
-- [MOT0.3B animated toolbar plan](docs/MOT0.3B_TOOLBAR_PLAN.md)
 - [Legacy prototype disposition](docs/LEGACY_PROTOTYPE_DISPOSITION.md)
 - [Motion UI theme and token API](motion-ui/README.md)
 - [Motion Lab app and build guide](motion-lab/README.md)
