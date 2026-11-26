@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 data class MotionUiTokens(
     val shapes: MotionUiShapes = MotionUiShapes(),
     val spacing: MotionUiSpacing = MotionUiSpacing(),
-    val materials: MotionUiMaterials
+    val materials: MotionUiMaterials,
 ) {
     companion object {
         /** Creates neutral defaults derived from the supplied Material color scheme. */
@@ -61,7 +61,7 @@ data class MotionUiTokens(
 @Immutable
 data class MotionUiShapes(
     val card: Shape = RoundedCornerShape(24.dp),
-    val sheet: Shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
+    val sheet: Shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
 )
 
 /** A deliberately small spacing scale for shared component layouts. */
@@ -69,7 +69,7 @@ data class MotionUiShapes(
 data class MotionUiSpacing(
     val compact: Dp = 8.dp,
     val medium: Dp = 16.dp,
-    val large: Dp = 24.dp
+    val large: Dp = 24.dp,
 )
 
 /** Surface material roles; actual brand colors and opacity remain app-owned. */
@@ -77,7 +77,7 @@ data class MotionUiSpacing(
 data class MotionUiMaterials(
     val cardContainer: Color,
     val glassContainer: Color,
-    val cardElevation: Dp = 1.dp
+    val cardElevation: Dp = 1.dp,
 )
 
 private val LocalMotionUiTokens = staticCompositionLocalOf { MotionUiTokens.defaults(lightColorScheme()) }
@@ -94,7 +94,7 @@ fun MotionUiTheme(
     typography: Typography = Typography(),
     shapes: Shapes = Shapes(),
     tokens: MotionUiTokens = MotionUiTokens.defaults(colorScheme),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(LocalMotionUiTokens provides tokens) {
         MaterialTheme(
