@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -298,6 +299,23 @@ private fun SpringsDemo() {
 
 @Composable
 private fun MorphDemo() {
+    var compare by rememberSaveable { mutableStateOf(false) }
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        FilterChip(
+            selected = compare,
+            onClick = { compare = !compare },
+            label = { Text("Compare with Compose") }
+        )
+        if (compare) {
+            MorphComparisonDemo()
+        } else {
+            MorphMotionDemo()
+        }
+    }
+}
+
+@Composable
+private fun MorphMotionDemo() {
     val motion = rememberMotionValue(initial = 0f, overMin = 0.06f, overMax = 0.08f)
     val visible by remember(motion) {
         derivedStateOf { motion.value > 0.001f || motion.isRunning }
@@ -356,6 +374,120 @@ private fun MorphDemo() {
             }
         }
         Text("The morph uses measured source and target anchors. Its content is revealed as the surface grows.")
+    }
+}
+
+@Composable
+private fun MorphComparisonDemo() {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    val motion = rememberMotionValue(initial = 0f, overMin = 0.04f, overMax = 0.04f)
+    val visible by remember(motion) {
+        derivedStateOf { motion.value > 0.001f || motion.isRunning }
+    }
+    LaunchedEffect(expanded) {
+        motion.animateTo(if (expanded) 1f else 0f)
+    }
+
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Button(onClick = { expanded = !expanded }) {
+            Text(if (expanded) "Close both" else "Open both")
+        }
+        Card(
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+        ) {
+            Column(
+                Modifier.fillMaxWidth().padding(14.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text("Motion · measured container morph", style = MaterialTheme.typography.titleMedium)
+                MorphHost(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(220.dp)
+                ) {
+                    Box(Modifier.fillMaxSize()) {
+                        Surface(
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .morphAnchor("compare-source", 24.dp)
+                                .morphSource("compare-source", 24.dp),
+                            shape = RoundedCornerShape(24.dp),
+                            color = MaterialTheme.colorScheme.secondaryContainer
+                        ) {
+                            Box(Modifier.padding(horizontal = 22.dp, vertical = 10.dp)) {
+                                Text("Profile", style = MaterialTheme.typography.titleMedium)
+                            }
+                        }
+                        Spacer(
+                            Modifier
+                                .align(Alignment.BottomCenter)
+                                .fillMaxWidth()
+                                .height(154.dp)
+                                .morphAnchor("compare-target", 28.dp)
+                        )
+                        if (visible) {
+                            Morph(
+                                from = "compare-source",
+                                to = "compare-target",
+                                value = motion,
+                                modifier = Modifier.fillMaxSize(),
+                                surface = Modifier.background(MaterialTheme.colorScheme.primaryContainer)
+                            ) {
+                                Column(
+                                    Modifier
+                                        .fillMaxSize()
+                                        .padding(18.dp)
+                                        .reveal(motion, 0.3f, 0.7f),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Text("Profile details", style = MaterialTheme.typography.titleMedium)
+                                    Text("A surface travels from its measured source into its destination.")
+                                    Text("The content appears as the container grows.")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        Card(
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+        ) {
+            Column(
+                Modifier.fillMaxWidth().padding(14.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text("Compose · default AnimatedVisibility", style = MaterialTheme.typography.titleMedium)
+                Surface(
+                    shape = RoundedCornerShape(24.dp),
+                    color = MaterialTheme.colorScheme.secondaryContainer
+                ) {
+                    Box(Modifier.padding(horizontal = 22.dp, vertical = 10.dp)) {
+                        Text("Profile", style = MaterialTheme.typography.titleMedium)
+                    }
+                }
+                AnimatedVisibility(visible = expanded) {
+                    Surface(
+                        Modifier.fillMaxWidth().height(154.dp),
+                        shape = RoundedCornerShape(28.dp),
+                        color = MaterialTheme.colorScheme.primaryContainer
+                    ) {
+                        Column(
+                            Modifier.fillMaxSize().padding(18.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text("Profile details", style = MaterialTheme.typography.titleMedium)
+                            Text("Compose reveals a separate destination below the source.")
+                            Text("This uses AnimatedVisibility's default enter and exit.")
+                        }
+                    }
+                }
+            }
+        }
+        Text(
+            "One control opens and closes both previews. Motion morphs between measured anchors; Compose uses its default AnimatedVisibility transition.",
+            style = MaterialTheme.typography.bodySmall
+        )
     }
 }
 
