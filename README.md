@@ -91,6 +91,7 @@ On Windows, use `gradlew.bat` instead of `./gradlew`.
 - [Repository instructions for AI agents](AGENTS.md)
 - [AI usage and cost policy](docs/AI_USAGE_POLICY.md)
 - [MOT0.2 standalone Motion Lab plan](docs/MOT0.2_PLAN.md)
+- [MOT0.3 Motion UI proposal](docs/MOT0.3_PLAN.md)
 - [Motion Lab app and build guide](motion-lab/README.md)
 
 ## Project status
