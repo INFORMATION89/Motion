@@ -26,7 +26,7 @@ This file is the working handoff for the next development session. Keep it curre
 
 - Branch: `work/consolidated-docs-platforms`
 - MOT0.1 remains draft until the MorphMotion interruption, reversal, target/source retargeting, gesture supersession, and non-finite input contracts are covered by deterministic tests.
-- Latest PR head checked: `ab02bbb6d2a627802e4f1c428fef3247e59bb335`.
+- Last inspected code head: `ab02bbb6d2a627802e4f1c428fef3247e59bb335`. Later commits in this branch only synchronize documentation; they do not change the code covered by run #38.
 - GitHub Actions run [#38](https://github.com/INFORMATION89/Motion-UI/actions/runs/45737129108) failed at `:motion:spotlessKotlinCheck` because `MorphMotionTest.kt` needs one blank line between tests. Unit tests and library build were skipped; neither has a result for this head.
 - Fix the exact formatting issue as part of the next coherent batch. Do not rerun the full workflow just for documentation edits; after the remaining MOT0.1 code/test batch is complete, run the required workflow once on its exact final head.
 - PRs #1–#3 were consolidated into PR #4. Do not treat their old branch names, SHAs, or CI runs as current evidence.
