@@ -401,10 +401,11 @@ class MorphMotionTest {
         motion.close()
         advanceMorphFrames(5)
 
-        motion.drag(0.5f)
+        motion.drag(1f)
         advanceMorphFrames(30)
         motion.isVisible shouldBe true
         motion.isMoving shouldBe false
+        (motion.progress > 0.5f) shouldBe true
         val draggedBounds = motion.bounds
         advanceMorphFrames(20)
         motion.bounds shouldBe draggedBounds
