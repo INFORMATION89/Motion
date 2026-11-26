@@ -48,7 +48,7 @@ val cardColor = tokens.materials.cardContainer
 
 - `:motion-ui` depends on `:motion`; Core never depends on UI.
 - Material 3 remains responsible for standard controls, typography, and semantics.
-- No Solstice or Breezy code, resources, assets, or branding are included.
+- No consumer-specific or third-party application code, resources, assets, or branding are included.
 - No Haze dependency or blur implementation is included in MOT0.3A.
 - The module currently targets Android / Jetpack Compose only.
 
