@@ -17,7 +17,7 @@ Use `gradlew.bat` on Windows.
 
 - **Springs and release:** compare Motion spring tokens, then drag and release a MotionValue.
 - **Morph:** open a surface from its measured source anchor, and scrub it closed with a drag.
-- **Page movement:** swipe pages or select a page using spring-driven movement and overshoot.
+- **Page movement:** swipe pages with Motion's spring fling, or compare Motion's `springToPage` with Compose's default pager animation. The comparison sends the same selected destination to both previews.
 - **Dial:** drag, flick, and snap a dial across a finite range.
 - **Scroll edge blur:** explore progressive blur and fade at the edges of a horizontal list.
 
