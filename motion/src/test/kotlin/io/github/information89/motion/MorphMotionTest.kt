@@ -388,7 +388,6 @@ class MorphMotionTest {
         motion.bounds.center.x shouldBe (200f plusOrMinus 0.1f)
     }
 
-
     @Test
     fun `drag takes over a closing morph and release resumes from its current path`() = morphMotionTest {
         val motion = MorphMotion(this)
