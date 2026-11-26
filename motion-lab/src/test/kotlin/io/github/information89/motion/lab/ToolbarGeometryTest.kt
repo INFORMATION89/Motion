@@ -152,6 +152,90 @@ class ToolbarGeometryTest {
     }
 
     @Test
+    fun `edge auto scroll accelerates toward the nearest physical edge`() {
+        val left = toolbarEdgeScrollDelta(
+            pointerViewportX = 4f,
+            viewportWidthPx = 300f,
+            frameSeconds = 1f / 60f,
+            reverseDirection = false,
+            edgeSizePx = 48f,
+            maxSpeedPxPerSecond = 900f
+        )
+        val right = toolbarEdgeScrollDelta(
+            pointerViewportX = 296f,
+            viewportWidthPx = 300f,
+            frameSeconds = 1f / 60f,
+            reverseDirection = false,
+            edgeSizePx = 48f,
+            maxSpeedPxPerSecond = 900f
+        )
+
+        (left < 0f) shouldBe true
+        (right > 0f) shouldBe true
+        toolbarEdgeScrollDelta(
+            pointerViewportX = 150f,
+            viewportWidthPx = 300f,
+            frameSeconds = 1f / 60f,
+            reverseDirection = false,
+            edgeSizePx = 48f,
+            maxSpeedPxPerSecond = 900f
+        ) shouldBe 0f
+    }
+
+    @Test
+    fun `edge auto scroll mirrors its direction in RTL`() {
+        val ltrLeft = toolbarEdgeScrollDelta(
+            4f,
+            300f,
+            1f / 60f,
+            reverseDirection = false,
+            edgeSizePx = 48f,
+            maxSpeedPxPerSecond = 900f
+        )
+        val rtlLeft = toolbarEdgeScrollDelta(
+            4f,
+            300f,
+            1f / 60f,
+            reverseDirection = true,
+            edgeSizePx = 48f,
+            maxSpeedPxPerSecond = 900f
+        )
+
+        (ltrLeft < 0f) shouldBe true
+        (rtlLeft > 0f) shouldBe true
+        rtlLeft shouldBe -ltrLeft
+    }
+
+    @Test
+    fun `viewport and content pointer coordinates round trip in LTR and RTL`() {
+        val ltrContent = toolbarContentPosition(42f, 120f, reverseDirection = false)
+        toolbarViewportPosition(ltrContent, 120f, reverseDirection = false) shouldBe 42f
+
+        val rtlContent = toolbarContentPosition(42f, 120f, reverseDirection = true)
+        toolbarViewportPosition(rtlContent, 120f, reverseDirection = true) shouldBe 42f
+    }
+
+    @Test
+    fun `edge auto scroll rejects invalid frame and geometry values`() {
+        toolbarEdgeScrollDelta(
+            Float.NaN,
+            300f,
+            1f / 60f,
+            reverseDirection = false,
+            edgeSizePx = 48f,
+            maxSpeedPxPerSecond = 900f
+        ) shouldBe 0f
+        toolbarEdgeScrollDelta(
+            4f,
+            300f,
+            Float.POSITIVE_INFINITY,
+            reverseDirection = false,
+            edgeSizePx = 48f,
+            maxSpeedPxPerSecond = 900f
+        ) shouldBe 0f
+    }
+
+    @Test
     fun `duplicate tab IDs are rejected`() {
         val failure = runCatching {
             toolbarSelectionFractions(

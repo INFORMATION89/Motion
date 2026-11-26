@@ -103,6 +103,58 @@ internal fun toolbarAdjacentTabId(
     return tabIds[targetIndex]
 }
 
+
+internal fun toolbarContentPosition(
+    viewportPositionPx: Float,
+    scrollOffsetPx: Float,
+    reverseDirection: Boolean,
+): Float {
+    val direction = if (reverseDirection) -1f else 1f
+    return viewportPositionPx + scrollOffsetPx * direction
+}
+
+internal fun toolbarViewportPosition(
+    contentPositionPx: Float,
+    scrollOffsetPx: Float,
+    reverseDirection: Boolean,
+): Float {
+    val direction = if (reverseDirection) -1f else 1f
+    return contentPositionPx - scrollOffsetPx * direction
+}
+
+internal fun toolbarEdgeScrollDelta(
+    pointerViewportX: Float,
+    viewportWidthPx: Float,
+    frameSeconds: Float,
+    reverseDirection: Boolean,
+    edgeSizePx: Float,
+    maxSpeedPxPerSecond: Float,
+): Float {
+    if (
+        !pointerViewportX.isFinite() ||
+        !viewportWidthPx.isFinite() ||
+        !frameSeconds.isFinite() ||
+        !edgeSizePx.isFinite() ||
+        !maxSpeedPxPerSecond.isFinite() ||
+        viewportWidthPx <= 0f ||
+        frameSeconds <= 0f ||
+        edgeSizePx <= 0f ||
+        maxSpeedPxPerSecond <= 0f
+    ) {
+        return 0f
+    }
+
+    val edge = minOf(edgeSizePx, viewportWidthPx / 2f)
+    val leftStrength = ((edge - pointerViewportX) / edge).coerceIn(0f, 1f)
+    val rightStrength = (
+        (pointerViewportX - (viewportWidthPx - edge)) / edge
+    ).coerceIn(0f, 1f)
+    val velocity = (rightStrength * rightStrength - leftStrength * leftStrength) *
+        maxSpeedPxPerSecond
+    val direction = if (reverseDirection) -1f else 1f
+    return velocity * frameSeconds * direction
+}
+
 internal fun nearestToolbarTabId(
     tabIds: List<String>,
     boundsById: Map<String, ToolbarTabBounds>,

@@ -20,15 +20,20 @@ import android.animation.ValueAnimator
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.gestures.stopScroll
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +53,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -62,13 +68,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusGroup
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
@@ -133,6 +144,7 @@ internal fun ToolbarPrototype() {
     val reducedMotion = !ValueAnimator.areAnimatorsEnabled()
     var profile by remember { mutableStateOf(ToolbarVisualProfile.EXPRESSIVE) }
     var showContextAction by remember { mutableStateOf(true) }
+    var contextActionDetached by remember { mutableStateOf(false) }
     var hapticsEnabled by remember { mutableStateOf(false) }
     var actionActive by remember { mutableStateOf(false) }
 
@@ -178,6 +190,11 @@ internal fun ToolbarPrototype() {
                 label = { Text("Context action") }
             )
             FilterChip(
+                selected = contextActionDetached,
+                onClick = { contextActionDetached = !contextActionDetached },
+                label = { Text("Detach action") }
+            )
+            FilterChip(
                 selected = hapticsEnabled,
                 onClick = { hapticsEnabled = !hapticsEnabled },
                 label = { Text("Haptics") }
@@ -188,6 +205,7 @@ internal fun ToolbarPrototype() {
             hostProgress = hostProgress,
             profile = profile,
             showContextAction = showContextAction,
+            contextActionDetached = contextActionDetached,
             actionActive = actionActive,
             hapticsEnabled = hapticsEnabled,
             onActionClick = { actionActive = !actionActive },
@@ -198,7 +216,8 @@ internal fun ToolbarPrototype() {
         )
         Text(
             "Long-press the selected tab and drag across the row. " +
-                "A tap or keyboard action requests a destination; the pager remains the source of truth.",
+                "A tap or keyboard action requests a destination; the pager remains the source of truth. " +
+                "Use Detach action to inspect the connector retracting into a separate target.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -256,6 +275,7 @@ private fun ToolbarPrototypeBar(
     hostProgress: ToolbarHostProgress?,
     profile: ToolbarVisualProfile,
     showContextAction: Boolean,
+    contextActionDetached: Boolean,
     actionActive: Boolean,
     hapticsEnabled: Boolean,
     onActionClick: () -> Unit,
@@ -286,13 +306,33 @@ private fun ToolbarPrototypeBar(
     }
     val feedback = haptics()
     val reducedMotion = !ValueAnimator.areAnimatorsEnabled()
+    val detachmentTarget = if (contextActionDetached) 1f else 0f
+    val detachmentProgress by animateFloatAsState(
+        targetValue = detachmentTarget,
+        animationSpec = if (reducedMotion) snap() else Motion.playful.spec(),
+        label = "toolbar-action-detachment"
+    )
+    val connectorGap by animateDpAsState(
+        targetValue = if (contextActionDetached) 8.dp else 0.dp,
+        animationSpec = if (reducedMotion) snap() else Motion.control.spec(),
+        label = "toolbar-action-gap"
+    )
+    val actionLeadingCorner by animateDpAsState(
+        targetValue = if (contextActionDetached) 24.dp else 12.dp,
+        animationSpec = if (reducedMotion) snap() else Motion.control.spec(),
+        label = "toolbar-action-leading-corner"
+    )
     val scrollState = rememberScrollState()
     val textMeasurer = rememberTextMeasurer()
     val tabBounds = remember { mutableStateMapOf<String, ToolbarTabBounds>() }
     var viewportWidthPx by remember { mutableFloatStateOf(0f) }
     var dragging by remember { mutableStateOf(false) }
+    var dragPointerViewportX by remember { mutableFloatStateOf(0f) }
     var dragTargetId by remember { mutableStateOf<String?>(null) }
     var settlingTargetId by remember { mutableStateOf<String?>(null) }
+    var focusedTabId by remember(selectedTabId) { mutableStateOf(selectedTabId) }
+    var pendingFocusRequestId by remember { mutableStateOf<String?>(null) }
+    var toolbarHasFocus by remember { mutableStateOf(false) }
 
     val activeSettlingTargetId = settlingTargetId?.takeUnless {
         it == selectedTabId || hostProgress != null
@@ -322,6 +362,15 @@ private fun ToolbarPrototypeBar(
     val latestOnSelectionRequest by rememberUpdatedState(onSelectionRequest)
     val latestOnSelectionInteractionStarted by rememberUpdatedState(onSelectionInteractionStarted)
 
+    LaunchedEffect(selectedTabId, toolbarHasFocus) {
+        if (!toolbarHasFocus) focusedTabId = selectedTabId
+    }
+    LaunchedEffect(pendingFocusRequestId) {
+        val targetId = pendingFocusRequestId ?: return@LaunchedEffect
+        withFrameNanos { }
+        focusRequesters[targetId]?.requestFocus()
+        pendingFocusRequestId = null
+    }
     LaunchedEffect(selectedTabId, hostProgress != null, settlingTargetId) {
         if (
             settlingTargetId != null &&
@@ -332,28 +381,68 @@ private fun ToolbarPrototypeBar(
     }
     LaunchedEffect(
         selectedTabId,
+        focusedTabId,
+        toolbarHasFocus,
         hostProgress == null,
         dragging,
         activeSettlingTargetId,
         viewportWidthPx,
-        tabBounds[selectedTabId],
+        tabBounds[if (toolbarHasFocus) focusedTabId else selectedTabId],
         scrollState.maxValue
     ) {
         if (hostProgress != null || dragging || activeSettlingTargetId != null) return@LaunchedEffect
-        val selected = tabBounds[selectedTabId] ?: return@LaunchedEffect
+        val targetId = if (toolbarHasFocus) focusedTabId else selectedTabId
+        val targetBounds = tabBounds[targetId] ?: return@LaunchedEffect
         if (viewportWidthPx <= 0f) return@LaunchedEffect
-        val target = (selected.centerPx - viewportWidthPx / 2f)
+        val target = (targetBounds.centerPx - viewportWidthPx / 2f)
             .roundToInt()
             .coerceIn(0, scrollState.maxValue)
         if (target != scrollState.value) {
             if (reducedMotion) scrollState.scrollTo(target) else scrollState.animateScrollTo(target)
         }
     }
+    LaunchedEffect(dragging, layoutDirection, hapticsEnabled) {
+        if (!dragging) return@LaunchedEffect
+        val reverseDirection = layoutDirection == LayoutDirection.Rtl
+        val edgeSize = with(density) { 48.dp.toPx() }
+        val maxSpeed = with(density) { 900.dp.toPx() }
+        var previousFrameNanos = 0L
+        while (dragging) {
+            val frameNanos = withFrameNanos { it }
+            if (previousFrameNanos != 0L) {
+                val frameSeconds = (
+                    (frameNanos - previousFrameNanos) / 1_000_000_000f
+                ).coerceIn(0f, 0.05f)
+                val delta = toolbarEdgeScrollDelta(
+                    pointerViewportX = dragPointerViewportX,
+                    viewportWidthPx = viewportWidthPx,
+                    frameSeconds = frameSeconds,
+                    reverseDirection = reverseDirection,
+                    edgeSizePx = edgeSize,
+                    maxSpeedPxPerSecond = maxSpeed
+                )
+                if (delta != 0f) {
+                    scrollState.scrollBy(delta)
+                    val contentX = toolbarContentPosition(
+                        viewportPositionPx = dragPointerViewportX,
+                        scrollOffsetPx = scrollState.value.toFloat(),
+                        reverseDirection = reverseDirection
+                    )
+                    val next = nearestToolbarTabId(ids, tabBounds, contentX)
+                    if (next != null && next != dragTargetId) {
+                        dragTargetId = next
+                        if (hapticsEnabled) feedback.perform(Haptic.detent)
+                    }
+                }
+            }
+            previousFrameNanos = frameNanos
+        }
+    }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(0.dp)
     ) {
         Box(
             modifier = Modifier
@@ -381,7 +470,11 @@ private fun ToolbarPrototypeBar(
                         )
                     }
                     Row(
-                        modifier = Modifier.align(Alignment.CenterStart).selectableGroup(),
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .selectableGroup()
+                            .focusGroup()
+                            .onFocusChanged { toolbarHasFocus = it.hasFocus },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         toolbarDestinations.forEach { destination ->
@@ -411,7 +504,23 @@ private fun ToolbarPrototypeBar(
                                         }
                                     }
                                     .clip(RoundedCornerShape(24.dp))
+                                    .then(
+                                        if (toolbarHasFocus && focusedTabId == destination.id) {
+                                            Modifier.border(
+                                                BorderStroke(2.dp, colors.primary),
+                                                RoundedCornerShape(24.dp)
+                                            )
+                                        } else {
+                                            Modifier
+                                        }
+                                    )
                                     .focusRequester(focusRequesters.getValue(destination.id))
+                                    .focusProperties { canFocus = focusedTabId == destination.id }
+                                    .onFocusChanged {
+                                        if (it.isFocused && focusedTabId != destination.id) {
+                                            focusedTabId = destination.id
+                                        }
+                                    }
                                     .onPreviewKeyEvent { event ->
                                         if (event.type != KeyEventType.KeyDown) {
                                             return@onPreviewKeyEvent false
@@ -431,9 +540,10 @@ private fun ToolbarPrototypeBar(
                                             backwardKey -> toolbarAdjacentTabId(ids, destination.id, forward = false)
                                             else -> null
                                         } ?: return@onPreviewKeyEvent false
-                                        val focused = focusRequesters[targetId]?.requestFocus() ?: false
-                                        if (focused) latestOnSelectionRequest(targetId)
-                                        focused
+                                        focusedTabId = targetId
+                                        pendingFocusRequestId = targetId
+                                        latestOnSelectionRequest(targetId)
+                                        true
                                     }
                                     .semantics {
                                         role = Role.Tab
@@ -443,9 +553,8 @@ private fun ToolbarPrototypeBar(
                                     .clickable(role = Role.Tab) {
                                         latestOnSelectionRequest(destination.id)
                                     }
-                                    .pointerInput(destination.id, selectedTabId, hapticsEnabled) {
+                                    .pointerInput(destination.id, selectedTabId, hapticsEnabled, layoutDirection) {
                                         if (destination.id == selectedTabId) {
-                                            var pointerX = 0f
                                             detectDragGesturesAfterLongPress(
                                                 onDragStart = { start ->
                                                     val measured = tabBounds[destination.id]
@@ -455,14 +564,23 @@ private fun ToolbarPrototypeBar(
                                                         settlingTargetId = null
                                                         latestOnSelectionInteractionStarted()
                                                         if (hapticsEnabled) feedback.perform(Haptic.press)
-                                                        pointerX = measured.leftPx + start.x
+                                                        dragPointerViewportX = toolbarViewportPosition(
+                                                            contentPositionPx = measured.leftPx + start.x,
+                                                            scrollOffsetPx = scrollState.value.toFloat(),
+                                                            reverseDirection = layoutDirection == LayoutDirection.Rtl
+                                                        )
                                                     }
                                                 },
                                                 onDrag = { change, amount ->
                                                     change.consume()
                                                     if (dragging) {
-                                                        pointerX += amount.x
-                                                        val next = nearestToolbarTabId(ids, tabBounds, pointerX)
+                                                        dragPointerViewportX += amount.x
+                                                        val contentX = toolbarContentPosition(
+                                                            viewportPositionPx = dragPointerViewportX,
+                                                            scrollOffsetPx = scrollState.value.toFloat(),
+                                                            reverseDirection = layoutDirection == LayoutDirection.Rtl
+                                                        )
+                                                        val next = nearestToolbarTabId(ids, tabBounds, contentX)
                                                         if (next != null && next != dragTargetId) {
                                                             dragTargetId = next
                                                             if (hapticsEnabled) feedback.perform(Haptic.detent)
@@ -530,8 +648,80 @@ private fun ToolbarPrototypeBar(
                     fadeOut(animationSpec = Motion.content.spec())
             }
         ) {
-            Button(onClick = onActionClick) {
-                Text(if (actionActive) "Unpin" else "Pin")
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Canvas(
+                    modifier = Modifier
+                        .width(24.dp)
+                        .height(48.dp)
+                ) {
+                    val centerY = size.height / 2f
+                    val outerHalfHeight = size.height * 0.38f
+                    val waistHalfHeight = outerHalfHeight * (1f - detachmentProgress)
+                    val connector = Path().apply {
+                        moveTo(0f, centerY - outerHalfHeight)
+                        cubicTo(
+                            size.width * 0.3f,
+                            centerY - outerHalfHeight,
+                            size.width * 0.3f,
+                            centerY - waistHalfHeight,
+                            size.width * 0.5f,
+                            centerY - waistHalfHeight
+                        )
+                        cubicTo(
+                            size.width * 0.7f,
+                            centerY - waistHalfHeight,
+                            size.width * 0.7f,
+                            centerY - outerHalfHeight,
+                            size.width,
+                            centerY - outerHalfHeight
+                        )
+                        lineTo(size.width, centerY + outerHalfHeight)
+                        cubicTo(
+                            size.width * 0.7f,
+                            centerY + outerHalfHeight,
+                            size.width * 0.7f,
+                            centerY + waistHalfHeight,
+                            size.width * 0.5f,
+                            centerY + waistHalfHeight
+                        )
+                        cubicTo(
+                            size.width * 0.3f,
+                            centerY + waistHalfHeight,
+                            size.width * 0.3f,
+                            centerY + outerHalfHeight,
+                            0f,
+                            centerY + outerHalfHeight
+                        )
+                        close()
+                    }
+                    drawPath(
+                        path = connector,
+                        color = appearance.indicator.copy(
+                            alpha = (1f - detachmentProgress).coerceIn(0f, 1f)
+                        )
+                    )
+                }
+                Spacer(Modifier.width(connectorGap))
+                Button(
+                    onClick = onActionClick,
+                    modifier = Modifier.height(48.dp),
+                    shape = RoundedCornerShape(
+                        topStart = actionLeadingCorner,
+                        topEnd = 24.dp,
+                        bottomEnd = 24.dp,
+                        bottomStart = actionLeadingCorner
+                    ),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = appearance.indicator,
+                        contentColor = appearance.selectedContent
+                    )
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(if (actionActive) "✓" else "+")
+                        Spacer(Modifier.width(8.dp))
+                        Text(if (actionActive) "Unpin" else "Pin")
+                    }
+                }
             }
         }
     }
