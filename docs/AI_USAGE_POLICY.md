@@ -27,6 +27,8 @@ Select the least expensive and least resource-intensive model that can reliably 
 
 ### Task tiers
 
+**Default routing:** Sonnet or ChatGPT for everyday implementation and iteration; Opus for genuinely complex planning, architecture, cross-repository reasoning, or stubborn bugs. ChatGPT and Sonnet are interchangeable execution choices for the standard tier, not a requirement to use both.
+
 | Tier | Work | Preferred approach |
 |---|---|---|
 | Routine | Formatting, small documentation edits, simple test additions, mechanical refactors, summaries of known material | Efficient / fast model; tightly scoped context |
@@ -40,7 +42,7 @@ A task's tier is determined by its risk, uncertainty, scope, and reasoning deman
 
 Use the best currently available ChatGPT model for the tier, considering the actual product surface:
 
-Treat model selection as a recommendation, not a gate. ChatGPT/Codex may start and carry a task as far as its available capabilities allow. When a task would benefit from Claude Opus 5.5, explicitly mark **“Opus review recommended”** in the task brief or handoff; do not block the initial work while waiting for Opus.
+Treat model selection as a recommendation, not a gate. ChatGPT/Codex may start and carry a task as far as its available capabilities allow. For ordinary engineering, treat **Claude Sonnet and a balanced ChatGPT coding model as interchangeable defaults**: choose whichever has the better repository access and available allowance. When a task would benefit from a stronger independent pass, mark **“Opus review pending”** in the task brief or handoff; do not block initial work while waiting for Opus.
 
 - Efficient models are the default for routine, bounded work.
 - Balanced models are preferred for ordinary implementation and debugging.
@@ -51,15 +53,15 @@ Treat model selection as a recommendation, not a gate. ChatGPT/Codex may start a
 
 ### Claude
 
-Use the currently available Claude model suited to the task:
+Use the currently available Claude model suited to the task. For normal coding, Sonnet is the default; this is the same task tier that may be handled by ChatGPT's balanced coding models:
 
 - Haiku-class models: routine extraction, short summaries, classification, and simple bounded tasks.
-- Sonnet-class models: normal coding, implementation, debugging, and focused reviews.
-- **Claude Opus 5.5:** reserve for demanding architecture, long-running autonomous coding, complex systems engineering, difficult debugging, broad refactors, and high-value independent review when its stronger reasoning materially reduces risk or rework.
+- **Sonnet-class models:** default for everyday coding, clear feature implementations, routine bug fixes, scoped refactors, tests, standard documentation, and fast iteration.
+- **Claude Opus (current suitable version):** reserve for complex architecture and trade-offs, cross-repository or long-context reasoning, difficult concurrency/system bugs, repeated failures where the current model is looping, complex specifications, and high-value independent review when stronger reasoning materially reduces risk or rework.
 - Use adaptive thinking / effort controls proportionally. Do not select maximum effort by habit.
 - Claude Code should be used when repository-aware execution and tool use are valuable; do not let an agent run indefinitely without milestones, bounded scope, or a stop condition.
 
-The model family and exact model ID are not permanent policy. Confirm the currently supported model and official pricing before configuring API workflows. For Opus 5.5 API usage, use the documented model identifier rather than guessing aliases.
+The model family and exact model ID are not permanent policy. Confirm the currently supported model and official pricing before configuring API workflows. Never hardcode a model alias from an older guide.
 
 ## 3. ChatGPT + Claude collaboration
 
@@ -78,7 +80,7 @@ Do not ask both agents to independently perform the same implementation, read th
 - **ChatGPT as coordinator:** maintain project context, break work into tasks, coordinate GitHub/repository operations, track decisions, and consolidate evidence.
 - **ChatGPT/Codex first, Opus when useful:** for most tasks, let ChatGPT/Codex own the work. For advanced or consequential tasks where a stronger independent pass could catch architectural, reasoning, or regression issues, flag Opus as recommended for a later review pass. ChatGPT/Codex can implement first; hand Opus a concise brief and the resulting diff at a useful checkpoint or before merge.
 - A recommendation to use Opus is not a requirement, a blocker, or permission to incur extra charges. If Opus is unavailable or would require unapproved paid usage, continue with proportionate ChatGPT/Codex review and verification, and disclose that the recommended specialist pass was not performed.
-- **Claude Opus 5.5 as specialist:** bring it in for high-complexity coding, architecture challenges, deep debugging, or independent review where justified.
+- **Claude Opus as specialist:** bring it in for high-complexity planning, architecture challenges, cross-repo reasoning, deep debugging, or independent review where justified.
 - Either tool may be primary. Choose based on repository access, tool reliability, available limits, and task fit—not brand loyalty.
 - A specialist should receive a concise task brief, relevant files/diff, constraints, and requested output. Do not repeatedly transmit the entire project history.
 - The primary agent must evaluate and verify suggestions; another model's approval is not proof of correctness.
