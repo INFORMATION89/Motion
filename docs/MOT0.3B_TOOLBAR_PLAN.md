@@ -16,7 +16,7 @@ The key invariant is:
 
 > One interaction model, multiple visual profiles, consumer-owned navigation and actions.
 
-## 2. What the existing consumer experience tells us
+## 2. Reusable interaction capabilities
 
 The the consuming application toolbar demonstrates several distinct capabilities worth preserving as generic, opt-in behaviours:
 
@@ -29,7 +29,7 @@ The the consuming application toolbar demonstrates several distinct capabilities
 
 These are behavioural requirements, not a mandate to reproduce the consuming application's glass, colors, weather accent, iconography, dimensions, labels, or exact animation tuning.
 
-No consumer-specific/upstream source, assets, strings, icons, theme classes, weather state, or app navigation code may be copied into Motion UI. Implement the generic contract independently from this description. The consumer remains responsible for its own styling and product semantics.
+No consumer or third-party source, assets, strings, icons, theme classes, weather state, or app navigation code may be copied into Motion UI. Implement the generic contract independently from this description. The consumer remains responsible for its own styling and product semantics.
 
 ## 3. Ownership boundaries
 
@@ -55,7 +55,7 @@ Do not add a second animation engine or duplicate Core physics inside the toolba
 - Tab content, stable IDs, labels, icons, content descriptions, enabled/visible policy, and callbacks.
 - The mapping between pager progress and toolbar progress.
 - Contextual action meaning, enabled/checked state, icon, label, and callback.
-- Product-specific appearance, including the consuming application's palette, glass renderer, weather-driven accent, icons, and branding.
+- Product-specific appearance, including consumer-specific palette, materials, iconography, and branding.
 
 Motion UI must not import a navigation library, own a back stack, or assume a pager is present.
 
@@ -75,7 +75,7 @@ Each tab should provide:
 - An optional selected-state description if the consumer needs one.
 - A selection callback routed through the consumer.
 
-Do not put Android string resource IDs, weather-specific types, ImageVector assumptions, or app-specific page enums in the public model. Prefer composable icon/content slots or a small stable abstraction that does not constrain consumers to one icon library.
+Do not put Android string resource IDs, domain-specific types, ImageVector assumptions, or app-specific page enums in the public model. Prefer composable icon/content slots or a small stable abstraction that does not constrain consumers to one icon library.
 
 The API must define what happens when a selected tab becomes disabled or is removed. It must not silently select an arbitrary destination; the consumer remains the source of truth.
 
@@ -100,7 +100,7 @@ The toolbar may expose one optional contextual action ("bud") that can:
 - Represent checked/toggled state when applicable.
 - Report its measured bounds when a consumer needs coordinated transitions.
 
-Its action semantics must be available independently of its visual expansion. A consumer must be able to invoke it without first triggering a drag or waiting for an animation. Avoid baking in search, pin, postcard, places, or any product-specific meaning.
+Its action semantics must be available independently of its visual expansion. A consumer must be able to invoke it without first triggering a drag or waiting for an animation. Avoid baking in any product-specific meaning.
 
 ### Configuration
 
@@ -175,7 +175,7 @@ The same behavioural component must support the following profiles without chang
 
 ### Consumer-defined appearance
 
-the consuming application may configure the app-defined profile to recreate its expressive floating pill, glass material, weather-aware accent, icon set, and contextual action. All consumer-specific renderers, colors, weather-derived state, icons, labels, and brand decisions remain in the consuming application. There must be no bundled the consuming applicationStyle, the consuming application palette, or the consuming application asset in Motion UI.
+the consuming application may configure the app-defined profile to recreate its expressive floating pill, glass material, weather-aware accent, icon set, and contextual action. All consumer-specific renderers, colors, domain-derived state, icons, labels, and brand decisions remain in the consuming application. There must be no bundled the consuming applicationStyle, the consuming application palette, or the consuming application asset in Motion UI.
 
 ### Style invariants
 
@@ -240,14 +240,14 @@ Do not claim TalkBack, device, contrast, or haptic validation unless it has actu
 4. **Core integration:** reuse existing Motion Core primitives where appropriate; add a Core API only if the prototype identifies a generic missing capability.
 5. **Accessibility and resilience:** add semantics, keyboard/focus support, reduced-motion behavior, and focused UI tests.
 6. **Public API hardening:** document lifecycle, state ownership, list mutation, progress mapping, and compatibility before declaring the API stable.
-7. **Consumer adoption:** only in a separate consumer-repository change, with the consumer supplying its appearance and product actions. Do not update the the consuming application submodule or source in this workstream.
+7. **Consumer adoption:** only in a separate consumer-repository change, with the consumer supplying its appearance and product actions. Do not update a consumer repository's dependency pin or source in this workstream.
 
 A reusable card/surface may follow this toolbar milestone; it must not delay or replace the toolbar work.
 
 ## 10. Explicit non-goals and guardrails
 
 - No changes to consumer source, its submodule pointer, or its open pull requests in this workstream.
-- No copied consumer-specific/upstream code, assets, icons, resources, strings, theme classes, or weather logic.
+- No copied consumer or third-party code, assets, icons, resources, strings, theme classes, or domain logic.
 - No navigation/back-stack ownership and no required pager dependency.
 - No Haze/blur dependency in the first toolbar milestone.
 - No requirement that every style use glass, gooey deformation, haptics, or long-press drag.
