@@ -1,6 +1,6 @@
 # Repository instructions for AI agents
 
-Read this file before making changes. Then read [README.md](README.md), [the framework overview](docs/FRAMEWORK_OVERVIEW.md), [platform support](docs/PLATFORM_SUPPORT.md), [the Solstice adoption guide](docs/AI_SOLSTICE_ADOPTION.md), [motion principles](docs/MOTION.md), and the relevant implementation or design documents under `docs/`.
+Read this file and [project rules](docs/RULES.md) before making changes. Then read [README.md](README.md), [the framework overview](docs/FRAMEWORK_OVERVIEW.md), [platform support](docs/PLATFORM_SUPPORT.md), [the Solstice adoption guide](docs/AI_SOLSTICE_ADOPTION.md), [motion principles](docs/MOTION.md), and the relevant implementation or design documents under `docs/`.
 
 ## Project boundaries
 
