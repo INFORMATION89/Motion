@@ -49,6 +49,7 @@ spotless {
 
 dependencies {
     implementation(project(":motion"))
+    implementation(project(":motion-ui"))
     implementation(platform(libs.compose.bom))
     implementation(libs.activity.compose)
     implementation(libs.compose.animation)
