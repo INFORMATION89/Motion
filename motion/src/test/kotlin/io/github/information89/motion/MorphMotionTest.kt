@@ -124,7 +124,7 @@ class MorphMotionTest {
     }
 
     @Test
-    fun `open then close before placement settles honors the latest command`() = morphMotionTest {
+    fun `immediate open then close honors the latest command`() = morphMotionTest {
         val motion = MorphMotion(this)
         motion.source = sourceAnchor()
         motion.target = targetAnchor()
@@ -205,7 +205,9 @@ class MorphMotionTest {
         val nextTarget = alternateTargetAnchor()
         motion.updateTarget(nextTarget)
         motion.bounds shouldBe before
-        advanceMorphFrames(240)
+        advanceMorphFrames(3)
+        (motion.bounds.center.x >= before.center.x) shouldBe true
+        advanceMorphFrames(237)
 
         motion.bounds.center.x shouldBe (350f plusOrMinus 0.1f)
         motion.bounds.center.y shouldBe (200f plusOrMinus 0.1f)
@@ -244,7 +246,9 @@ class MorphMotionTest {
 
         motion.updateSource(alternateSourceAnchor())
         motion.bounds shouldBe before
-        advanceMorphFrames(240)
+        advanceMorphFrames(3)
+        (motion.bounds.center.x <= before.center.x) shouldBe true
+        advanceMorphFrames(237)
 
         motion.bounds.center.x shouldBe (80f plusOrMinus 0.1f)
         motion.bounds.center.y shouldBe (90f plusOrMinus 0.1f)
@@ -453,4 +457,24 @@ class MorphMotionTest {
         motion.bounds.center.y shouldBe (200f plusOrMinus 0.1f)
         motion.isMoving shouldBe false
     }
+
+    @Test
+    fun `newer command wins while initial placement interrupts an existing spring`() = morphMotionTest {
+        val motion = MorphMotion(this)
+        motion.source = sourceAnchor()
+        motion.target = targetAnchor()
+
+        motion.scrub(0.4f)
+        motion.release(0f)
+        motion.open()
+        motion.close()
+        advanceMorphFrames(240)
+
+        motion.isOpen shouldBe false
+        motion.bounds.center.x shouldBe (50f plusOrMinus 0.01f)
+        motion.bounds.center.y shouldBe (50f plusOrMinus 0.01f)
+        motion.isMoving shouldBe false
+        motion.isVisible shouldBe false
+    }
+
 }
