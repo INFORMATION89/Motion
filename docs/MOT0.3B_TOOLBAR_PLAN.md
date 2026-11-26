@@ -27,9 +27,9 @@ The the consuming application toolbar demonstrates several distinct capabilities
 - The contextual action can represent a stateful action such as pin/unpin, with a small state-change animation and optional semantic haptic feedback.
 - The toolbar can adapt its available tabs and contextual action to different host configurations.
 
-These are behavioural requirements, not a mandate to reproduce the consuming application's glass, colors, weather accent, iconography, dimensions, labels, or exact animation tuning.
+These are behavioural requirements, not a mandate to reproduce a consumer's materials, colors, domain-derived accents, iconography, dimensions, labels, or exact animation tuning.
 
-No consumer or third-party source, assets, strings, icons, theme classes, weather state, or app navigation code may be copied into Motion UI. Implement the generic contract independently from this description. The consumer remains responsible for its own styling and product semantics.
+No consumer or third-party source, assets, strings, icons, theme classes, domain state, or app navigation code may be copied into Motion UI. Implement the generic contract independently from this description. The consumer remains responsible for its own styling and product semantics.
 
 ## 3. Ownership boundaries
 
@@ -175,7 +175,7 @@ The same behavioural component must support the following profiles without chang
 
 ### Consumer-defined appearance
 
-the consuming application may configure the app-defined profile to recreate its expressive floating pill, glass material, weather-aware accent, icon set, and contextual action. All consumer-specific renderers, colors, domain-derived state, icons, labels, and brand decisions remain in the consuming application. There must be no bundled the consuming applicationStyle, the consuming application palette, or the consuming application asset in Motion UI.
+A consumer may configure the app-defined profile to match its own visual language and product actions. Consumer-specific renderers, colors, domain-derived state, icons, labels, and brand decisions remain in the consumer application. Motion UI must not bundle a consumer brand preset, palette, or asset.
 
 ### Style invariants
 
