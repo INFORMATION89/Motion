@@ -10,8 +10,8 @@ Finish the reliability work around `MotionValue`, `MotionPhysics`, and especiall
 
 - Work branch: `work/consolidated-docs-platforms`.
 - PR: [#4](https://github.com/INFORMATION89/Motion-UI/pull/4) — draft, open, not merged. PRs #1–#3 were consolidated into it.
-- Last inspected code head: `ab02bbb6d2a627802e4f1c428fef3247e59bb335`. Subsequent branch commits only synchronize documentation and do not change the code covered by run #38.
-- Latest checked CI: [run #38](https://github.com/INFORMATION89/Motion-UI/actions/runs/45737129108) failed at Spotless due to one missing blank line in `MorphMotionTest.kt`; unit tests and library build were skipped. This is not a passing baseline for the consolidated head.
+- Current PR head: `ad9ca7438684af24eaaf868abc92535f57113cad`; last inspected code head: `ab02bbb6d2a627802e4f1c428fef3247e59bb335`. The intervening commits are documentation-only.
+- Latest checked CI: [run #40](https://github.com/INFORMATION89/Motion-UI/actions/runs/45762377072) failed at Spotless due to one missing blank line in `MorphMotionTest.kt`; unit tests and library build were skipped. Run #38 had the same failure. The code has not yet received passing unit-test/build evidence on this head.
 - The baseline includes input validation and normalization in `MotionValue` / `MotionPhysics`, geometric progress in `MorphMotion`, target retargeting, command-generation protection for pending placement, and initial regression tests.
 - This is a baseline, not completion: interruption, retargeting, and MorphMotion input-boundary coverage remains insufficient.
 
