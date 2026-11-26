@@ -94,7 +94,7 @@ On Windows, use `gradlew.bat` instead of `./gradlew`.
 
 ## Project status
 
-The `:motion` Android library and the standalone `:motion-lab` sample app are Gradle modules. Motion Lab currently includes a generic gallery, spring/release, morph, page, dial, and edge-blur demonstrations. Page movement also has an opt-in comparison that drives Motion and Compose's default pager animation with the same destination. The old `lab/` directory remains an unbuilt Solstice-era prototype and is not part of the new app.
+The `:motion` Android library and the standalone `:motion-lab` sample app are Gradle modules. Motion Lab currently includes a generic gallery, spring/release, morph, page, dial, and edge-blur demonstrations. Morph and page movement also have opt-in comparisons that drive Motion and Compose's standard animations from the same shared input. The old `lab/` directory remains an unbuilt Solstice-era prototype and is not part of the new app.
 
 
 ## License
