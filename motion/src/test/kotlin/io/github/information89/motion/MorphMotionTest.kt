@@ -234,7 +234,7 @@ class MorphMotionTest {
     }
 
     @Test
-    fun `source retargeting while closing is continuous and settles at latest source`() = morphMotionTest {
+    fun `source retargeting while closing preserves velocity and settles at latest source`() = morphMotionTest {
         val motion = MorphMotion(this)
         motion.source = sourceAnchor()
         motion.target = targetAnchor()
@@ -242,13 +242,21 @@ class MorphMotionTest {
         advanceMorphFrames(240)
         motion.close()
         advanceMorphFrames(5)
+        val previous = motion.bounds
+        advanceMorphFrames(3)
         val before = motion.bounds
+        val directionBeforeRetarget = before.center.x - previous.center.x
 
         motion.updateSource(alternateSourceAnchor())
         motion.bounds shouldBe before
         advanceMorphFrames(3)
-        (motion.bounds.center.x <= before.center.x) shouldBe true
-        advanceMorphFrames(237)
+        val afterRetarget = motion.bounds
+        if (directionBeforeRetarget > 0f) {
+            (afterRetarget.center.x >= before.center.x) shouldBe true
+        } else if (directionBeforeRetarget < 0f) {
+            (afterRetarget.center.x <= before.center.x) shouldBe true
+        }
+        advanceMorphFrames(234)
 
         motion.bounds.center.x shouldBe (80f plusOrMinus 0.1f)
         motion.bounds.center.y shouldBe (90f plusOrMinus 0.1f)

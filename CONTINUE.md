@@ -25,10 +25,11 @@ This file is the working handoff for the next development session. Keep it curre
 **Integration:** PR #4 is the integration vehicle for MOT0.1. Check its live GitHub status before taking action; this handoff does not assume whether it is open, ready, or merged. The branch contains the MOT0.1 implementation work plus framework, platform, Solstice-planning, AI-agent, and cost-aware verification documentation.
 
 - Branch: `work/consolidated-docs-platforms`
-- Current implementation head: `75f58a4d323bf1cc179f677c2af03bf16ce6e282`.
-- Latest checked CI: [run #57](https://github.com/INFORMATION89/Motion-UI/actions/runs/45764028890) failed only at Spotless because `MorphMotionTest.kt` has one extra blank line before its final class brace. Unit tests and library build were skipped on that run.
-- Previous code head `ccbcc16680a8471842af53e0ff06a3d168df1500` passed Spotless, all 62 unit tests, and `:motion:assembleRelease` in [run #56](https://github.com/INFORMATION89/Motion-UI/actions/runs/45763845704). The current head adds one more pending-placement/retarget-continuity regression test; run #57 did not execute it.
-- Remove the exact trailing blank line in the test file, then run the complete required workflow once on the resulting coherent head. Do not spend another full run for documentation-only changes; include documentation synchronization before that final run.
+- Current implementation head before this correction: `0c5cdfa99f4ef87aaa54936ff5842c8d6c9ef03f`.
+- [Run #58](https://github.com/INFORMATION89/Motion-UI/actions/runs/45764177687) passed Spotless but one source-retarget continuity assertion failed. Unit tests stopped at 63 tests with one failure; library build was skipped.
+- The failed assertion incorrectly assumed the morph must move left immediately after retargeting. The corrected test compares post-retarget movement with the actual pre-retarget direction, then checks the final source anchor.
+- The trailing blank-line violation from run #57 was corrected in head `0c5cdfa`; run #58 confirms Spotless now passes.
+- After this focused test correction, run the full required workflow once on the exact resulting head. Do not spend another full run for documentation-only changes.
 - PRs #1–#3 were consolidated into PR #4. Their old branch names, SHAs, and CI runs are historical only.
 
 ### Already implemented in MOT0.1
@@ -47,8 +48,8 @@ This file is the working handoff for the next development session. Keep it curre
 
 No additional feature work is planned for MOT0.1. The remaining gate is final verification on the exact branch head, review of the complete diff, and integration of PR #4.
 
-1. Remove the single trailing blank line reported by run #57 in `MorphMotionTest.kt`.
-2. Run the complete required CI workflow once on the final code-and-documentation head.
+1. Confirm the source-retarget continuity regression test matches preserved spring velocity and settles at the latest source.
+2. Run the complete required CI workflow once on the resulting final code-and-documentation head.
 3. Confirm Spotless, `:motion:testDebugUnitTest`, and `:motion:assembleRelease` all pass on that exact SHA.
 4. Update the PR description with the exact evidence, mark it ready, and merge PR #4 into `main` after all required checks pass.
 5. Keep physical-device checks marked `NOT TESTED` / `DEFERRED`; they are not part of this milestone's CI gate.
