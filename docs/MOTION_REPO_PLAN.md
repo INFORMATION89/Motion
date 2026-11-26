@@ -26,8 +26,9 @@ This document preserves the repository-extraction decisions from 2026-11-21. The
 
 - The animated toolbar contract is documented in `docs/MOT0.3B_TOOLBAR_PLAN.md` and remains a proposal until reviewed against the prototype.
 - The current spike is intentionally hosted in Motion Lab, not yet exposed as a public `:motion-ui` API.
-- The spike exercises stable-ID host progress, variable-width geometry, optional long-press drag, a contextual action, and two configurable visual profiles.
-- Public API design follows only after the same interaction behavior has been exercised and reviewed. Manual emulator, TalkBack, contrast, and haptic checks remain deferred until actually performed.
+- The spike exercises stable-ID host progress, variable-width geometry, optional long-press drag, a contextual action, two configurable visual profiles, and arrow-key focus transfer with LTR/RTL direction mapping.
+- The sample-only implementation and its geometry/keyboard unit tests passed required CI run #190 on exact head `3b2ac1d525dd80a2fb6e72e443f63a6981bed506` (Spotless, Core tests/release build, Motion UI tests/release build, Motion Lab unit tests/debug build).
+- Public API design follows only after the same interaction behavior has been exercised and reviewed. Emulator, TalkBack, focus indication, contrast, font-scale, drag edge-scroll, reduced-motion preference changes, and physical haptic checks remain deferred until performed.
 
 ## Original decisions (2026-11-21)
 

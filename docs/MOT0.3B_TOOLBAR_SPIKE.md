@@ -32,14 +32,20 @@ The pager and destination data belong to Motion Lab. The prototype does not make
 
 - The contextual action currently enters and exits as a separate trailing action; the final connected/detached morph is not implemented.
 - Long-press drag previews the nearest measured tab. Automatic edge-scrolling during a drag still needs evaluation on a narrow viewport.
-- The prototype has grouped tab semantics, roving focus via logical arrow-key navigation (mirrored for RTL), and ordinary click/Enter/Space activation. TalkBack traversal, focus indication, and physical keyboard behavior still require manual validation.
+- The tabs expose grouped tab semantics and remain individually focusable. Arrow-key events transfer focus to the adjacent tab and request selection in logical order, mirrored for RTL; this is not yet a strict single-tab-stop roving-focus model. The ordinary clickable action provides keyboard activation. TalkBack traversal, visible focus indication, and physical keyboard behavior still require manual validation.
 - Visual comparison uses existing Material 3 colors and Motion UI theme tokens; it is not yet a finalized style interface.
 - Android's animator-enabled signal is checked by the sample during composition. Runtime preference changes while the screen is already open need a lifecycle/manual check.
 - Physical haptic output, contrast, RTL behavior, large font scale, emulator/device interaction, and rapid gesture interruption remain unverified until exercised.
 
+## Verification
+
+- Required CI run #190 passed on exact implementation head `3b2ac1d525dd80a2fb6e72e443f63a6981bed506`.
+- The run passed Spotless, Core unit tests/release build, Motion UI unit tests/release build, Motion Lab unit tests, and Motion Lab debug assembly.
+- This confirms formatting, compilation, and automated tests only; it does not establish TalkBack, focus appearance, visual contrast, RTL rendering, large font scale, haptic output, or physical-device interaction.
+
 ## Exit criteria
 
-1. Required CI passes on the final spike commit, including the new Lab unit tests.
+1. Keep CI passing on any subsequent code or documentation commit.
 2. Review confirms that host progress never commits navigation state and cannot move the indicator for invalid/non-adjacent endpoints.
 3. Manual review exercises forward/reverse swipes, rapid retargeting, drag release/cancel, hidden contextual action hit testing, both styles, reduced motion, RTL, and narrow widths.
 4. Any missing generic behavior is classified as existing Motion Core reuse, Compose behavior, or a separately proposed Motion UI capability.
