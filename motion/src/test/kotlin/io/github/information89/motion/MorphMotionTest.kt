@@ -25,6 +25,7 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.assertThrows
 
 private class MorphStepClock : MonotonicFrameClock {
     private var time = 0L
@@ -64,4 +65,52 @@ class MorphMotionTest {
 
         motion.progress shouldBe (0.25f plusOrMinus 0.001f)
     }
+    @Test
+    fun `drag rejects non-finite deltas without changing geometry`() = morphMotionTest {
+        val motion = MorphMotion(this)
+        motion.source = MorphAnchor(Rect(0f, 0f, 100f, 100f), 20f)
+        motion.target = MorphAnchor(Rect(100f, 0f, 200f, 100f), 20f)
+        motion.scrub(0.4f)
+        val before = motion.bounds
+
+        assertThrows(IllegalArgumentException::class.java) { motion.drag(Float.NaN) }
+        assertThrows(IllegalArgumentException::class.java) { motion.drag(Float.POSITIVE_INFINITY) }
+        assertThrows(IllegalArgumentException::class.java) { motion.drag(Float.NEGATIVE_INFINITY) }
+
+        motion.bounds shouldBe before
+    }
+
+    @Test
+    fun `scrub rejects non-finite progress without changing geometry`() = morphMotionTest {
+        val motion = MorphMotion(this)
+        motion.source = MorphAnchor(Rect(0f, 0f, 100f, 100f), 20f)
+        motion.target = MorphAnchor(Rect(100f, 0f, 200f, 100f), 20f)
+        motion.scrub(0.4f)
+        val before = motion.bounds
+
+        assertThrows(IllegalArgumentException::class.java) { motion.scrub(Float.NaN) }
+        assertThrows(IllegalArgumentException::class.java) { motion.scrub(Float.POSITIVE_INFINITY) }
+        assertThrows(IllegalArgumentException::class.java) { motion.scrub(Float.NEGATIVE_INFINITY) }
+
+        motion.bounds shouldBe before
+    }
+
+    @Test
+    fun `release rejects invalid velocity and deceleration`() = morphMotionTest {
+        val motion = MorphMotion(this)
+        motion.source = MorphAnchor(Rect(0f, 0f, 100f, 100f), 20f)
+        motion.target = MorphAnchor(Rect(100f, 0f, 200f, 100f), 20f)
+        motion.scrub(0.4f)
+        val before = motion.bounds
+
+        assertThrows(IllegalArgumentException::class.java) { motion.release(Float.NaN) }
+        assertThrows(IllegalArgumentException::class.java) { motion.release(Float.POSITIVE_INFINITY) }
+        assertThrows(IllegalArgumentException::class.java) { motion.release(0f, Float.NaN) }
+        assertThrows(IllegalArgumentException::class.java) { motion.release(0f, 0f) }
+        assertThrows(IllegalArgumentException::class.java) { motion.release(0f, 1f) }
+        assertThrows(IllegalArgumentException::class.java) { motion.release(0f, Float.POSITIVE_INFINITY) }
+
+        motion.bounds shouldBe before
+    }
+
 }
