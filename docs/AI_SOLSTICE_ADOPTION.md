@@ -32,7 +32,6 @@ For each behavior found in Solstice, assign exactly one primary recommendation:
 | Motion capability gap | A reusable behavior is missing from Motion and has value beyond Solstice | Propose a separate Motion API/design issue with a contract and tests; do not implement it during planning. |
 | Keep in Solstice | The behavior is domain-specific, tied to weather UX, product rules, visual identity, or app architecture | Leave it in the app. |
 | Use another library | A standard component or platform capability is already solved by Compose, Material, or a specialized library | Reuse that library instead of duplicating it. |
-| Use another library | A standard component or platform capability is already solved by Compose, Material, or a specialized library | Reuse that library instead of duplicating it. |
 
 Do not promote code to Motion merely because it contains animation calls. Motion Core is for generic motion mechanics; Motion UI is for reusable, configurable component building blocks; standard controls stay with Material/Compose; Solstice's visual design, screens, data, and business logic stay in Solstice.
 
