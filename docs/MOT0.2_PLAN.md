@@ -125,6 +125,10 @@ Run the full required GitHub Actions workflow once the coherent implementation b
 
 Manual install/interaction checks on an emulator or physical device are separate from CI and remain `NOT TESTED` / `DEFERRED` until completed.
 
+## Follow-up product direction (outside MOT0.2)
+
+The next Motion Lab design iteration should consider the two-section Components / Interactions information architecture, automatic system light/dark appearance, an optional pure-black appearance, and optional predictive-back blur. These ideas are recorded in [MOTION_LAB_PLAN.md](MOTION_LAB_PLAN.md); they are not retroactive MOT0.2 acceptance criteria and must be separately scoped before implementation.
+
 ## Explicit non-goals
 
 - Changing the public behavior or physics of existing Motion Core APIs.
