@@ -292,6 +292,7 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
      * along the straight path, so the surface stays under the finger.
      */
     fun drag(delta: Float) {
+        require(delta.isFinite()) { "delta must be finite" }
         moveGeneration++
         val s = source ?: return
         val t = target ?: return
@@ -312,6 +313,7 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
      * predictive back gesture. Then [open] (cancelled) or [close] (committed) carries on from there.
      */
     fun scrub(progress: Float) {
+        require(progress.isFinite()) { "progress must be finite" }
         moveGeneration++
         val s = source ?: return
         val t = target ?: return
@@ -333,6 +335,10 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
      * velocity, and a flick with momentum gets the slight overshoot.
      */
     fun release(rawVelocity: Float, deceleration: Float = MotionPhysics.DECELERATION_NORMAL) {
+        require(rawVelocity.isFinite()) { "rawVelocity must be finite" }
+        require(deceleration.isFinite() && deceleration > 0f && deceleration < 1f) {
+            "deceleration must be finite and in (0, 1)"
+        }
         val s = source ?: return
         val t = target ?: return
         // A speed limit (user 2026-11-21: a very fast close broke the animation): the finger's speed is
