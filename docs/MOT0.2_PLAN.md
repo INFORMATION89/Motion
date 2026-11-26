@@ -43,11 +43,11 @@ The initial app foundation and gallery have been added on the MOT0.2 branch:
 
 - `:motion-lab` is included in Gradle as a standalone Android application and depends on `:motion`.
 - The app has its own namespace, application ID, launcher activity, and neutral Material 3 theme.
-- The home gallery links to spring/release, morph, page movement, dial, and scroll edge-blur examples.
+- The home gallery links to spring/release, morph, page movement, dial, and scroll edge-blur examples. Page movement now has an opt-in comparison mode: the same destination button drives Motion's `springToPage` and Compose's default `animateScrollToPage` concurrently. Gesture input is disabled in comparison mode so the two implementations receive equivalent input.
 - Slow motion controls `MotionTime.scale` and resets to normal when the Lab leaves composition.
 - The CI workflow includes `:motion-lab:assembleDebug`.
 
-This is an initial implementation, not a completed milestone. Build and CI results must pass on the exact final PR head before the module is considered validated. Emulator and physical-device interactions remain `NOT TESTED` / `DEFERRED`.
+This is an initial implementation, not a completed milestone. CI run [#80](https://github.com/INFORMATION89/Motion-UI/actions/runs/45771497832) passed on the previous app-only head `89749a4a7f44bc3c6f0cb347b9b3e11833ad95da`; the new comparison-mode commit still requires CI on the exact updated PR head. Emulator and physical-device interactions remain `NOT TESTED` / `DEFERRED`.
 
 ## Delivery phases
 
@@ -83,7 +83,8 @@ Every example must demonstrate a real public API contract, document its interact
 ### 4. Meaningful comparisons and tuning
 
 - Add side-by-side comparisons with reasonable Compose/Material defaults for the patterns where a comparison teaches something useful.
-- Start with morph, sheet-like interaction, and page movement.
+- **First comparison implemented:** page movement, using one shared destination control to drive Motion's `springToPage` and Compose's default `animateScrollToPage` concurrently. Swipes are disabled in this mode so both previews receive the same input.
+- **Next comparisons:** morph and sheet-like interaction.
 - Ensure both sides receive equivalent input and state so the comparison is fair.
 - Expose only a small set of tuning controls that help users understand the effect of each parameter.
 - Avoid copying Motion's implementation into the baseline side; the baseline should use the standard Compose/Material approach.
