@@ -69,6 +69,9 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.github.information89.motion.Dial
+import io.github.information89.motion.ui.MotionUiMaterials
+import io.github.information89.motion.ui.MotionUiTheme
+import io.github.information89.motion.ui.MotionUiTokens
 import io.github.information89.motion.DialLook
 import io.github.information89.motion.DialScale
 import io.github.information89.motion.EdgeBand
@@ -815,5 +818,14 @@ private fun MotionLabTheme(content: @Composable () -> Unit) {
             tertiary = Color(0xFF805B45)
         )
     }
-    MaterialTheme(colorScheme = colors, content = content)
+    MotionUiTheme(
+        colorScheme = colors,
+        tokens = MotionUiTokens(
+            materials = MotionUiMaterials(
+                cardContainer = colors.surfaceContainer,
+                glassContainer = colors.surface.copy(alpha = 0.86f)
+            )
+        ),
+        content = content
+    )
 }
