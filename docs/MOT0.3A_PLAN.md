@@ -31,7 +31,7 @@ Establish the optional `:motion-ui` Android library and its app-configurable the
 
 - Card/page/sheet components (subsequent MOT0.3B deliveries).
 - Glass rendering and Haze dependency (conditional MOT0.3C review).
-- Solstice integration or submodule changes.
+- the consuming application integration or submodule changes.
 - Motion Core changes, publishing, and platform expansion.
 - Device/TalkBack validation unless separately scheduled and available.
 
