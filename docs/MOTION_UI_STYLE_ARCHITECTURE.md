@@ -20,9 +20,9 @@ The intended component API should support:
 
 - **Material 3 Expressive profile:** a familiar Material 3 visual treatment, using Material components and tokens where appropriate. It must not recreate standard controls unnecessarily.
 - **App-defined profile:** consumers can supply their own tokens and component style values.
-- **Solstice appearance, supplied by Solstice:** Solstice can configure the reusable toolbar to match its expressive floating pill, morphing selection, glass treatment, and contextual bud. Solstice-specific palette, glass renderer, icons, weather-derived accent, and branding remain in Solstice.
+- **the consuming application appearance, supplied by the consuming application:** the consuming application can configure the reusable toolbar to match its expressive floating pill, morphing selection, glass treatment, and contextual bud. consumer-specific palette, glass renderer, icons, weather-derived accent, and branding remain in the consuming application.
 
-The library should provide sensible neutral defaults and a clear extension point. Avoid putting Solstice's brand assets or LGPL-derived implementation code into Motion-UI's Apache-2.0 codebase. Reimplement generic behaviour from documented requirements and independently authored code; keep the Solstice visual preset in the Solstice consumer if it contains product-specific styling.
+The library should provide sensible neutral defaults and a clear extension point. Avoid putting the consuming application's brand assets or LGPL-derived implementation code into Motion-UI's Apache-2.0 codebase. Reimplement generic behaviour from documented requirements and independently authored code; keep the consumer visual preset in the the consuming application consumer if it contains product-specific styling.
 
 ## Animated toolbar capability contract
 
@@ -47,11 +47,11 @@ Do not require every consumer to enable every effect. A simpler Material 3 Expre
 3. Prototype the toolbar in Motion Lab, applying at least two visual profiles to the same interaction state and callbacks.
 4. Verify accessibility, reduced motion, gesture interruption, and consumer configuration before public API hardening.
 5. Deliver reusable card/surface components after the toolbar contract and prototype are established.
-6. Integrate into Solstice only in a separate Solstice PR after the generic component is independently tested.
+6. Integrate into the consuming application only in a separate the consuming application PR after the generic component is independently tested.
 
 ## Non-goals
 
-- Do not copy Solstice/Breezy source files, icons, resources, weather logic, or branding into Motion UI.
+- Do not copy consumer-specific/upstream source files, icons, resources, weather logic, or branding into Motion UI.
 - Do not make Material 3 Expressive the only supported visual identity.
 - Do not force all consumers to use glass, elastic motion, haptics, or long-press gestures.
 - Do not let visual style own navigation state or product-specific actions.
