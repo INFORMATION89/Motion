@@ -15,7 +15,9 @@ The spike exercises the same interaction model under two visual profiles without
 - Measured, variable-width indicator geometry and label expansion/collapse.
 - Optional long-press drag selection, cancellation, and a consumer selection request.
 - Optional contextual Pin/Unpin action and semantic haptic feedback.
-- Horizontal overflow with selected-tab visibility management.
+- A single contextual-action Button target with a connecting Canvas morph that narrows/retracts as the action detaches; there is no second focusable connector or duplicate action node.
+- Horizontal overflow with selected-tab visibility management and auto-scroll when a long-press drag enters the viewport edge zones; scroll direction is mirrored for RTL.
+- Strict single-tab-stop focus: only the current tab can receive focus, arrow keys transfer focus and request selection, and the visible focus indicator follows the active tab. Directional keys map to logical order in LTR and RTL.
 - Android system animator-disable preference used as the Motion Lab reduced-motion signal.
 
 The pager and destination data belong to Motion Lab. The prototype does not make Motion UI own navigation or a pager state.
@@ -23,23 +25,24 @@ The pager and destination data belong to Motion Lab. The prototype does not make
 ## Implementation boundaries
 
 - `ToolbarPrototype.kt` is sample-only UI and depends on existing Motion Core and Motion UI APIs.
-- `ToolbarGeometry.kt` contains sample-owned pure progress/geometry helpers. It validates finite progress, stable endpoint IDs, adjacency, and measured bounds.
-- `ToolbarGeometryTest.kt` covers endpoint validation, reverse progress, variable-width interpolation, missing geometry fallback, nearest-tab selection, keyboard navigation/wrap-around, and duplicate IDs.
+- `ToolbarGeometry.kt` contains sample-owned pure progress, geometry, pointer-coordinate conversion, and edge-scroll helpers. It validates finite progress, stable endpoint IDs, adjacency, and measured bounds.
+- `ToolbarGeometryTest.kt` contains 15 tests covering endpoint validation, reverse progress, variable-width interpolation, missing geometry fallback, nearest-tab selection, keyboard navigation/wrap-around, duplicate IDs, LTR/RTL coordinate conversion, edge acceleration, and invalid frame inputs.
 - No new dependency is added. The Motion Lab module reuses the repository's existing test bundle.
 - CI now runs `:motion-lab:testDebugUnitTest` as well as its debug build.
 
 ## Known limitations to resolve during review
 
-- The contextual action currently enters and exits as a separate trailing action; the final connected/detached morph is not implemented.
-- Long-press drag previews the nearest measured tab. Automatic edge-scrolling during a drag still needs evaluation on a narrow viewport.
-- The tabs expose grouped tab semantics and remain individually focusable. Arrow-key events transfer focus to the adjacent tab and request selection in logical order, mirrored for RTL; this is not yet a strict single-tab-stop roving-focus model. The ordinary clickable action provides keyboard activation. TalkBack traversal, visible focus indication, and physical keyboard behavior still require manual validation.
+- The connector morph and single-target structure are implemented in the sample, but attached/detached hit-target behavior and its transition timing still need Compose UI and device validation.
+- Edge auto-scroll uses a quadratic velocity ramp in a 48 dp edge zone, is capped at 900 dp/s, clamps frame delta to 50 ms, and mirrors scroll direction in RTL. Narrow viewport behavior and gesture competition still require manual review.
+- The tabs use strict single-tab-stop focus with directional arrow navigation and a visible outline. TalkBack traversal, focus appearance, keyboard hardware behavior, and focus recovery while tabs are reordered/removed still require manual validation.
+
 - Visual comparison uses existing Material 3 colors and Motion UI theme tokens; it is not yet a finalized style interface.
 - Android's animator-enabled signal is checked by the sample during composition. Runtime preference changes while the screen is already open need a lifecycle/manual check.
-- Physical haptic output, contrast, RTL behavior, large font scale, emulator/device interaction, and rapid gesture interruption remain unverified until exercised.
+- Physical haptic output, contrast, RTL rendering, large font scale, live reduced-motion preference changes, emulator/device interaction, and rapid gesture interruption remain unverified until exercised.
 
 ## Verification
 
-- Required CI run #190 passed on exact implementation head `3b2ac1d525dd80a2fb6e72e443f63a6981bed506`.
+- Required CI run #197 passed on exact implementation head `75b6c9dacfb5079fc12dbcc36e0f4789f8d97b40`.
 - The run passed Spotless, Core unit tests/release build, Motion UI unit tests/release build, Motion Lab unit tests, and Motion Lab debug assembly.
 - This confirms formatting, compilation, and automated tests only; it does not establish TalkBack, focus appearance, visual contrast, RTL rendering, large font scale, haptic output, or physical-device interaction.
 
@@ -47,8 +50,8 @@ The pager and destination data belong to Motion Lab. The prototype does not make
 
 1. Keep CI passing on any subsequent code or documentation commit.
 2. Review confirms that host progress never commits navigation state and cannot move the indicator for invalid/non-adjacent endpoints.
-3. Manual review exercises forward/reverse swipes, rapid retargeting, drag release/cancel, hidden contextual action hit testing, both styles, reduced motion, RTL, and narrow widths.
-4. Any missing generic behavior is classified as existing Motion Core reuse, Compose behavior, or a separately proposed Motion UI capability.
+3. Add Compose UI tests for controlled tab callbacks, roving focus, action semantics, and adjacent-tab hit testing while the connector is attached/detached.
+4. Manual review exercises forward/reverse swipes, rapid retargeting, drag release/cancel, edge auto-scroll, both styles, reduced motion, RTL, and narrow widths.
 5. Only after these checks should the public toolbar API and its module-owned UI tests be designed.
 
 Do not treat a green CI run as proof of visual, accessibility, haptic, or physical-device validation.
