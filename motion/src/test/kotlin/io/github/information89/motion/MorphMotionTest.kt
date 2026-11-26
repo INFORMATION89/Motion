@@ -74,18 +74,39 @@ class MorphMotionTest {
     }
 
     @Test
+    fun `identical source and target anchors use intent as progress fallback`() = morphMotionTest {
+        val motion = MorphMotion(this)
+        val anchor = sourceAnchor()
+        motion.source = anchor
+        motion.target = anchor
+
+        motion.scrub(0.5f)
+        motion.progress shouldBe 0f
+        motion.open()
+        motion.progress shouldBe 1f
+        advanceMorphFrames(3)
+
+        motion.isOpen shouldBe true
+        motion.bounds shouldBe anchor.bounds
+    }
+
+    @Test
     fun `drag rejects non-finite deltas without changing geometry`() = morphMotionTest {
         val motion = MorphMotion(this)
         motion.source = MorphAnchor(Rect(0f, 0f, 100f, 100f), 20f)
         motion.target = MorphAnchor(Rect(100f, 0f, 200f, 100f), 20f)
         motion.scrub(0.4f)
         val before = motion.bounds
+        val wasOpen = motion.isOpen
+        val wasVisible = motion.isVisible
 
         assertThrows(IllegalArgumentException::class.java) { motion.drag(Float.NaN) }
         assertThrows(IllegalArgumentException::class.java) { motion.drag(Float.POSITIVE_INFINITY) }
         assertThrows(IllegalArgumentException::class.java) { motion.drag(Float.NEGATIVE_INFINITY) }
 
         motion.bounds shouldBe before
+        motion.isOpen shouldBe wasOpen
+        motion.isVisible shouldBe wasVisible
     }
 
     @Test
@@ -95,12 +116,16 @@ class MorphMotionTest {
         motion.target = MorphAnchor(Rect(100f, 0f, 200f, 100f), 20f)
         motion.scrub(0.4f)
         val before = motion.bounds
+        val wasOpen = motion.isOpen
+        val wasVisible = motion.isVisible
 
         assertThrows(IllegalArgumentException::class.java) { motion.scrub(Float.NaN) }
         assertThrows(IllegalArgumentException::class.java) { motion.scrub(Float.POSITIVE_INFINITY) }
         assertThrows(IllegalArgumentException::class.java) { motion.scrub(Float.NEGATIVE_INFINITY) }
 
         motion.bounds shouldBe before
+        motion.isOpen shouldBe wasOpen
+        motion.isVisible shouldBe wasVisible
     }
 
     @Test
@@ -111,16 +136,20 @@ class MorphMotionTest {
         motion.scrub(0.4f)
         val before = motion.bounds
         val wasOpen = motion.isOpen
+        val wasVisible = motion.isVisible
 
         assertThrows(IllegalArgumentException::class.java) { motion.release(Float.NaN) }
         assertThrows(IllegalArgumentException::class.java) { motion.release(Float.POSITIVE_INFINITY) }
+        assertThrows(IllegalArgumentException::class.java) { motion.release(Float.NEGATIVE_INFINITY) }
         assertThrows(IllegalArgumentException::class.java) { motion.release(0f, Float.NaN) }
         assertThrows(IllegalArgumentException::class.java) { motion.release(0f, 0f) }
         assertThrows(IllegalArgumentException::class.java) { motion.release(0f, 1f) }
         assertThrows(IllegalArgumentException::class.java) { motion.release(0f, Float.POSITIVE_INFINITY) }
+        assertThrows(IllegalArgumentException::class.java) { motion.release(0f, Float.NEGATIVE_INFINITY) }
 
         motion.bounds shouldBe before
         motion.isOpen shouldBe wasOpen
+        motion.isVisible shouldBe wasVisible
     }
 
     @Test
@@ -241,17 +270,24 @@ class MorphMotionTest {
         motion.open()
         advanceMorphFrames(240)
         motion.close()
-        advanceMorphFrames(30)
-        val previous = motion.bounds
-        advanceMorphFrames(3)
-        val before = motion.bounds
-        (before.center.x < previous.center.x) shouldBe true
 
-        motion.updateSource(alternateSourceAnchor())
-        motion.bounds shouldBe before
-        advanceMorphFrames(3)
-        (motion.bounds.center.x <= before.center.x) shouldBe true
-        advanceMorphFrames(204)
+        var previous = motion.bounds
+        var retargeted = false
+        for (frame in 0 until 60) {
+            advanceMorphFrames(1)
+            val current = motion.bounds
+            if (current.center.x < previous.center.x) {
+                motion.updateSource(alternateSourceAnchor())
+                motion.bounds shouldBe current
+                advanceMorphFrames(3)
+                (motion.bounds.center.x <= current.center.x) shouldBe true
+                retargeted = true
+                break
+            }
+            previous = current
+        }
+        retargeted shouldBe true
+        advanceMorphFrames(240)
 
         motion.bounds.center.x shouldBe (80f plusOrMinus 0.1f)
         motion.bounds.center.y shouldBe (90f plusOrMinus 0.1f)

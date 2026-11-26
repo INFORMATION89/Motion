@@ -48,7 +48,7 @@ This file is the working handoff for the next development session. Keep it curre
 
 No additional feature work is planned for MOT0.1. The remaining gate is final verification on the exact branch head, review of the complete diff, and integration of PR #4.
 
-1. Confirm the source-retarget continuity regression test matches preserved spring velocity and settles at the latest source.
+1. Confirm the source-retarget continuity regression detects the active closing direction and settles at the latest source; verify invalid inputs preserve state and identical anchors use the progress fallback.
 2. Run the complete required CI workflow once on the resulting final code-and-documentation head.
 3. Confirm Spotless, `:motion:testDebugUnitTest`, and `:motion:assembleRelease` all pass on that exact SHA.
 4. Update the PR description with the exact evidence, mark it ready, and merge PR #4 into `main` after all required checks pass.
