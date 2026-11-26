@@ -64,7 +64,24 @@ import kotlin.math.roundToInt
 
 /** Where an anchor sits inside its [MorphHost], and its corner radius in pixels. */
 @Immutable
-data class MorphAnchor(val bounds: Rect, val cornerRadius: Float)
+data class MorphAnchor(val bounds: Rect, val cornerRadius: Float) {
+    init {
+        require(
+            bounds.left.isFinite() && bounds.top.isFinite() &&
+                bounds.right.isFinite() && bounds.bottom.isFinite()
+        ) { "MorphAnchor bounds must be finite" }
+        require(bounds.right >= bounds.left && bounds.bottom >= bounds.top) {
+            "MorphAnchor bounds must not be inverted"
+        }
+        require(
+            bounds.width.isFinite() && bounds.height.isFinite() &&
+                bounds.center.x.isFinite() && bounds.center.y.isFinite()
+        ) { "MorphAnchor derived geometry must be finite" }
+        require(cornerRadius.isFinite() && cornerRadius >= 0f) {
+            "MorphAnchor cornerRadius must be finite and non-negative"
+        }
+    }
+}
 
 /** The geometry of a morph at progress [p] (unclamped: past 0 or 1 it extrapolates, for overshoot). */
 @Immutable

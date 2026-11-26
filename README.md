@@ -1,49 +1,95 @@
 # Motion
 
-A motion framework for Jetpack Compose that makes interactions feel like iOS: springs written as
-*response* and *damping*, gestures that hand their velocity to the animation, rubber-banding, UIKit's
-release rule, and surfaces that morph out of the element that opened them. It depends only on
-Compose (`animation`, `foundation`). Licensed under the Apache License 2.0 (see `LICENSE`).
+An independent motion and interaction framework for Jetpack Compose apps.
 
-Made for [Solstice](https://github.com/INFORMATION89/Solstice), where it started as the `:motion`
-module, and meant for any Compose app.
+Motion provides reusable motion behavior: spring-driven state, interruptible animations, gesture-to-animation handoff, elastic boundaries, morphing surfaces, and interaction primitives. It is designed to be used by different apps without depending on their screens, themes, or business logic.
 
-## In this repo
+Motion is organized around two layers: **Motion Core** (`:motion`) owns reusable motion and interaction behavior; **Motion UI** (`:motion-ui`) is a planned, optional component layer for configurable page frames, cards, sheets, header actions, and message surfaces. Motion UI will build on Core, not replace Material 3 or specialized UI libraries. The `:motion-ui` module does not exist yet.
 
-| | |
-|---|---|
-| `motion/` | The library (Gradle module `:motion`, package `io.github.information89.motion`). What each piece does: [motion/README.md](motion/README.md). |
-| `lab/` | Motion Lab, a Material You Expressive app to try every piece. Moving in from Solstice; not built yet (phase 2 of [docs/MOTION_REPO_PLAN.md](docs/MOTION_REPO_PLAN.md)). |
-| `docs/` | The motion rules ([MOTION.md](docs/MOTION.md)), the morph study, the lab plan, and the plan for this repo. |
+## What Motion covers
 
-Build and test: `./gradlew :motion:testDebugUnitTest :motion:assembleRelease` (JDK 21, Android SDK 37).
+- **Motion behavior** — spring tokens, retargeting, interruption, and velocity continuity.
+- **Gesture mechanics** — drag, catch, release projection, velocity handoff, and rubber-banding.
+- **Reusable interactions** — morphing surfaces, page movement, dials, reveal choreography, and related interaction state.
+- **Motion-related feedback** — semantic haptic primitives, ambient motion scheduling, and reduced-motion support.
 
-## Using it in an app
+See [the framework overview](docs/FRAMEWORK_OVERVIEW.md) for the responsibilities of Motion Core, the planned Motion UI layer, Compose, other UI libraries, and app code.
 
-It isn't published. Build it from source with a Gradle composite build, as Solstice does:
+## Platform support
 
-1. Add this repo as a git submodule, e.g. at `motion/`:
-   `git submodule add https://github.com/INFORMATION89/Motion.git motion`
-2. In `settings.gradle.kts`:
-   ```kotlin
-   includeBuild("motion") {
-       dependencySubstitution {
-           substitute(module("io.github.information89:motion")).using(project(":motion"))
-       }
-   }
-   ```
-3. In your module: `implementation("io.github.information89:motion")`.
+The current library is an Android library built on Jetpack Compose. It targets Android 10 (API 29) and uses compile SDK 37 with JDK 21. iOS and desktop targets (Windows, macOS, and Linux) are not supported by the current artifact.
 
-Clone with `git clone --recurse-submodules`, or run `git submodule update --init` in an existing
-clone. In CI, check out submodules (`actions/checkout` with `submodules: true`).
+See [platform support and integration](docs/PLATFORM_SUPPORT.md) for the working Android setup and the requirements for future platform targets.
 
-## How a change reaches Solstice
+## Use in an Android app
 
-1. Change Motion here (code, tests, lab), push; CI goes green.
-2. In Solstice, move the submodule to that commit (`git -C motion pull` or
-   `git submodule update --remote motion`), build and check, and commit the new pointer:
-   "Bump Motion to abc1234: what changed".
-3. To try a change inside Solstice first, edit Solstice's `motion/` folder (it's a checkout of this
-   repo), test it in Solstice, then commit and push from inside `motion/` and bump the pointer.
+Motion is not currently published to Maven. It is consumed from source through a Gradle composite build.
 
-Motion never imports app code: anything an app needs from Motion lands here first.
+Add the repository as a submodule:
+
+```bash
+git submodule add https://github.com/INFORMATION89/Motion-UI.git motion
+```
+
+In the consuming project's `settings.gradle.kts`:
+
+```kotlin
+includeBuild("motion") {
+    dependencySubstitution {
+        substitute(module("io.github.information89:motion"))
+            .using(project(":motion"))
+    }
+}
+```
+
+Then add the dependency to the app or library module:
+
+```kotlin
+dependencies {
+    implementation("io.github.information89:motion")
+}
+```
+
+For a fresh clone, include submodules:
+
+```bash
+git clone --recurse-submodules <app-repository-url>
+```
+
+For an existing clone:
+
+```bash
+git submodule update --init --recursive
+```
+
+Pin the submodule to a tested Motion commit. Do not move a consuming app to an unverified branch tip.
+
+## Build and test
+
+Run from the repository root:
+
+```bash
+./gradlew spotlessCheck
+./gradlew :motion:testDebugUnitTest
+./gradlew :motion:assembleRelease
+```
+
+On Windows, use `gradlew.bat` instead of `./gradlew`.
+
+## Documentation
+
+- [Framework scope and responsibilities](docs/FRAMEWORK_OVERVIEW.md)
+- [Platform support and integration](docs/PLATFORM_SUPPORT.md)
+- [AI guide for planning Motion adoption in Solstice](docs/AI_SOLSTICE_ADOPTION.md)
+- [Library API and usage](motion/README.md)
+- [Motion principles](docs/MOTION.md)
+- [Morph design study](docs/MORPH_STUDY.md)
+- [Repository instructions for AI agents](AGENTS.md)
+
+## Project status
+
+Motion is under active development. The `:motion` Android library is part of the Gradle build. The sources in `lab/` are prototypes and are not currently included as a Gradle module.
+
+## License
+
+Motion is licensed under the [Apache License 2.0](LICENSE).

@@ -132,6 +132,7 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
     private val h = Animatable(0f)
     private val r = Animatable(0f)
     private var placed = false
+    private var moveGeneration = 0L
 
     // Under a finger the surface sinks a little and springs back when let go, like iOS 26's
     // interactive glass ("scales and bounces"; WWDC25 Meet Liquid Glass). 0 at rest, 1 pressed.
@@ -175,9 +176,18 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
         get() {
             val s = source ?: return 0f
             val t = target ?: return 0f
-            val span = (t.bounds.height - s.bounds.height) + (t.bounds.width - s.bounds.width)
-            if (abs(span) < 1f) return if (isOpen) 1f else 0f
-            return ((h.value - s.bounds.height) + (w.value - s.bounds.width)) / span
+            val dx = t.bounds.center.x - s.bounds.center.x
+            val dy = t.bounds.center.y - s.bounds.center.y
+            val dw = t.bounds.width - s.bounds.width
+            val dh = t.bounds.height - s.bounds.height
+            val denominator = dx * dx + dy * dy + dw * dw + dh * dh
+            if (denominator < 1f) return if (isOpen) 1f else 0f
+            val numerator =
+                (cx.value - s.bounds.center.x) * dx +
+                    (cy.value - s.bounds.center.y) * dy +
+                    (w.value - s.bounds.width) * dw +
+                    (h.value - s.bounds.height) * dh
+            return numerator / denominator
         }
 
     // The corner as it actually looks: a pill's "100 dp" is really half its height. Springing from the
@@ -210,12 +220,29 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
     /**
      * The source's current bounds (e.g. a postcard on a page that's moving). While it's closing, the
      * springs re-aim at it from where they are, keeping their velocity, so it lands where the source is
-     * now, even off screen (agreed 2026-11-21: a closing window floated where its postcard had been).
+     * now, even off screen. While closed and settled, its hidden geometry snaps to the latest source.
      */
     internal fun updateSource(anchor: MorphAnchor) {
         if (anchor == source) return
         source = anchor
-        if (!isOpen && isMoving && !caught) animate(anchor, lastSprings)
+        if (!isOpen && !caught) {
+            if (isMoving) {
+                animate(anchor, lastSprings)
+            } else if (placed) {
+                scope.launch(start = CoroutineStart.UNDISPATCHED) { placeAtSource() }
+            }
+        }
+    }
+
+    /**
+     * The target's current bounds. Whenever open (including after settling), re-aim at the new target
+     * from the current geometry and velocity; while closed or caught, defer the change until motion resumes.
+     */
+    internal fun updateTarget(anchor: MorphAnchor) {
+        if (anchor == target) return
+        target = anchor
+        // An open surface remains attached to its anchor even after its first spring has settled.
+        if (isOpen && !caught) animate(anchor, lastSprings)
     }
 
     /** Springs every property to [to] with [springs], each from its current velocity plus [kick]. */
@@ -235,7 +262,9 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
             // Settled within Compose's own pixel threshold (the default 0.01 for a bare Float kept a resting
             // surface "moving" for a long tail of invisible motion, so a touch on an open card was caught as
             // a tap that closed it).
-            scope.launch { a.animateTo(v[i], spring.spec(PIXEL_THRESHOLD), initialVelocity = velocity) }
+            scope.launch(start = CoroutineStart.UNDISPATCHED) {
+                a.animateTo(v[i], spring.spec(PIXEL_THRESHOLD), initialVelocity = velocity)
+            }
         }
     }
 
@@ -244,28 +273,40 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
 
     /** Opens, from wherever it is now (a tap: no bounce). */
     fun open(springs: MorphSprings = MorphSprings.Open) {
-        val t = target ?: return
+        if (target == null) return
         isOpen = true
+        val generation = ++moveGeneration
         scope.launch(start = CoroutineStart.UNDISPATCHED) {
             if (!placed) placeAtSource()
-            animate(t, springs)
+            // A close (or a newer open) may have arrived while the first layout was pending.
+            if (generation != moveGeneration || !isOpen) return@launch
+            animate(target ?: return@launch, springs)
         }
     }
 
     /** Closes back into the source, from wherever it is now (a tap or back: no bounce). */
     fun close(springs: MorphSprings = MorphSprings.Close) {
-        val s = source ?: return
+        if (source == null) return
         isOpen = false
-        animate(s, springs)
+        val generation = ++moveGeneration
+        scope.launch(start = CoroutineStart.UNDISPATCHED) {
+            if (!placed) placeAtSource()
+            if (generation != moveGeneration || isOpen) return@launch
+            animate(source ?: return@launch, springs)
+        }
     }
 
     /**
      * A finger moved by [delta] of the path (1 = from source to target): all five follow it at once,
-     * along the straight path, so the surface stays under the finger.
+     * along the straight path, so the surface stays under the finger. Drag takes gesture ownership
+     * until release, catch, or a new open/close command resumes spring motion.
      */
     fun drag(delta: Float) {
+        require(delta.isFinite()) { "delta must be finite" }
+        moveGeneration++
         val s = source ?: return
         val t = target ?: return
+        caught = true
         val p = (progress + delta).coerceIn(-0.05f, 1.08f)
         val a = values(s)
         val b = values(t)
@@ -280,11 +321,15 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
 
     /**
      * Puts it at [progress] along the path (0 = the source, 1 = the target) at once, e.g. following a
-     * predictive back gesture. Then [open] (cancelled) or [close] (committed) carries on from there.
+     * predictive back gesture. Scrubbing takes gesture ownership and keeps the surface visible.
+     * Then [open] (cancelled) or [close] (committed) carries on from there.
      */
     fun scrub(progress: Float) {
+        require(progress.isFinite()) { "progress must be finite" }
+        moveGeneration++
         val s = source ?: return
         val t = target ?: return
+        caught = true
         val p = progress.coerceIn(-0.05f, 1.08f)
         val a = values(s)
         val b = values(t)
@@ -303,6 +348,10 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
      * velocity, and a flick with momentum gets the slight overshoot.
      */
     fun release(rawVelocity: Float, deceleration: Float = MotionPhysics.DECELERATION_NORMAL) {
+        require(rawVelocity.isFinite()) { "rawVelocity must be finite" }
+        require(deceleration.isFinite() && deceleration > 0f && deceleration < 1f) {
+            "deceleration must be finite and in (0, 1)"
+        }
         val s = source ?: return
         val t = target ?: return
         // A speed limit (user 2026-11-21: a very fast close broke the animation): the finger's speed is
@@ -320,6 +369,7 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
             else -> MorphSprings.Close
         }
         isOpen = opening
+        moveGeneration++
         // The springs carry their own velocity (zeroed by the drag's snaps), so the kick is the finger's.
         animate(if (opening) t else s, springs, kick)
     }
@@ -355,6 +405,7 @@ class MorphMotion internal constructor(private val scope: CoroutineScope) {
      * cancelled); a drag carries on from there, a tap turns it back.
      */
     internal fun catch() {
+        moveGeneration++
         caught = true
         scope.launch { press.animateTo(1f, Motion.snappy.spec()) }
         scope.launch(start = CoroutineStart.UNDISPATCHED) {
@@ -434,7 +485,8 @@ fun SpringMorph(
     // The first source is set at once (opening reads it); later ones re-aim the springs after composition.
     if (motion.source == null) motion.source = source
     SideEffect { motion.updateSource(source) }
-    motion.target = target
+    if (motion.target == null) motion.target = target
+    SideEffect { motion.updateTarget(target) }
     val density = LocalDensity.current
     // How far a finger travels for the whole path: the farthest an edge moves between source and target,
     // so the edge under the finger keeps up with it (2026-11-21: by the change in height, the moon sheet

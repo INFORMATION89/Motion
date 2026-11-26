@@ -18,6 +18,7 @@ package io.github.information89.motion
 
 import androidx.compose.ui.geometry.Rect
 import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 class MorphGeometryTest {
@@ -48,5 +49,43 @@ class MorphGeometryTest {
     fun `corners stay within half the shorter side`() {
         val tiny = MorphAnchor(Rect(0f, 0f, 10f, 10f), cornerRadius = 40f)
         MorphGeometry.frame(tiny, tiny, 0f).cornerRadius shouldBe 5f
+    }
+
+    @Test
+    fun `zero-size anchors are allowed for transient layout`() {
+        MorphAnchor(Rect(10f, 20f, 10f, 20f), cornerRadius = 0f)
+    }
+
+    @Test
+    fun `inverted anchor bounds are rejected`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            MorphAnchor(Rect(10f, 0f, 5f, 10f), cornerRadius = 0f)
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            MorphAnchor(Rect(0f, 10f, 10f, 5f), cornerRadius = 0f)
+        }
+    }
+
+    @Test
+    fun `non-finite anchor geometry and corner radius are rejected`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            MorphAnchor(Rect(Float.NaN, 0f, 10f, 10f), cornerRadius = 0f)
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            MorphAnchor(Rect(0f, 0f, Float.POSITIVE_INFINITY, 10f), cornerRadius = 0f)
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            MorphAnchor(Rect(0f, 0f, 10f, 10f), cornerRadius = Float.NaN)
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            MorphAnchor(Rect(0f, 0f, 10f, 10f), cornerRadius = -1f)
+        }
+    }
+
+    @Test
+    fun `overflowing derived anchor geometry is rejected`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            MorphAnchor(Rect(-Float.MAX_VALUE, 0f, Float.MAX_VALUE, 10f), cornerRadius = 0f)
+        }
     }
 }

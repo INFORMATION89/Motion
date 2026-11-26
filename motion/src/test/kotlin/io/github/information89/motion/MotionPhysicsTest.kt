@@ -21,6 +21,10 @@ import io.kotest.matchers.floats.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
+private fun assertIllegalArgument(block: () -> Unit) {
+    (runCatching(block).exceptionOrNull() is IllegalArgumentException) shouldBe true
+}
+
 class MotionPhysicsTest {
 
     @Test
@@ -136,6 +140,21 @@ class MotionPhysicsTest {
             fastFlick = 2f,
             deceleration = 0.5f
         ) shouldBe 0.5f
+    }
+
+    @Test
+    fun `projection rejects non finite values and invalid deceleration`() {
+        assertIllegalArgument { MotionPhysics.project(Float.NaN, 1f) }
+        assertIllegalArgument { MotionPhysics.project(0f, Float.POSITIVE_INFINITY) }
+        assertIllegalArgument { MotionPhysics.project(0f, 1f, 1f) }
+    }
+
+    @Test
+    fun `target selection rejects invalid thresholds and rest points`() {
+        val points = listOf(0f, 1f)
+        assertIllegalArgument { MotionPhysics.chooseTarget(0f, 1f, emptyList(), 0f, 1f) }
+        assertIllegalArgument { MotionPhysics.chooseTarget(0f, 1f, listOf(0f, Float.NaN), 0f, 1f) }
+        assertIllegalArgument { MotionPhysics.chooseTarget(0f, 1f, points, 2f, 1f) }
     }
 
     @Test

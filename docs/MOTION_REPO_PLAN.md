@@ -1,110 +1,70 @@
-# Moving Motion into its own repo
+# Motion repository plan
 
-Plan agreed with the user on 2026-11-21. The repo is
-[INFORMATION89/Motion](https://github.com/INFORMATION89/Motion): public, empty, Apache-2.0 like
-`:motion`. This file moved into that repo in phase 1 and is kept up to date here.
+This document preserves the original repository-extraction decisions from 2026-11-21. The repository is now [INFORMATION89/Motion-UI](https://github.com/INFORMATION89/Motion-UI); the current implementation state below takes precedence over historical target-state descriptions in the plan.
 
-## Decisions (user, 2026-11-21)
+## Current state — 2026-11-25
 
-- **Workflow: git submodule + Gradle composite build.** Solstice keeps Motion at `motion/` as a
-  submodule pinned to an exact Motion commit and builds it from source (`includeBuild`). Nothing is
-  published.
-- **History: kept.** Motion starts with the commits that touched `motion/` and the lab (33 commits,
-  all our own Apache-2.0 work, none of upstream Breezy's history).
-- **Lab tabs:** Springs · Morphs · Pages · Controls · Effects (Material 3 bottom navigation bar).
-  Slow motion and the frame counter sit in the top app bar, on every tab.
-- **Lab app:** "Motion Lab", `io.github.information89.motion.lab`, its own app next to Solstice. The
-  "Solstice Lab" launcher icon goes away from Solstice.
-- **The lab is a plain Material You Expressive app** (the user): `MaterialExpressiveTheme`, dynamic
-  colour, standard Material 3 components (Scaffold, top app bar, navigation bar, cards, chips,
-  sliders, segmented buttons) used the standard way. No Solstice look (no glass, no sky), and no
-  invented values: sizes and spacing come from Material 3's own defaults and specs. Every demo is
-  laid out the same way.
+- Motion is an independent Android library with a standalone Gradle build and a single included library module, `:motion`.
+- The module uses the Android library Gradle plugin and Jetpack Compose Animation/Foundation. It is not a Kotlin Multiplatform project.
+- The current target is Android 10 / API 29+, compile SDK 37, Android Build Tools 37, and JDK 21.
+- `lab/` contains prototype sources; it is not currently included as a Gradle module or CI target.
+- CI runs Spotless, `:motion:testDebugUnitTest`, and `:motion:assembleRelease`.
+- Solstice consumes Motion through a Git submodule and Gradle composite build. It pins the Motion commit through the submodule pointer.
+- Desktop (Windows/macOS/Linux) and iOS support are future design work, not supported targets.
+- Physical-device and Pixel validation remain `NOT TESTED` / `DEFERRED` while the required hardware is unavailable. Passing CI does not establish device behavior.
 
-## The Motion repo
+## Original decisions (2026-11-21)
 
+- **Workflow: Git submodule + Gradle composite build.** Solstice keeps Motion at `motion/` as a submodule pinned to an exact Motion commit and builds it from source through `includeBuild`. Nothing is currently published to Maven.
+- **Independence:** Motion must not import Solstice code or depend on any consuming app. Generic motion behavior belongs in Motion; app styling, screens, assets, and product logic remain in the consuming app.
+- **History:** the extracted Motion repository keeps the project-owned Motion history, not the upstream Breezy Weather history.
+- **Motion Lab direction:** a separate Material You Expressive app was planned to demonstrate Motion with standard Material 3 components rather than Solstice's visual styling. The lab is not yet a Gradle module.
+
+## Intended repository structure
+
+The intended structure remains:
+
+```text
+Motion-UI/
+  motion/       Android motion library (Gradle module :motion)
+  lab/          prototype sources; future standalone demo app/module
+  docs/         architecture, motion rules, research, and plans
+  gradle/       wrapper and version catalog
+  .github/      CI
+  LICENSE       Apache-2.0
+  README.md     project entry point
 ```
-Motion/
-  motion/        the library (Gradle module :motion, package io.github.information89.motion)
-  lab/           Motion Lab (Gradle module :lab, an Android app)
-  docs/          this plan, MOTION.md (the motion rules), MORPH_STUDY.md, the lab plan
-  gradle/        wrapper + its own version catalog
-  .github/       CI
-  LICENSE        Apache-2.0
-  README.md      what Motion is, how to use it, how Solstice takes it in
-```
 
-- **Its own Gradle setup.** Today `:motion` uses Solstice's `breezy.library` convention plugin; the
-  Motion repo gets plain `com.android.library` / `com.android.application` setups. Versions (AGP,
-  Kotlin, Compose BOM, SDKs, minimum Android 10) are the same as Solstice's catalog, copied, so both
-  build the same code the same way. Same Spotless/ktlint rules as Solstice.
-- **CI:** `:motion` unit tests, ktlint, and a Motion Lab APK (debug, plus a test-signed build to
-  install on the phone, like Solstice's `testing` pre-release).
-- **Solstice-specific docs stay in Solstice.** Motion takes the motion docs (MOTION.md rules,
-  MORPH_STUDY.md, MOTION_LAB_PLAN.md, the `:motion` README), and Solstice links to them.
+Do not describe `lab/` as a built or CI-validated app until it is included in the Gradle build and has its own verification.
 
-## How changes flow (the workflow)
+## How changes reach Solstice
 
-1. **Change Motion in the Motion repo** (my clone: `~/Developer/Motion`): code, lab demo, tests,
-   commit, push. Motion's CI goes green.
-2. **Solstice takes it:** in Solstice, `git -C motion fetch && git -C motion checkout <commit>` (or
-   `git submodule update --remote motion`), build and check, then commit the new pointer
-   ("Bump Motion to abc1234: what changed"). Solstice's CI checks out submodules
-   (`actions/checkout` with `submodules: true`).
-3. **Trying a Motion change in Solstice before pushing it:** work directly in Solstice's `motion/`
-   submodule folder (it's a real Motion checkout), test in Solstice, then commit and push *from
-   inside* `motion/` to Motion, and bump the pointer in Solstice.
-4. **Rules:** Motion never imports Solstice code. A change Solstice needs from Motion lands in Motion
-   first. Tags (`v0.1.0`, …) mark versions for the changelog, though Solstice pins commits.
-5. **A new computer:** `git clone --recurse-submodules https://github.com/INFORMATION89/Solstice.git`
-   (or `git submodule update --init` in an existing clone).
+1. Make and test a reusable change in Motion.
+2. Confirm the Motion CI workflow passes on the exact commit intended for adoption.
+3. In Solstice, fetch Motion and check out that exact tested commit inside the `motion/` submodule.
+4. Build and test Solstice with that pointer.
+5. Commit the updated submodule pointer in Solstice with a message that identifies the SHA and reason.
 
-What changes about tuning: today the lab's Toolbar demo edits the app's `ToolbarMotion` live. As two
-apps that link goes; values tuned in the lab are committed in Motion and reach Solstice with a bump.
+A change should be prototyped in Solstice only when useful, but the generic implementation must land in Motion first. Do not copy app code into Motion. Prefer an exact commit checkout over an unreviewed moving branch update.
 
-## What moves from Solstice into `:motion`
+## Original extraction candidates
 
-Generic motion code that lives in Solstice today and has no Solstice imports (checked 2026-11-21):
+The 2026-11-21 inventory identified these areas for review:
 
-| Solstice file | Becomes in `:motion` | Used by |
+| Solstice area | Potential reusable behavior | App-specific boundary |
 |---|---|---|
-| `shell/ShellNavigation.kt` | page navigation: tab taps with a drawn slide, the settle, the toolbar's glide, the title hand-off | home, postcard window, lab |
-| `shell/ToolbarMotion.kt` | the floating toolbar's motion (pill slide, bud, press, slide to switch), with `TOOLBAR_MOTION_PLAN.md` | `Toolbar.kt`, lab |
-| `components/PressMorph.kt` | press morph shape for segmented rows | settings rows |
-| `components/SolsticeSheetState.kt` | sheet motion (grow from a source, detents, drag away) | search |
+| Shell/page navigation | page movement, settle, and generic gesture mechanics | route policy, screens, page content |
+| Toolbar interaction | pill movement, press, and transitions between states | toolbar composition, glass/sky look, icons, app state |
+| Segmented-row press morph | reusable press/morph behavior | row content, labels, settings semantics |
+| Sheet state | detents, drag, and source-to-sheet mechanics | search UI, screen state, product-specific content |
 
-Stays in Solstice: `Toolbar.kt`'s look (glass, sky, icons), `SolsticeMotion.kt` (Solstice's own
-choreography constants, forwarding to `:motion`), all screens.
+Treat this as a historical candidate list. Re-inspect current Solstice source, call sites, and tests before planning a move. See [the AI adoption guide](AI_SOLSTICE_ADOPTION.md).
 
-The lab's Toolbar demo needs a toolbar: once the toolbar's motion is in `:motion`, the lab shows it
-with a plain Material 3 look, and Solstice keeps its glass look on the same motion.
+## Planned phases
 
-## Phases
+1. **Library reliability:** complete the core motion state, physics, validation, and interruption contracts with focused deterministic tests.
+2. **Motion Lab:** make the prototype a standalone, independently verifiable app using standard Material 3 components.
+3. **Reusable interaction extraction:** move generic behavior into Motion one piece at a time, each with tests and a corresponding Lab example when that improves validation.
+4. **Consumer workflow:** document contribution, version pinning, and the Solstice update process.
 
-Each phase: plan the details, agree, build, check on the Pixel, then the next one.
-
-1. **Bootstrap Motion with the library only.**
-   - Install `git-filter-repo` (Homebrew; not installed yet). In a throwaway clone of Solstice, keep
-     only `motion/`, the lab files and the motion docs, and lay them out as above. Check the result
-     before anything is pushed: no Solstice-only files, no upstream history.
-   - Add the standalone Gradle setup, CI and README; push to Motion. CI green.
-   - In Solstice: remove `motion/`, add the submodule at `motion/` on that commit, wire
-     `includeBuild`, CI with submodules. Solstice must build and behave exactly as before
-     (same APK contents; tests pass).
-2. **Motion Lab as its own app** (in Motion's `:lab`).
-   - New Material You Expressive app shell: top app bar (slow motion, frame counter), the five tabs,
-     one consistent card per demo.
-   - Move the demos and swap Solstice's theme tokens (`Space`, `CornerShapes`, `Sizes`) for Material
-     3's defaults. The Toolbar demo waits for phase 3.
-   - Remove the lab from Solstice (activity, manifests, "Solstice Lab" icon, CI notes).
-3. **Move the generic motion code** from the table above into `:motion`, one piece at a time, each
-   with its lab demo and tests; Solstice switches to it with a bump. Page navigation and the toolbar
-   go after the other session's settle work (swipe settle B in the app) has landed, since it's
-   changing `ShellNavigation` right now.
-4. **Workflow docs:** `CONTRIBUTING.md` in Motion and the "Motion" section in Solstice's
-   `CONTINUE.md` (clone with submodules, bump, test a change in place).
-
-## Open
-
-- What each tab's screen holds exactly, and the demo card layout: planned in phase 2 with screenshots.
-- The toolbar's motion API in `:motion`: comes with `TOOLBAR_MOTION_PLAN.md` (still to approve).
+Each phase should have a scoped plan, acceptance criteria, cost-aware verification, and an explicit list of deferred device checks. Do not expand a milestone into unrelated UI components, platform ports, or benchmarks.

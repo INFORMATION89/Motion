@@ -1,0 +1,66 @@
+# Repository instructions for AI agents
+
+Read this file before making changes. Then read [README.md](README.md), [the framework overview](docs/FRAMEWORK_OVERVIEW.md), [platform support](docs/PLATFORM_SUPPORT.md), [the Solstice adoption guide](docs/AI_SOLSTICE_ADOPTION.md), [motion principles](docs/MOTION.md), and the relevant implementation or design documents under `docs/`.
+
+## Project boundaries
+
+- This repository contains the reusable Motion framework. It is independent of Solstice and must remain useful to unrelated apps.
+- The current artifact is an Android library for Jetpack Compose. Do not claim iOS, Windows, macOS, or Linux support until corresponding Gradle targets, platform implementations, tests, and CI exist.
+- Never add Solstice, weather-domain, or other consumer-app dependencies, source code, assets, or assumptions to Motion.
+- Motion Core (`:motion`) owns reusable motion and interaction behavior. The planned Motion UI (`:motion-ui`) layer may own configurable, cross-app component building blocks, but not a complete application framework, product screens, visual brand, navigation policy, or domain logic. Motion UI depends on Core; Core never depends on Motion UI. Follow [the framework overview](docs/FRAMEWORK_OVERVIEW.md) when deciding where code belongs.
+- Compose remains the animation, rendering, and interaction foundation. Use Compose primitives such as `Animatable`, `spring`, and gesture APIs; do not invent a second general-purpose animation engine.
+- Motion-specific behavior and interaction decisions must follow `docs/MOTION.md`. Do not change agreed, user-visible motion behavior without documenting the trade-off and obtaining the owner's agreement.
+- Keep the library API small and intentional. Do not add public inspection hooks, configuration knobs, dependencies, or abstractions solely to simplify one test.
+
+## Current milestone boundary
+
+MOT0.1 is limited to reliability of the core motion state and physics, focused regression tests, and directly related documentation.
+
+Do not fold these into MOT0.1:
+- Motion Lab implementation or redesign.
+- New animation/interaction components unrelated to the reliability contracts.
+- Benchmarks or performance dashboards.
+- Solstice-specific UI or migration work.
+- A multiplatform conversion.
+- Broad refactors unrelated to a failing test or a documented contract gap.
+
+Follow the ordered tasks in [docs/MOT0.1_PLAN.md](docs/MOT0.1_PLAN.md). Start with deterministic regression tests for interruption and reversal in `MorphMotion`, then implement the smallest change that satisfies the intended contract.
+
+## Implementation and test discipline
+
+- Prefer a failing regression test before changing production code.
+- For animation tests, use a deterministic `MonotonicFrameClock` and advance frames deliberately. Do not use wall-clock sleeps or timing-dependent assertions.
+- Test observable behavior: final anchor, current bounds, visibility, open/closed intent, and whether motion settles. Do not expose internal velocity as public API just for assertions.
+- Retarget from current animated values and preserve each `Animatable`'s current velocity when starting a replacement spring.
+- New commands and gestures must supersede stale work. Check pending coroutines and initial placement races, not only the happy path.
+- Validate non-finite numeric input before mutating state or launching work. Do not silently turn `NaN` or infinity into a plausible value.
+- Keep intentional finite high-velocity clamps; validate raw input before clamping.
+- Preserve legitimate zero-size/transient layout anchors if validating `MorphAnchor`; reject invalid geometry rather than silently normalizing it.
+- Never weaken or delete a regression assertion merely to make CI green.
+
+## AI-assisted planning and implementation
+
+- Verify the current branch, submodule commit, open PRs, source tree, and latest CI before relying on earlier plans or chat context.
+- For Solstice adoption work, follow `docs/AI_SOLSTICE_ADOPTION.md`. The first deliverable is an evidence-based migration plan in Solstice, not an automatic code migration or submodule bump.
+- Inspect existing APIs before proposing new ones. Classify each candidate as direct reuse, app-side composition, a reusable Motion gap, or app-specific behavior.
+- Prefer adapting existing components and libraries over rebuilding equivalents. Avoid duplicating spring constants, gesture physics, or component implementations in consuming apps.
+- Do not broaden platform support as incidental cleanup. A platform proposal must identify source-set boundaries, platform APIs, tests, and CI requirements first.
+
+## Cost-aware verification
+
+1. **Plan before testing.** For each task, identify the changed modules, acceptance criteria, smallest relevant checks, expensive checks (full CI, emulators, device runs, and live integrations), and the evidence that would count as a pass.
+2. **Use focused checks during iteration.** Run the affected unit tests, lint target, or build task while implementing. Do not run the entire CI suite after every small change. For documentation-only changes, skip local code tests that cannot be affected.
+3. **Batch related changes.** Complete a coherent set of implementation and documentation changes before pushing or requesting the full pull-request CI workflow. Run the full required CI suite once when the batch is ready.
+4. **Reuse passing results.** Record the commit SHA and environment associated with each result. Do not repeat a check when neither relevant code nor its dependencies/configuration changed. If one job fails, inspect its logs and rerun only that job where possible; do not rerun successful jobs without a technical reason.
+5. **Limit infrastructure retries.** After an infrastructure/environment failure, inspect the evidence and allow at most one retry with a materially different setup. If the same requirement fails again, stop and mark it `BLOCKED`; report the evidence and the host/tool access needed. Do not repeatedly retry an unchanged setup.
+6. **Ask before expanding verification.** Before substantially widening the test matrix, adding a new expensive test layer, or spending another full CI run after a failed run, explain why it is needed and obtain the owner's approval when it exceeds the agreed task plan. A narrowly scoped rerun of only the failed job is preferred when supported.
+7. **Keep device checks separate.** CI is the routine acceptance gate when device access is unavailable. Real-device, live-source, and manual interaction checks remain `NOT TESTED` or `DEFERRED` until explicitly required and available. A passing CI workflow must never be described as device or live-integration validation.
+8. **Report exact evidence.** State the exact commands or workflow run, tested commit SHA, pass/fail results, checks not run, and blockers. Never claim an unrun or uninspected check passed.
+
+## Git and pull request rules
+
+- Work on a focused branch and use a pull request; do not push development work directly to `main`.
+- Keep related changes together and commits understandable.
+- Keep MOT0.1 in draft until every acceptance criterion in `docs/MOT0.1_PLAN.md` is covered by tests and the complete CI workflow passes on the exact final branch head.
+- Do not merge, release, publish, tag, or bump a consuming app's submodule unless explicitly requested.
+- Update `CONTINUE.md`, implementation plans, and PR descriptions when branch state or remaining work materially changes.

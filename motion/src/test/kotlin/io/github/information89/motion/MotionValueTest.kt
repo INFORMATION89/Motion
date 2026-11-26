@@ -44,10 +44,66 @@ private fun motionTest(block: suspend CoroutineScope.() -> Unit) = runBlocking(S
 
 private suspend fun frames(n: Int) = repeat(n) { yield() }
 
+private fun assertIllegalArgument(block: () -> Unit) {
+    (runCatching(block).exceptionOrNull() is IllegalArgumentException) shouldBe true
+}
+
 class MotionValueTest {
 
     private fun CoroutineScope.value(initial: Float = 0f) =
         MotionValue(initial, this, overMin = 0.1f, overMax = 0.1f, slowFlick = 0.5f, fastFlick = 2f)
+
+    @Test
+    fun `rest points are copied sorted and deduplicated`() = motionTest {
+        val supplied = mutableListOf(1f, 0f, 1f, 0.5f)
+        val v = MotionValue(0f, this, restPoints = supplied)
+        supplied += 2f
+        v.restPoints shouldBe listOf(0f, 0.5f, 1f)
+
+        v.restPoints = listOf(2f, 0f, 2f, 1f)
+        v.restPoints shouldBe listOf(0f, 1f, 2f)
+    }
+
+    @Test
+    fun `rest points reject empty and non finite values`() = motionTest {
+        val v = value()
+        assertIllegalArgument { v.restPoints = emptyList() }
+        assertIllegalArgument { v.restPoints = listOf(0f, Float.NaN) }
+        assertIllegalArgument { v.restPoints = listOf(Float.POSITIVE_INFINITY) }
+    }
+
+    @Test
+    fun `constructor rejects non finite and invalid configuration values`() = motionTest {
+        assertIllegalArgument { MotionValue(Float.NaN, this) }
+        assertIllegalArgument { MotionValue(0f, this, overMin = -1f) }
+        assertIllegalArgument { MotionValue(0f, this, overMax = Float.POSITIVE_INFINITY) }
+        assertIllegalArgument { MotionValue(0f, this, slowFlick = Float.NaN) }
+        assertIllegalArgument { MotionValue(0f, this, fastFlick = -1f) }
+        assertIllegalArgument { MotionValue(0f, this, slowFlick = 3f, fastFlick = 2f) }
+        assertIllegalArgument { MotionValue(0f, this, deceleration = 1f) }
+    }
+
+    @Test
+    fun `runtime inputs reject non finite values`() = motionTest {
+        val v = value()
+        assertIllegalArgument { v.drag(Float.NaN) }
+        assertIllegalArgument { v.release(Float.POSITIVE_INFINITY) }
+        assertIllegalArgument { v.targetFor(Float.NEGATIVE_INFINITY) }
+        assertIllegalArgument { v.animateTo(Float.NaN) }
+        assertIllegalArgument { v.animateTo(1f, velocity = Float.NaN) }
+        assertIllegalArgument { v.snapTo(Float.POSITIVE_INFINITY) }
+    }
+
+    @Test
+    fun `flick thresholds reject invalid assignments immediately`() = motionTest {
+        val v = value()
+        assertIllegalArgument { v.slowFlick = -1f }
+        assertIllegalArgument { v.fastFlick = Float.NaN }
+        assertIllegalArgument { v.slowFlick = 3f }
+        assertIllegalArgument { v.fastFlick = 0.25f }
+        v.slowFlick shouldBe 0.5f
+        v.fastFlick shouldBe 2f
+    }
 
     @Test
     fun `drag moves one to one inside the range and resists past it`() = motionTest {
@@ -115,6 +171,38 @@ class MotionValueTest {
         v.animateTo(1f, velocity = 0f)
         frames(200)
         v.value shouldBe (1f plusOrMinus 0.001f)
+        v.isRunning shouldBe false
+    }
+
+    @Test
+    fun `changing rest points does not retarget an animation already in flight`() = motionTest {
+        val v = value()
+        v.animateTo(1f, velocity = 0f)
+        frames(6)
+        (v.value > 0f && v.value < 1f) shouldBe true
+
+        v.restPoints = listOf(0f, 2f)
+        v.target shouldBe 1f
+        frames(200)
+
+        v.value shouldBe (1f plusOrMinus 0.001f)
+        v.target shouldBe 1f
+        v.isRunning shouldBe false
+    }
+
+    @Test
+    fun `reissuing the current animation target still settles from current position`() = motionTest {
+        val v = value()
+        v.animateTo(1f, velocity = 0f)
+        frames(6)
+        val current = v.value
+        (current > 0f && current < 1f) shouldBe true
+
+        v.animateTo(1f, velocity = v.velocity)
+        frames(200)
+
+        v.value shouldBe (1f plusOrMinus 0.001f)
+        v.target shouldBe 1f
         v.isRunning shouldBe false
     }
 }

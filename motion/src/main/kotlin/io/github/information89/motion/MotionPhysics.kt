@@ -19,6 +19,16 @@ package io.github.information89.motion
 import androidx.compose.ui.unit.dp
 import kotlin.math.abs
 
+private fun requireFinite(value: Float, name: String) {
+    require(value.isFinite()) { "$name must be finite" }
+}
+
+private fun requireDeceleration(value: Float) {
+    require(value.isFinite() && value > 0f && value < 1f) {
+        "deceleration must be finite and in the range (0, 1)"
+    }
+}
+
 /**
  * The maths behind gestures, after UIKit (see Glasmio's notes, `ios-sheet-motion.md`). Pure
  * functions, no Compose, so they're unit-tested.
@@ -95,8 +105,14 @@ object MotionPhysics {
      * Where a fling would come to rest, given a [velocity] in units per second and a per-millisecond
      * [deceleration] (UIKit's `decelerationRate`).
      */
-    fun project(value: Float, velocity: Float, deceleration: Float = DECELERATION_NORMAL): Float =
-        value + velocity / 1000f * deceleration / (1f - deceleration)
+    fun project(value: Float, velocity: Float, deceleration: Float = DECELERATION_NORMAL): Float {
+        requireFinite(value, "value")
+        requireFinite(velocity, "velocity")
+        requireDeceleration(deceleration)
+        val projected = value + velocity / 1000f * deceleration / (1f - deceleration)
+        requireFinite(projected, "projected position")
+        return projected
+    }
 
     /**
      * Picks the rest point a release goes to:
@@ -114,8 +130,16 @@ object MotionPhysics {
         fastFlick: Float,
         deceleration: Float = DECELERATION_NORMAL,
     ): Float {
+        requireFinite(position, "position")
+        requireFinite(velocity, "velocity")
         require(restPoints.isNotEmpty()) { "restPoints must not be empty" }
-        val points = restPoints.sorted()
+        restPoints.forEach { requireFinite(it, "restPoints entries") }
+        requireFinite(slowFlick, "slowFlick")
+        requireFinite(fastFlick, "fastFlick")
+        require(slowFlick >= 0f && fastFlick >= 0f) { "flick thresholds must be non-negative" }
+        require(fastFlick >= slowFlick) { "fastFlick must be greater than or equal to slowFlick" }
+        requireDeceleration(deceleration)
+        val points = restPoints.distinct().sorted()
         val v = if (abs(velocity) < slowFlick) 0f else velocity
         val nearestNow = points.minBy { abs(it - position) }
         val target = points.minBy { abs(it - project(position, v, deceleration)) }
