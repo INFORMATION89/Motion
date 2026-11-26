@@ -28,6 +28,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.gestures.stopScroll
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -76,6 +77,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -186,8 +188,7 @@ internal fun ToolbarPrototype() {
             }
         )
         Text(
-            "Long-press the selected tab and drag across the row. " +
-                "A tap or keyboard action requests a destination; the pager owns the selected page.",
+            "Long-press the selected tab and drag across the row. A tap or keyboard activation requests a destination; the pager remains the source of truth.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -373,11 +374,6 @@ private fun ToolbarPrototypeBar(
                             val labelWidth = with(density) { labelLayout.size.width.toDp() }
                             val isCommittedSelection = selectedTabId == destination.id
                             val isVisuallySelected = fraction >= 0.5f
-                            val tabContentColor = if (isVisuallySelected) {
-                                appearance.selectedContent
-                            } else {
-                                appearance.unselectedContent
-                            }
                             Row(
                                 modifier = Modifier
                                     .onGloballyPositioned { coordinates ->
@@ -447,7 +443,7 @@ private fun ToolbarPrototypeBar(
                                 Text(
                                     destination.symbol,
                                     style = MaterialTheme.typography.titleMedium,
-                                    color = tabContentColor
+                                    color = if (isVisuallySelected) appearance.selectedContent else appearance.unselectedContent
                                 )
                                 Spacer(Modifier.width(8.dp * fraction))
                                 Box(
