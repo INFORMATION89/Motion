@@ -218,8 +218,8 @@ private fun DrawScope.blurBand(
 }
 
 /**
- * The edge look agreed for Solstice (F2, 2026-11-21), as defaults: a progressive blur and a fade, the
- * band as tall as what sits over that edge (measured by the app: status bar, a header, a toolbar).
+ * Default edge treatment combines progressive blur with a fade. The caller supplies the band height
+ * based on the content or system UI overlapping that edge.
  */
 object EdgeBlurDefaults {
     /** The blur at the very edge. */
