@@ -35,22 +35,34 @@ Core reliability work is merged. Do not reopen it without a reproduced regressio
 
 ## MOT0.2 — standalone Motion Lab
 
-**Status:** planning; implementation not started.
+**Status:** implementation in progress on [PR #7](https://github.com/INFORMATION89/Motion-UI/pull/7), still draft.
 
-The next phase is to add a separate `:motion-lab` Android sample app that depends on `:motion` and demonstrates its public API using generic content and Material 3. This does not create the planned `:motion-ui` component library and does not change Motion Core behavior.
+The separate `:motion-lab` Android sample app is now included in Gradle and depends on `:motion`. It has its own namespace, application ID, launcher activity, and neutral Material 3 theme. Its initial gallery links to five generic demonstrations:
 
-Important discovery: `lab/` is not a Gradle module. Its prototype sources still use Solstice/Breezy packages, activities, resources, theme classes, and LGPL-3.0 notices. They are references, not code to bulk-move or mechanically rename. Reimplement demos cleanly against the public Motion API; preserve notices and verify provenance/license compatibility before reusing any implementation code.
+- Spring tokens and gesture release.
+- Source-to-target morph.
+- Spring-driven pager movement and overshoot.
+- Dial interaction and snapping.
+- Horizontal scroll edge blur.
 
-### Next implementation steps
+The slow-motion control adjusts `MotionTime.scale` and the root composition restores it to `1f` on disposal. The old `lab/` source tree remains an unbuilt Solstice-era prototype; it is not a source dependency of the new app.
 
-1. Add the `:motion-lab` Android application plugin/module and make it depend on `:motion`.
-2. Build a neutral Material 3 theme, entry activity, and basic gallery/navigation scaffold.
-3. Port one stable demo at a time, starting with public APIs already covered by Core tests.
-4. Add meaningful Compose/Material baseline comparisons for selected interactions, keeping state and input equivalent.
-5. Add safe slow-motion controls, sample-app build/run instructions, and a CI job for `:motion-lab:assembleDebug`.
-6. Run the complete workflow once on the final coherent branch head; report emulator/device checks separately.
+### Current verification state
 
-See [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md) for detailed scope and acceptance criteria. Follow [docs/MOTION_LAB_PLAN.md](docs/MOTION_LAB_PLAN.md) for the gallery and comparison direction; don't claim any of that design is implemented until it exists.
+- The complete implementation branch has not yet passed CI. Inspect the newest workflow run for the exact PR head before treating the app as buildable.
+- The CI workflow now includes `:motion-lab:assembleDebug` in addition to Spotless, Core unit tests, and library release assembly.
+- No local Gradle build was run in this workspace.
+- Emulator and physical-device interaction remain `NOT TESTED` / `DEFERRED`.
+
+### Next steps
+
+1. Inspect the PR CI result on the exact latest branch SHA; fix any formatting, Kotlin compilation, or Gradle configuration failures.
+2. Review the full diff for module isolation, accessibility, Motion API usage, and dependency scope.
+3. Add focused UI/sample tests only where they validate behavior not already covered by Motion Core tests.
+4. Keep comparison-mode and gallery refinement as the next implementation slice; don't claim A/B comparisons exist yet.
+5. Update the PR description and keep it draft until the app builds and the required workflow passes.
+
+See [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md) for scope and acceptance criteria. Follow [docs/MOTION_LAB_PLAN.md](docs/MOTION_LAB_PLAN.md) for the longer-term gallery and comparison direction.
 
 ## Local setup and verification
 
