@@ -72,7 +72,10 @@ Run from the repository root:
 ./gradlew spotlessCheck
 ./gradlew :motion:testDebugUnitTest
 ./gradlew :motion:assembleRelease
+./gradlew :motion-lab:assembleDebug
 ```
+
+Install the sample on a connected Android device or emulator with `./gradlew :motion-lab:installDebug`.
 
 On Windows, use `gradlew.bat` instead of `./gradlew`.
 
@@ -87,11 +90,13 @@ On Windows, use `gradlew.bat` instead of `./gradlew`.
 - [Project rules](docs/RULES.md)
 - [Repository instructions for AI agents](AGENTS.md)
 - [AI usage and cost policy](docs/AI_USAGE_POLICY.md)
-
+- [MOT0.2 standalone Motion Lab plan](docs/MOT0.2_PLAN.md)
+- [Motion Lab app and build guide](motion-lab/README.md)
 
 ## Project status
 
-Motion is under active development. The `:motion` Android library is part of the Gradle build. The sources in `lab/` are prototypes and are not currently included as a Gradle module.
+The `:motion` Android library and the standalone `:motion-lab` sample app are Gradle modules. Motion Lab currently includes a generic gallery, spring/release, morph, page, dial, edge-blur, and semantic haptics demonstrations. Morph and page movement have opt-in comparisons driven by shared input. The haptics page exposes the existing semantic tokens and a temporary intensity control; real device vibration remains unverified. The old `lab/` directory remains an unbuilt Solstice-era prototype and is not part of the new app.
+
 
 ## License
 

@@ -5,7 +5,7 @@ Read this file and [project rules](docs/RULES.md) before making changes. Then re
 ## Project boundaries
 
 - This repository contains the reusable Motion framework. It is independent of Solstice and must remain useful to unrelated apps.
-- The current artifact is an Android library for Jetpack Compose. Do not claim iOS, Windows, macOS, or Linux support until corresponding Gradle targets, platform implementations, tests, and CI exist.
+- The current library artifact is an Android library for Jetpack Compose. Do not claim iOS, Windows, macOS, or Linux support until corresponding Gradle targets, platform implementations, tests, and CI exist.
 - Never add Solstice, weather-domain, or other consumer-app dependencies, source code, assets, or assumptions to Motion.
 - Motion Core (`:motion`) owns reusable motion and interaction behavior. The planned Motion UI (`:motion-ui`) layer may own configurable, cross-app component building blocks, but not a complete application framework, product screens, visual brand, navigation policy, or domain logic. Motion UI depends on Core; Core never depends on Motion UI. Follow [the framework overview](docs/FRAMEWORK_OVERVIEW.md) when deciding where code belongs.
 - Compose remains the animation, rendering, and interaction foundation. Use Compose primitives such as `Animatable`, `spring`, and gesture APIs; do not invent a second general-purpose animation engine.
@@ -14,17 +14,30 @@ Read this file and [project rules](docs/RULES.md) before making changes. Then re
 
 ## Current milestone boundary
 
-MOT0.1 is limited to reliability of the core motion state and physics, focused regression tests, and directly related documentation.
+MOT0.1 is complete and merged into `main`.
 
-Do not fold these into MOT0.1:
-- Motion Lab implementation or redesign.
-- New animation/interaction components unrelated to the reliability contracts.
+MOT0.2 is the standalone Motion Lab phase. Its scope is the separate `:motion-lab` Android sample app, focused documentation, and CI integration as defined in [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md).
+
+Do not fold these into MOT0.2:
+- Changes to Motion Core physics or existing user-visible motion contracts.
+- New public Core APIs without a separately reviewed reusable capability gap.
+- The planned `:motion-ui` component library.
+- Solstice-specific UI, consumer migrations, or submodule updates.
+- Kotlin Multiplatform, iOS, desktop, web, or platform expansion.
 - Benchmarks or performance dashboards.
-- Solstice-specific UI or migration work.
-- A multiplatform conversion.
-- Broad refactors unrelated to a failing test or a documented contract gap.
+- Broad refactors unrelated to making the standalone Lab work.
 
-Follow the ordered tasks in [docs/MOT0.1_PLAN.md](docs/MOT0.1_PLAN.md). Start with deterministic regression tests for interruption and reversal in `MorphMotion`, then implement the smallest change that satisfies the intended contract.
+The old `lab/` source tree is a prototype, not a Gradle module. Do not move or mechanically rename it into the new app: its code contains Solstice/Breezy app dependencies, packages, resources, theme classes, and LGPL notices. Reimplement generic demonstrations against the public Motion API and Compose/Material 3. Preserve notices and verify provenance/license compatibility before reusing any legacy implementation code.
+
+## Motion Lab product and UI rules
+
+- Treat Motion Lab as both a component showroom and an interaction test bench, not merely an animation gallery.
+- Organize the top-level experience into two clear destinations: **Components** and **Interactions**, presented through a familiar Material 3 top app bar / tab pattern. Keep navigation consistent with the rest of the app; do not invent a custom toolbar or navigation system.
+- **Components** are content-bearing UI building blocks that present information and context (for example cards, pages, and place-like content surfaces). **Interactions** are the controls and input patterns through which users act, provide input, or navigate (for example toolbars, buttons, dropdown menus, checkboxes, and gestures). Classify demos by what they teach; a component may contain interactions without making the categories interchangeable.
+- Support automatic system light/dark appearance. Any additional pure-black/AMOLED appearance must be an explicit optional choice, not a replacement for system-following behavior. Preserve readable contrast and semantic colors in every scheme.
+- Predictive-back blur is optional progressive enhancement only. Prefer platform/AndroidX predictive-back and Compose integration; use blur only where supported, keep it subtle, and provide a graceful no-blur fallback. Never build a custom back-navigation framework to demonstrate the effect.
+- Reuse Compose, Material 3, AndroidX, and existing Motion APIs before adding abstractions. Do not rebuild standard controls, navigation, blur, or animation primitives that the platform already provides. Add a new Motion abstraction only when a concrete reusable gap is demonstrated and separately justified.
+- Keep demo sections focused and independently understandable. Explain the component or interaction, show its context, and provide a direct way to exercise it.
 
 ## Implementation and test discipline
 
@@ -37,11 +50,13 @@ Follow the ordered tasks in [docs/MOT0.1_PLAN.md](docs/MOT0.1_PLAN.md). Start wi
 - Keep intentional finite high-velocity clamps; validate raw input before clamping.
 - Preserve legitimate zero-size/transient layout anchors if validating `MorphAnchor`; reject invalid geometry rather than silently normalizing it.
 - Never weaken or delete a regression assertion merely to make CI green.
+- For sample-app code, test the interaction contracts that are owned by the sample; do not duplicate Motion Core's internal tests in the Lab.
 
 ## AI-assisted planning and implementation
 
-- Verify the current branch, submodule commit, open PRs, source tree, and latest CI before relying on earlier plans or chat context.
-- For Solstice adoption work, follow `docs/AI_SOLSTICE_ADOPTION.md`. The first deliverable is an evidence-based migration plan in Solstice, not an automatic code migration or submodule bump.
+- Verify the current branch, submodule commit (when relevant), open PRs, source tree, and latest CI before relying on earlier plans or chat context.
+- For Solstice adoption work, follow [docs/AI_SOLSTICE_ADOPTION.md](docs/AI_SOLSTICE_ADOPTION.md). The first deliverable is an evidence-based migration plan in Solstice, not an automatic code migration or submodule bump.
+- For MOT0.2, follow [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md). Keep the Lab as a consumer of Motion's public API; do not let the sample app dictate or leak app-only requirements into Core.
 - Inspect existing APIs before proposing new ones. Classify each candidate as direct reuse, app-side composition, a reusable Motion gap, or app-specific behavior.
 - Prefer adapting existing components and libraries over rebuilding equivalents. Avoid duplicating spring constants, gesture physics, or component implementations in consuming apps.
 - Do not broaden platform support as incidental cleanup. A platform proposal must identify source-set boundaries, platform APIs, tests, and CI requirements first.
@@ -50,7 +65,7 @@ Follow the ordered tasks in [docs/MOT0.1_PLAN.md](docs/MOT0.1_PLAN.md). Start wi
 
 1. **Plan before testing.** For each task, identify the changed modules, acceptance criteria, smallest relevant checks, expensive checks (full CI, emulators, device runs, and live integrations), and the evidence that would count as a pass.
 2. **Use focused checks during iteration.** Run the affected unit tests, lint target, or build task while implementing. Do not run the entire CI suite after every small change. For documentation-only changes, skip local code tests that cannot be affected.
-3. **Batch related changes.** Complete a coherent set of implementation and documentation changes before pushing or requesting the full pull-request CI workflow. Run the full required CI suite once when the batch is ready.
+3. **Batch related changes.** Complete a coherent set of implementation and documentation changes before pushing or requesting the full pull-request CI workflow. Run the full required workflow once when the batch is ready.
 4. **Reuse passing results.** Record the commit SHA and environment associated with each result. Do not repeat a check when neither relevant code nor its dependencies/configuration changed. If one job fails, inspect its logs and rerun only that job where possible; do not rerun successful jobs without a technical reason.
 5. **Limit infrastructure retries.** After an infrastructure/environment failure, inspect the evidence and allow at most one retry with a materially different setup. If the same requirement fails again, stop and mark it `BLOCKED`; report the evidence and the host/tool access needed. Do not repeatedly retry an unchanged setup.
 6. **Ask before expanding verification.** Before substantially widening the test matrix, adding a new expensive test layer, or spending another full CI run after a failed run, explain why it is needed and obtain the owner's approval when it exceeds the agreed task plan. A narrowly scoped rerun of only the failed job is preferred when supported.
@@ -61,10 +76,9 @@ Follow the ordered tasks in [docs/MOT0.1_PLAN.md](docs/MOT0.1_PLAN.md). Start wi
 
 - Work on a focused branch and use a pull request; do not push development work directly to `main`.
 - Keep related changes together and commits understandable.
-- Keep MOT0.1 in draft until every acceptance criterion in `docs/MOT0.1_PLAN.md` is covered by tests and the complete CI workflow passes on the exact final branch head.
+- Keep MOT0.2 implementation work in draft until the app module builds, the required acceptance criteria are covered, and the complete CI workflow passes on the exact final branch head.
 - Do not merge, release, publish, tag, or bump a consuming app's submodule unless explicitly requested.
 - Update `CONTINUE.md`, implementation plans, and PR descriptions when branch state or remaining work materially changes.
-
 
 ## AI usage and cost policy
 
