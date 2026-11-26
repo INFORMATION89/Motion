@@ -110,6 +110,7 @@ class MorphMotionTest {
         motion.target = MorphAnchor(Rect(100f, 0f, 200f, 100f), 20f)
         motion.scrub(0.4f)
         val before = motion.bounds
+        val wasOpen = motion.isOpen
 
         assertThrows(IllegalArgumentException::class.java) { motion.release(Float.NaN) }
         assertThrows(IllegalArgumentException::class.java) { motion.release(Float.POSITIVE_INFINITY) }
@@ -119,6 +120,7 @@ class MorphMotionTest {
         assertThrows(IllegalArgumentException::class.java) { motion.release(0f, Float.POSITIVE_INFINITY) }
 
         motion.bounds shouldBe before
+        motion.isOpen shouldBe wasOpen
     }
 
     @Test
@@ -432,4 +434,19 @@ class MorphMotionTest {
         motion.bounds.center.y shouldBe (90f plusOrMinus 0.1f)
     }
 
+    @Test
+    fun `finite extreme release velocity remains bounded and settles safely`() = morphMotionTest {
+        val motion = MorphMotion(this)
+        motion.source = sourceAnchor()
+        motion.target = targetAnchor()
+        motion.scrub(0.5f)
+
+        motion.release(Float.MAX_VALUE)
+        advanceMorphFrames(240)
+
+        motion.isOpen shouldBe true
+        motion.bounds.center.x shouldBe (200f plusOrMinus 0.1f)
+        motion.bounds.center.y shouldBe (200f plusOrMinus 0.1f)
+        motion.isMoving shouldBe false
+    }
 }
