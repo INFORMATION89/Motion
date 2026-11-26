@@ -38,7 +38,7 @@ Motion UI depends on Motion Core. Motion Core must never depend on Motion UI.
 
 Think of an app as these cooperating layers:
 
-1. **Application and domain** — weather data, forecasts, business rules, screen state, navigation destinations, and product-specific decisions.
+1. **Application and domain** — domain data, model outputs, business rules, screen state, navigation destinations, and product-specific decisions.
 2. **App theme and product design** — brand colors, visual identity, product-specific typography choices, content, and screen composition.
 3. **Motion UI (optional)** — reusable component building blocks such as page frames, cards, sheets, header actions, and message surfaces, with configurable defaults.
 4. **UI component libraries** — standard buttons, switches, sliders, text fields, dialogs, navigation controls, semantics, and accessibility behavior. Prefer Material 3 or another focused library instead of cloning these.
@@ -80,7 +80,7 @@ Motion UI should:
 - depend on focused libraries such as Haze for specialized rendering instead of reimplementing them;
 - remain optional, so an app can use Motion Core without adopting Motion UI.
 
-It must not contain the consuming application screens, domain models, forecasts, navigation policy, sky rendering, weather icons, or a fixed the consuming application brand palette.
+It must not contain consumer screens, domain models, navigation policy, domain visualizations, domain icons, or a fixed brand palette.
 
 ## What belongs in other UI libraries
 
@@ -92,9 +92,9 @@ It must not contain the consuming application screens, domain models, forecasts,
 | Shared visual language: colors, typography, shape, spacing, component variants | The app's design system/theme, with neutral Motion UI token contracts where useful | The app supplies its values; Motion must not define an app's brand. |
 | Navigation routes, back stack, deep links, screen lifecycle | Navigation library or application architecture | Motion may animate transitions but does not own routing or navigation policy. |
 | Blur and advanced backdrop rendering | Haze or another specialized rendering library | Motion UI may wrap a dependency behind a configurable surface; it should not implement a competing blur engine. |
-| Images, maps, charts, weather icons, media, and domain widgets | Specialized libraries and app modules | Motion may animate their containers or interactions; it does not implement their domain content. |
+| Images, maps, charts, media, and domain widgets | Specialized libraries and app modules | Motion may animate their containers or interactions; it does not implement their domain content. |
 | Window management, platform sensors, OS-specific input, and hardware APIs | Platform libraries or narrow platform adapters | Motion may expose a stable abstraction only where the capability is genuinely part of motion feedback. |
-| Screens, weather cards, forecasts, sky rendering, and consumer-specific consumer-specific visual styling | the consuming application | Keep product-specific content and visual treatment in the app. |
+| Screens, domain-specific cards and visualizations, and consumer-specific visual styling | the consuming application | Keep product-specific content and visual treatment in the app. |
 
 Use an existing UI library when it already solves the structural, semantic, or visual problem. Do not create a second Button, TextField, navigation system, or theme layer just to attach an animation.
 
