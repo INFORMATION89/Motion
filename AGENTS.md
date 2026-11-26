@@ -86,6 +86,6 @@ Follow [docs/AI_USAGE_POLICY.md](docs/AI_USAGE_POLICY.md) for model selection, C
 
 Repository-specific rules in this file supplement the shared policy; they do not replace it. In particular:
 - Use one primary owner agent per coherent task. Bring in a second model only for a clearly independent review or specialist contribution.
-- Choose the smallest capable model and escalate based on task risk or demonstrated difficulty. Claude Opus 5.5 is for demanding work, not routine edits.
+- Choose the smallest capable model and escalate based on task risk or demonstrated difficulty. Claude Opus is for demanding work, not routine edits; when its review is warranted, track it as `Opus review pending` until it is actually completed.
 - Treat subscription allowances and API billing as separate. Do not enable paid API usage, buy credits, or incur open-ended spend without owner approval.
 - Keep context focused, reuse valid evidence, and stop repetitive or unproductive agent/tool loops.
