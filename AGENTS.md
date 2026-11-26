@@ -1,6 +1,6 @@
 # Repository instructions for AI agents
 
-Read this file and [project rules](docs/RULES.md) before making changes. Then read [README.md](README.md), [the framework overview](docs/FRAMEWORK_OVERVIEW.md), [platform support](docs/PLATFORM_SUPPORT.md), [the consumer adoption guide](docs/AI_SOLSTICE_ADOPTION.md), [motion principles](docs/MOTION.md), and the relevant implementation or design documents under `docs/`.
+Read this file and [project rules](docs/RULES.md) before making changes. Then read [README.md](README.md), [the framework overview](docs/FRAMEWORK_OVERVIEW.md), [platform support](docs/PLATFORM_SUPPORT.md), [the consumer adoption guide](docs/AI_CONSUMER_ADOPTION.md), [motion principles](docs/MOTION.md), and the relevant implementation or design documents under `docs/`.
 
 ## Project boundaries
 
@@ -54,7 +54,7 @@ The following remain outside the completed MOT0.2 scope and require separate pla
 ## AI-assisted planning and implementation
 
 - Verify the current branch, submodule commit (when relevant), open PRs, source tree, and latest CI before relying on earlier plans or chat context.
-- For consumer adoption work, follow [docs/AI_SOLSTICE_ADOPTION.md](docs/AI_SOLSTICE_ADOPTION.md). The first deliverable is an evidence-based migration plan in the consuming application, not an automatic code migration or submodule bump.
+- For consumer adoption work, follow [docs/AI_CONSUMER_ADOPTION.md](docs/AI_CONSUMER_ADOPTION.md). The first deliverable is an evidence-based migration plan in the consumer repository, not an automatic code migration or dependency-pin update.
 - MOT0.2 is complete; use [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md) as historical acceptance evidence. Keep Motion Lab as a consumer of Motion's public API; do not let the sample app dictate or leak app-only requirements into Core.
 - Inspect existing APIs before proposing new ones. Classify each candidate as direct reuse, app-side composition, a reusable Motion gap, or app-specific behavior.
 - Prefer adapting existing components and libraries over rebuilding equivalents. Avoid duplicating spring constants, gesture physics, or component implementations in consuming apps.
