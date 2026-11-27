@@ -24,6 +24,7 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsFocused
@@ -31,11 +32,9 @@ import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasContentDescription
-import androidx.compose.ui.test.hasRole
 import androidx.compose.ui.test.isSelected
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodes
-import androidx.compose.ui.test.onNode
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
@@ -64,16 +63,16 @@ class ToolbarPrototypeUiTest {
         setToolbar(onSelectionRequest = requested::set)
 
         composeRule.onNode(
-            hasRole(Role.Tab) and hasContentDescription("Saved items destination")
+            SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab) and hasContentDescription("Saved items destination")
         ).performClick()
         composeRule.waitForIdle()
 
         assertEquals("saved", requested.get())
         composeRule.onNode(
-            hasRole(Role.Tab) and hasContentDescription("Overview destination")
+            SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab) and hasContentDescription("Overview destination")
         ).assertIsSelected()
         composeRule.onNode(
-            hasRole(Role.Tab) and hasContentDescription("Saved items destination")
+            SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab) and hasContentDescription("Saved items destination")
         ).assertIsNotSelected()
     }
 
@@ -83,10 +82,10 @@ class ToolbarPrototypeUiTest {
 
         composeRule.waitForIdle()
 
-        composeRule.onAllNodes(hasRole(Role.Tab)).assertCountEquals(4)
-        composeRule.onAllNodes(hasRole(Role.Tab) and isSelected()).assertCountEquals(1)
+        composeRule.onAllNodes(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab)).assertCountEquals(4)
+        composeRule.onAllNodes(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab) and isSelected()).assertCountEquals(1)
         composeRule.onNode(
-            hasRole(Role.Tab) and hasContentDescription("Overview destination")
+            SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab) and hasContentDescription("Overview destination")
         ).assertIsSelected()
     }
 
@@ -97,12 +96,12 @@ class ToolbarPrototypeUiTest {
         composeRule.waitForIdle()
 
         composeRule.onNode(
-            hasRole(Role.Tab) and hasContentDescription("Overview destination")
+            SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab) and hasContentDescription("Overview destination")
         ).assertIsSelected()
         composeRule.onNode(
-            hasRole(Role.Tab) and hasContentDescription("Saved items destination")
+            SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab) and hasContentDescription("Saved items destination")
         ).assertIsNotSelected()
-        composeRule.onAllNodes(hasRole(Role.Tab) and isSelected()).assertCountEquals(1)
+        composeRule.onAllNodes(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab) and isSelected()).assertCountEquals(1)
     }
 
     @Test
@@ -150,7 +149,7 @@ class ToolbarPrototypeUiTest {
         setToolbar(showContextAction = false)
 
         composeRule.waitForIdle()
-        composeRule.onAllNodes(hasRole(Role.Button)).assertCountEquals(0)
+        composeRule.onAllNodes(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button)).assertCountEquals(0)
     }
 
     @Test
@@ -200,12 +199,12 @@ class ToolbarPrototypeUiTest {
         )
 
         composeRule.waitForIdle()
-        composeRule.onAllNodes(hasRole(Role.Button)).assertCountEquals(1)
-        composeRule.onNode(hasRole(Role.Button)).performClick()
+        composeRule.onAllNodes(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button)).assertCountEquals(1)
+        composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button)).performClick()
         composeRule.waitForIdle()
 
         assertEquals(1, clicks.get())
-        composeRule.onAllNodes(hasRole(Role.Button)).assertCountEquals(1)
+        composeRule.onAllNodes(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button)).assertCountEquals(1)
     }
 
     private fun setToolbar(
