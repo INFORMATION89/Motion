@@ -203,6 +203,94 @@ class ToolbarPrototypeUiTest {
         assertEquals("saved", requested.get())
     }
 
+    @Test
+    fun arrowRightMovesTheSingleFocusStopBackwardInRtl() {
+        val requested = AtomicReference<String?>(null)
+        setToolbar(
+            layoutDirection = LayoutDirection.Rtl,
+            selectedTabId = "saved",
+            onSelectionRequest = requested::set
+        )
+
+        val saved = composeRule.onNodeWithContentDescription("Saved items destination")
+        saved.performSemanticsAction(SemanticsActions.RequestFocus)
+        composeRule.waitForIdle()
+        saved.performKeyInput { pressKey(Key.DirectionRight) }
+        composeRule.waitForIdle()
+
+        composeRule.onNodeWithContentDescription("Overview destination").assertIsFocused()
+        saved.assertIsNotFocused()
+        assertEquals("overview", requested.get())
+    }
+
+    @Test
+    fun arrowLeftWrapsFromLastTabToFirstInRtl() {
+        val requested = AtomicReference<String?>(null)
+        setToolbar(
+            layoutDirection = LayoutDirection.Rtl,
+            selectedTabId = "settings",
+            onSelectionRequest = requested::set
+        )
+
+        val settings = composeRule.onNodeWithContentDescription("Settings destination")
+        settings.performSemanticsAction(SemanticsActions.RequestFocus)
+        composeRule.waitForIdle()
+        settings.performKeyInput { pressKey(Key.DirectionLeft) }
+        composeRule.waitForIdle()
+
+        composeRule.onNodeWithContentDescription("Overview destination").assertIsFocused()
+        assertEquals("overview", requested.get())
+    }
+
+    @Test
+    fun attachedContextActionDoesNotInterceptAdjacentTabClick() {
+        assertAdjacentTabRemainsInteractive(
+            contextActionDetached = false,
+            profile = ToolbarVisualProfile.EXPRESSIVE
+        )
+    }
+
+    @Test
+    fun detachedContextActionDoesNotInterceptAdjacentTabClick() {
+        assertAdjacentTabRemainsInteractive(
+            contextActionDetached = true,
+            profile = ToolbarVisualProfile.CUSTOM
+        )
+    }
+
+    private fun assertAdjacentTabRemainsInteractive(
+        contextActionDetached: Boolean,
+        profile: ToolbarVisualProfile,
+    ) {
+        val requested = AtomicReference<String?>(null)
+        val actionClicks = AtomicInteger(0)
+        setToolbar(
+            selectedTabId = "settings",
+            profile = profile,
+            contextActionDetached = contextActionDetached,
+            onActionClick = { actionClicks.incrementAndGet() },
+            onSelectionRequest = requested::set
+        )
+
+        composeRule.waitForIdle()
+        composeRule.onAllNodes(
+            SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button)
+        ).assertCountEquals(1)
+        composeRule.onNode(
+            SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button)
+        ).performClick()
+        composeRule.waitForIdle()
+
+        assertEquals(1, actionClicks.get())
+        assertEquals(null, requested.get())
+
+        composeRule.onNodeWithContentDescription("Discover destination").performClick()
+        composeRule.waitForIdle()
+
+        assertEquals("discover", requested.get())
+        assertEquals(1, actionClicks.get())
+    }
+
     private fun assertContextActionHasOneTarget(detached: Boolean) {
         val clicks = AtomicInteger(0)
         setToolbar(
@@ -222,6 +310,7 @@ class ToolbarPrototypeUiTest {
     private fun setToolbar(
         layoutDirection: LayoutDirection = LayoutDirection.Ltr,
         selectedTabId: String = "overview",
+        profile: ToolbarVisualProfile = ToolbarVisualProfile.EXPRESSIVE,
         hostProgress: ToolbarHostProgress? = null,
         showContextAction: Boolean = true,
         contextActionDetached: Boolean = false,
@@ -235,7 +324,7 @@ class ToolbarPrototypeUiTest {
                         ToolbarPrototypeBar(
                             selectedTabId = selectedTabId,
                             hostProgress = hostProgress,
-                            profile = ToolbarVisualProfile.EXPRESSIVE,
+                            profile = profile,
                             showContextAction = showContextAction,
                             contextActionDetached = contextActionDetached,
                             actionActive = false,
