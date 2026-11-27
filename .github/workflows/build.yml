@@ -54,12 +54,27 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5.0.2
 
+      - name: Enable KVM access when the hosted runner exposes it
+        run: |
+          if [[ -e /dev/kvm ]]; then
+            echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules >/dev/null
+            sudo udevadm control --reload-rules || true
+            sudo udevadm trigger --name-match=kvm || true
+          fi
+
+          if [[ -r /dev/kvm && -w /dev/kvm ]]; then
+            echo "KVM is available to the runner."
+          else
+            echo "KVM is unavailable; falling back to TCG."
+            echo "ANDROID_I_WANT_MY_TCG=yes" >> "$GITHUB_ENV"
+          fi
+
       - name: Run Motion Lab Compose UI tests
         uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
-        env:
-          ANDROID_I_WANT_MY_TCG: "yes"
         with:
           api-level: 35
+          disable-linux-hw-accel: auto
+          emulator-boot-timeout: 600
           arch: x86_64
           profile: pixel_2
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim

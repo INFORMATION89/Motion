@@ -34,7 +34,7 @@ This file is the working handoff for the next development session. Keep it align
 - The prototype includes stable-ID host progress, variable-width geometry, drag preview/cancel, RTL-aware edge auto-scroll, a retracting contextual-action connector with one semantic button target, two visual profiles, and strict single-tab-stop keyboard navigation with an RTL-aware focus ring.
 - The Lab has 15 pure unit tests covering host-progress validation, geometry interpolation/fallback, drag-target resolution, keyboard navigation/wrap-around, edge-scroll acceleration, and LTR/RTL coordinate conversion. Required CI includes `:motion-lab:testDebugUnitTest`.
 - Motion Lab Compose UI tests now cover tab semantics, host-progress selection invariants, LTR/RTL focus navigation, one contextual-action target, and adjacent-tab interaction with attached/detached action profiles.
-- CI runs fast formatting/unit/release checks and API 35 emulator tests in parallel jobs. Gradle parallel execution, build caching, and strict Configuration Cache compatibility checks are enabled in `gradle.properties`; see [CI design](docs/CI.md).
+- CI runs fast formatting/unit/release checks and API 35 emulator tests in parallel jobs. Gradle parallel execution, build caching, and strict Configuration Cache compatibility checks are enabled in `gradle.properties`. The emulator job enables KVM when the hosted runner exposes it and falls back to TCG only when necessary; see [CI design](docs/CI.md).
 - The obsolete, unbuilt prototype directory was removed after provenance/license review; no implementation was copied from it.
 
 ## MOT0.3A acceptance
