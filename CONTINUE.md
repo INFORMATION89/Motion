@@ -92,6 +92,15 @@ Do not merge, release, publish, tag, or update a consumer's pinned Motion commit
 - This is documentation-only research. No production behavior was changed, no Android build or manual validation was run, no CI workflow was triggered, and no merge was performed.
 
 
+## Motion Core runtime and test audit — 2026-11-27
+
+- Added [docs/MOTION_RUNTIME_AND_TEST_AUDIT.md](docs/MOTION_RUNTIME_AND_TEST_AUDIT.md), documenting existing deterministic coverage and the missing Android integration coverage.
+- Confirmed `rememberReducedMotion()` and `rememberAmbientMotionAllowed()` are remembered snapshots, not live system-setting subscriptions. `rememberAmbientClock()` is lifecycle-aware and reads the latest running predicate, but its lifecycle/FPS behavior has no dedicated automated test.
+- Core tests cover MotionValue interruption/settling, MorphMotion retargeting/reversal, geometry, and pure haptic scaling. No Core Android instrumentation tests cover settings, lifecycle, vibrator dispatch, or fallback paths; the toolbar UI suite has no reduced-motion test.
+- Identified haptic rate-limit timestamp advancement before system-enabled/intensity checks as a behavior to specify and test, not a confirmed bug.
+- Static source/test audit only. No build, tests, CI, Android device validation, or production changes.
+
+
 ## Motion Core / Motion UI architecture review — 2026-11-27
 
 - Added [docs/MOTION_ARCHITECTURE_REVIEW.md](docs/MOTION_ARCHITECTURE_REVIEW.md) after reviewing the current Core primitives, Android integrations, Motion UI theme foundation, toolbar contract/spike, and Material 3 Expressive reference.
