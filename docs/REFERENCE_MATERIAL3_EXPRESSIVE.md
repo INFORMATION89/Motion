@@ -35,9 +35,7 @@ The Expressive token source currently inspected defines:
 | Slow spatial | 0.8 | 200 |
 | Default effects | 1.0 | 1600 |
 | Fast effects | 1.0 | 3800 |
-| Slow effects | 0.8 | 200 |
-
-Correction: the source values for slow effects are damping 1.0 and stiffness 800. The table above should be read with that corrected value.
+| Slow effects | 1.0 | 800 |
 
 The standard scheme uses a different spatial damping/stiffness profile while retaining the same effects stiffness values. Components request semantic motion tokens rather than hard-coding every spring locally.
 
