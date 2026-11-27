@@ -43,7 +43,7 @@ The pager and destination data belong to Motion Lab. The prototype does not make
 ## Verification
 
 - Historical CI run #197 passed on implementation head `75b6c9dacfb5079fc12dbcc36e0f4789f8d97b40`, before the current Compose UI coverage and CI optimization work.
-- The current PR workflow splits fast formatting/unit/release checks from the API 35 emulator suite. The latest exact-head result must be recorded after both jobs complete.
+- The current PR workflow splits fast formatting/unit/release checks from the API 35 emulator suite. On CI #215, the fast job passed, the emulator booted in 25.9 seconds through the TCG fallback, and instrumentation compilation exposed a missing `click` test import. The import and KVM permission diagnostics are corrected in the next commit; verify both jobs again on the resulting exact head.
 - Compose UI tests cover tab semantics, host-progress invariants, LTR/RTL keyboard focus, a single contextual-action semantic target, real pointer hit-testing in attached/detached states, and long-press drag success/cancellation.
 - `docs/MOT0.3B_MANUAL_VALIDATION.md` records the remaining device/accessibility review. Its checks are all NOT TESTED until completed on the designated emulator/device.
 - Automated CI does not establish TalkBack, focus appearance, visual contrast, RTL rendering, large font scale, dynamic reduced-motion behavior, haptic output, or physical-device interaction.

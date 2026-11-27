@@ -60,12 +60,17 @@ jobs:
             echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules >/dev/null
             sudo udevadm control --reload-rules || true
             sudo udevadm trigger --name-match=kvm || true
+            sudo chmod a+rw /dev/kvm || true
           fi
 
-          if [[ -r /dev/kvm && -w /dev/kvm ]]; then
-            echo "KVM is available to the runner."
+          if [[ -e /dev/kvm && -r /dev/kvm && -w /dev/kvm ]]; then
+            echo "KVM is available to the runner:"
+            ls -l /dev/kvm
+            id
           else
-            echo "KVM is unavailable; falling back to TCG."
+            echo "KVM is unavailable to the runner; falling back to TCG."
+            ls -l /dev/kvm 2>/dev/null || echo "/dev/kvm is not exposed on this runner."
+            id
             echo "ANDROID_I_WANT_MY_TCG=yes" >> "$GITHUB_ENV"
           fi
 

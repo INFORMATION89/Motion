@@ -11,7 +11,7 @@ Both jobs are required evidence for a green workflow. The split exposes formatti
 
 The fast job has a 20-minute timeout. The emulator job has a 35-minute timeout to allow for Android image setup and emulator boot while preventing an indefinitely occupied runner. The workflow concurrency group cancels superseded runs for the same pull request or branch.
 
-Before starting the emulator, CI grants the runner access to `/dev/kvm` when the hosted VM exposes it. The emulator action then uses automatic Linux hardware-acceleration detection. When KVM is absent or still inaccessible, the workflow explicitly enables the tested TCG fallback instead of failing emulator startup. Avoid forcing TCG on runners where KVM is available: it disables VM acceleration and makes boot substantially slower.
+Before starting the emulator, CI attempts to grant the runner read/write access to `/dev/kvm` when the hosted VM exposes it, then records the device permissions and runner groups. The emulator action uses automatic Linux hardware-acceleration detection. When KVM is absent or remains inaccessible, the workflow explicitly enables the tested TCG fallback instead of failing emulator startup. Avoid forcing TCG on runners where KVM is available: it disables VM acceleration and makes boot substantially slower.
 
 ## Gradle performance settings
 
