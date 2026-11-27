@@ -107,3 +107,11 @@ Do not merge, release, publish, tag, or update a consumer's pinned Motion commit
 - Confirmed the existing UI → Core boundary and that the toolbar's host progress, tab semantics, focus, and contextual action remain component/consumer concerns. Core should continue using Compose animation primitives rather than becoming a second engine.
 - Recorded concrete gaps: reduced-motion signals are snapshots rather than live subscriptions; Core facilities are Android/Compose-specific under the current Android-only product commitment; global slow-motion/haptic tuning must remain scoped to lab/debug use; Motion UI currently delivers tokens/theme only.
 - Documentation-only review. No production code/API/dependency/CI changes, build, tests, device validation, PR opening, or merge.
+
+## Motion runtime follow-up design — 2026-11-27
+
+- Added [docs/MOTION_RUNTIME_DESIGN_NOTES.md](docs/MOTION_RUNTIME_DESIGN_NOTES.md) after a deeper source-level review of `AmbientClock.kt`, `Morph.kt`, and `Haptics.kt`.
+- Found a concrete ambient-clock efficiency mismatch: `running = false` stops state writes but the coroutine still requests a callback every display frame; the FPS cap also limits writes rather than callback scheduling. The note defines an event-driven inactive/active loop and deterministic regression evidence.
+- Specified an internal, composition-scoped Android observer direction for animator-scale and battery-saver changes without adding a public API or global preference state.
+- Recorded the haptic rate-limit edge case and a proposed dispatch contract; no behavior was changed pending explicit review.
+- Documentation-only commit. No source/API/dependency/CI changes, builds, tests, device checks, PR updates, or merge.
