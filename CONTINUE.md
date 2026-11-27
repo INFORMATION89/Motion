@@ -60,6 +60,13 @@ This file is the working handoff for the next development session. Keep it align
 - [ ] Complete [manual validation record](docs/MOT0.3B_MANUAL_VALIDATION.md) on the designated emulator/device; every item remains NOT TESTED until recorded.
 - [ ] Decide the smallest public Motion UI API only after the manual review.
 
+## CI run-volume audit — 2026-11-27
+
+- The latest 100 repository workflow runs contained 44 cancelled, 23 failed, and 33 successful runs. PR #26 accounted for 36 of those runs: 11 cancelled, 21 failed, and 4 successful.
+- These are workflow-run records, not billing data; no claim about charged minutes or monetary cost is made from these counts.
+- CI #216 on commit 53c551f586b04b65ae8d3f85179502df351872c4: the fast-check job passed; the API 35 Compose UI emulator job failed. The full workflow is therefore failed, not green.
+- The run volume exposed a process failure: small, separate commits on a PR branch each triggered another workflow. The policy now requires atomic multi-file batches, one intended full CI run per coherent batch, and owner approval before further full runs beyond one consolidated follow-up. Do not continue per-file writes or incremental pushes.
+
 ## Next steps
 
 1. Verify both CI jobs on the exact latest PR #26 head, including API 35 Compose UI instrumentation.

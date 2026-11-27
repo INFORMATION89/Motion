@@ -13,6 +13,14 @@ The fast job has a 20-minute timeout. The emulator job has a 35-minute timeout t
 
 Before starting the emulator, CI attempts to grant the runner read/write access to `/dev/kvm` when the hosted VM exposes it, then records the device permissions and runner groups. The emulator action uses automatic Linux hardware-acceleration detection. When KVM is absent or remains inaccessible, the workflow explicitly enables the tested TCG fallback instead of failing emulator startup. Avoid forcing TCG on runners where KVM is available: it disables VM acceleration and makes boot substantially slower.
 
+## Run-volume discipline
+
+The workflow is triggered by every push to an open pull-request branch and every push to main. Each commit pushed to a PR can therefore create another complete workflow run. The concurrency group cancels a superseded run, but it does not debounce pushes or prevent a new run record; work already started may be wasted.
+
+Keep the required workflow unchanged and control run volume through the development process: batch related changes, publish one atomic multi-file commit per coherent batch, and inspect the resulting workflow before making another push. Do not use one GitHub Contents API write per file for a multi-file change, because each write creates a separate commit. Do not add path filters or skip-CI markers without first validating required-check and branch-protection behavior; skipped workflows can leave required checks pending.
+
+See [AI Usage and Cost Policy](AI_USAGE_POLICY.md#7-cost-aware-verification-and-ci) and [repository agent instructions](../AGENTS.md#cost-aware-verification) for the mandatory run budget, failure diagnosis, and approval rules. Cancelled workflow counts do not establish billable minutes or monetary cost.
+
 ## Gradle performance settings
 
 The root `gradle.properties` enables these settings, and CI must exercise them on every run:
