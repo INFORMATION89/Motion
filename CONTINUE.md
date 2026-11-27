@@ -87,6 +87,6 @@ Do not merge, release, publish, tag, or update a consumer's pinned Motion commit
 
 ## Material 3 Expressive reference study — 2026-11-27
 
-- Added [docs/REFERENCE_MATERIAL3_EXPRESSIVE.md](docs/REFERENCE_MATERIAL3_EXPRESSIVE.md), an implementation-focused study of MotionScheme, ToggleButton shape state, ButtonGroup interaction/layout negotiation, FloatingToolbar accessibility/scroll behavior, LoadingIndicator polygon morphing, and the Graphics Shapes `Morph` geometry/performance contract.
-- The study compares those patterns with the MOT0.3B toolbar spike and records adoption boundaries for Motion Core and Motion UI.
-- This is documentation-only research. No production behavior was changed, no Android build or manual validation was run, and no CI workflow was triggered.
+- Added [docs/REFERENCE_MATERIAL3_EXPRESSIVE.md](docs/REFERENCE_MATERIAL3_EXPRESSIVE.md), an implementation-focused study of MotionScheme, ToggleButton, ButtonGroup, FloatingToolbar, LoadingIndicator, MaterialShapes/Morph, SplitButton, expressive ListItem, and flexible AppBars.
+- The study compares implementation patterns with the MOT0.3B toolbar spike and records concrete boundaries for Motion Core and Motion UI: independent action semantics, transient vs durable state, constraint-aware layout, one progress source, semantic handoff, and explicit morph compatibility.
+- This is documentation-only research. No production behavior was changed, no Android build or manual validation was run, no CI workflow was triggered, and no merge was performed.

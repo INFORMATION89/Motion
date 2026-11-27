@@ -198,3 +198,66 @@ Sources:
 - https://github.com/androidx/androidx/blob/androidx-main/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/MaterialShapes.kt
 - https://github.com/androidx/androidx/blob/androidx-main/graphics/graphics-shapes/src/commonMain/kotlin/androidx/graphics/shapes/Morph.kt
 - https://github.com/androidx/androidx/blob/androidx-main/graphics/graphics-shapes/src/commonMain/kotlin/androidx/graphics/shapes/RoundedPolygon.kt
+
+
+## 9. SplitButton: two independent actions with shared geometry
+
+The expressive split button is composed from two actual button controls, not one compound click target. The leading button owns the primary action; the trailing button owns a contextually related secondary action. Each has its own interaction source and semantics/role, while `SplitButtonLayout` supplies their shared geometry.
+
+The custom measure policy deliberately measures the trailing action first: it reserves the trailing button's intrinsic width plus spacing, then gives the remaining width to the leading action. Both are constrained to a common visual height. The parent enforces the minimum interactive size once; the child buttons temporarily suppress their own minimum-size enforcement to avoid doubled internal padding. Relative placement preserves layout-direction behavior.
+
+Each button derives pressed state from its interaction source. The trailing checked variant also accepts externally controlled checked state. Shape selection follows pressed > checked > resting, and compatible rounded/corner-based shapes are animated; unsupported shape types remain discrete rather than being falsely interpolated. The API intentionally leaves the menu/dropdown behavior to the consumer.
+
+**Implication for Motion:** preserve action boundaries and independent semantics even when controls share a visual container. Shared layout should coordinate sizing and spacing without merging action ownership. Measure priority and min-touch-target enforcement should be explicit and tested under constrained widths and RTL. Do not bake a dropdown/menu policy into a generic split-control primitive.
+
+Source:
+- https://github.com/androidx/androidx/blob/androidx-main/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/SplitButton.kt
+
+## 10. Expressive ListItem: interaction state drives shape, color, elevation, and measurement
+
+Interactive list items observe pressed, focused, hovered, and dragged interactions through a resolved `MutableInteractionSource`. The selected state is supplied separately by the caller. Shape selection is delegated to `ListItemShapes.shapeForInteraction`; colors for the container and each content slot are animated from a compact state tuple (enabled, selected, dragged). Shape uses a fast spatial token, while colors use a default effects token. Drag elevation is separately animated with a spatial token.
+
+The implementation merges descendant semantics at the item boundary, applies minimum interactive size only for interactive items, and uses combined click/long-click handling with a shape-aware focus ring. Its content is not a single Row: it is a multi-content custom Layout with independent leading, trailing, overline, supporting, and main-content slots. The measure policy accounts for directional horizontal padding, vertical padding, available width, and the dimensions of leading/trailing content before placing the text column. This allows one-, two-, and three-line item variants to share a consistent layout contract without hard-coding one fixed row height.
+
+**Implication for Motion:** a component state model should distinguish domain selection from transient interaction state. Animate only the visual properties that need transition, with semantic motion roles per property. For reusable list/surface primitives, slot-aware measurement and text-driven height are more robust than fixed-height templates. Keep semantics merged at the correct interaction boundary and preserve focus indication when shape changes.
+
+Source:
+- https://github.com/androidx/androidx/blob/androidx-main/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ListItem.kt
+
+## 11. Flexible App Bars: scroll is a continuous external input, not a second animation
+
+The flexible medium/large app bars are implemented as a two-row layout. The compact row owns navigation/actions and the collapsed title; the lower row owns the expanded title/subtitle. Both are driven by the same `TopAppBarState` through a `TopAppBarScrollBehavior` and nested-scroll connection. The expanded/collapsed heights are validated, and the lower row's measured size updates the scroll state's height-offset limit.
+
+A single collapsed fraction coordinates several outputs: container color interpolation, compact-title alpha, expanded-title alpha, and which title's semantics are exposed. The title semantic handoff occurs around the midpoint so assistive technology does not encounter duplicate title nodes during the visual crossfade. The app bar also supports direct vertical dragging and settling/fling behavior. The exit-until-collapsed behavior consumes vertical scroll in pre/post scroll phases, respects `canScroll`, and can snap or decay based on configured animation specs.
+
+This architecture keeps the scrollable content as the source of continuous progress. The app bar maps that progress into height, color, and title presentation; it does not independently spring-animate a second progress value. The layout also clips each row and applies window insets at the appropriate level to avoid expanded content drawing into system-bar regions.
+
+**Implication for Motion:** when a component follows externally owned scroll/navigation progress, derive all visual properties from that one normalized progress value. Reserve springs for independently initiated transitions such as settling after a drag. For collapsing content, accessibility semantics must track the currently meaningful representation, not merely opacity. Treat insets, clipping, dynamic measured bounds, and scroll-consumption policy as part of the component contract.
+
+Source:
+- https://github.com/androidx/androidx/blob/androidx-main/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/AppBar.kt
+
+## 12. Refined decisions for Motion Core and Motion UI
+
+The additional source review reinforces these boundaries:
+
+1. **Core owns mechanics, UI owns policy.** Core may provide interpolation, interaction observation helpers, progress mapping, and reusable geometry. Components own action meaning, overflow/menu behavior, selection policy, and accessibility labels.
+2. **Keep transient and durable state separate.** Pressed/focused/hovered/dragged are interaction signals; selected/checked and navigation destination belong to caller/domain state.
+3. **Preserve independent actions inside compound layouts.** A shared visual surface must not collapse two buttons into one accessibility or input target.
+4. **Prefer constraint-aware layouts.** Reserve critical controls first, distribute remaining space deliberately, and define behavior for narrow widths, font scaling, and RTL.
+5. **Use one authoritative progress source.** Scroll- or pager-driven components should map host progress to geometry/color/alpha without layering a second animation over it. Spring/decay is appropriate for the component's own settle phase.
+6. **Coordinate semantics with visual transitions.** Crossfades between duplicate representations need a clear semantic handoff; invisible/transparent content must not remain ambiguously exposed.
+7. **Keep shape interpolation capability explicit.** Morph only supported geometry families; otherwise use a deterministic state change or crossfade.
+8. **Accessibility settings can constrain motion policy.** Touch exploration, focus, and reduced motion must be inputs to component behavior where relevant, not post-processing flags.
+
+These are reference-derived engineering principles, not a request to reproduce Material components or their appearance. The Motion toolbar remains its own specialized component; this study informs its engineering quality without replacing its distinctive behavior.
+
+## 13. Sources reviewed in this pass
+
+- `SplitButton.kt` — independent primary/secondary actions, intrinsic-width-first measurement, shape states, checked semantics.
+- `ListItem.kt` — interaction state collection, state-driven shape/color/elevation, merged semantics, multi-slot measurement.
+- `AppBar.kt` — flexible two-row app bars, shared collapsed fraction, nested-scroll/drag settling, semantic title handoff.
+
+## Verification boundary (updated)
+
+This remains a source-code and documentation review only. No Motion production implementation was changed, no Android build or device validation was run, no CI workflow was triggered, and no branch was merged. Source observations refer to AndroidX `androidx-main` as inspected on 2026-11-27 and should be rechecked against the consuming Compose version.
