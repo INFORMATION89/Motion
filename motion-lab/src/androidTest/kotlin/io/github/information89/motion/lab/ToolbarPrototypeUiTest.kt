@@ -37,6 +37,7 @@ import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.isSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performSemanticsAction
@@ -121,6 +122,52 @@ class ToolbarPrototypeUiTest {
                 isSelected()
         ).assertCountEquals(1)
         assertEquals(null, requested.get())
+    }
+
+    @Test
+    fun longPressDragRequestsTargetOnReleaseWithoutCommittingSelection() {
+        val requested = AtomicReference<String?>(null)
+        val requestCount = AtomicInteger(0)
+        val interactionStarted = AtomicInteger(0)
+        setToolbar(
+            onSelectionRequest = {
+                requestCount.incrementAndGet()
+                requested.set(it)
+            },
+            onSelectionInteractionStarted = { interactionStarted.incrementAndGet() }
+        )
+
+        composeRule.waitForIdle()
+        dragSelectedOverviewToSaved(cancelGesture = false)
+
+        assertEquals(1, interactionStarted.get())
+        assertEquals("saved", requested.get())
+        assertEquals(1, requestCount.get())
+        composeRule.onNodeWithContentDescription("Overview destination").assertIsSelected()
+        composeRule.onNodeWithContentDescription("Saved items destination").assertIsNotSelected()
+    }
+
+    @Test
+    fun cancelledLongPressDragDoesNotRequestTarget() {
+        val requested = AtomicReference<String?>(null)
+        val requestCount = AtomicInteger(0)
+        val interactionStarted = AtomicInteger(0)
+        setToolbar(
+            onSelectionRequest = {
+                requestCount.incrementAndGet()
+                requested.set(it)
+            },
+            onSelectionInteractionStarted = { interactionStarted.incrementAndGet() }
+        )
+
+        composeRule.waitForIdle()
+        dragSelectedOverviewToSaved(cancelGesture = true)
+
+        assertEquals(1, interactionStarted.get())
+        assertEquals(null, requested.get())
+        assertEquals(0, requestCount.get())
+        composeRule.onNodeWithContentDescription("Overview destination").assertIsSelected()
+        composeRule.onNodeWithContentDescription("Saved items destination").assertIsNotSelected()
     }
 
     @Test
@@ -325,6 +372,29 @@ class ToolbarPrototypeUiTest {
         composeRule.onAllNodes(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button)).assertCountEquals(1)
     }
 
+    private fun dragSelectedOverviewToSaved(cancelGesture: Boolean) {
+        val source = composeRule.onNodeWithContentDescription("Overview destination")
+            .fetchSemanticsNode()
+            .boundsInRoot
+            .center
+        val target = composeRule.onNodeWithContentDescription("Saved items destination")
+            .fetchSemanticsNode()
+            .boundsInRoot
+            .center
+
+        composeRule.onRoot().performTouchInput {
+            down(source)
+            advanceEventTime(700)
+            moveTo(target, delayMillis = 16)
+            if (cancelGesture) {
+                cancel()
+            } else {
+                up()
+            }
+        }
+        composeRule.waitForIdle()
+    }
+
     private fun setToolbar(
         layoutDirection: LayoutDirection = LayoutDirection.Ltr,
         selectedTabId: String = "overview",
@@ -334,6 +404,7 @@ class ToolbarPrototypeUiTest {
         contextActionDetached: Boolean = false,
         onActionClick: () -> Unit = {},
         onSelectionRequest: (String) -> Unit = {},
+        onSelectionInteractionStarted: () -> Unit = {},
     ) {
         composeRule.setContent {
             CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
@@ -349,7 +420,7 @@ class ToolbarPrototypeUiTest {
                             hapticsEnabled = false,
                             onActionClick = onActionClick,
                             onSelectionRequest = onSelectionRequest,
-                            onSelectionInteractionStarted = {}
+                            onSelectionInteractionStarted = onSelectionInteractionStarted
                         )
                     }
                 }

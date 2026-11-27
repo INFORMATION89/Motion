@@ -44,15 +44,16 @@ The pager and destination data belong to Motion Lab. The prototype does not make
 
 - Historical CI run #197 passed on implementation head `75b6c9dacfb5079fc12dbcc36e0f4789f8d97b40`, before the current Compose UI coverage and CI optimization work.
 - The current PR workflow splits fast formatting/unit/release checks from the API 35 emulator suite. The latest exact-head result must be recorded after both jobs complete.
-- Compose UI tests cover tab semantics, host-progress invariants, LTR/RTL keyboard focus, single contextual-action semantics, and pointer hit-testing in attached/detached states.
-- This confirms formatting, compilation, and automated tests only; it does not establish TalkBack, focus appearance, visual contrast, RTL rendering, large font scale, haptic output, or physical-device interaction.
+- Compose UI tests cover tab semantics, host-progress invariants, LTR/RTL keyboard focus, a single contextual-action semantic target, real pointer hit-testing in attached/detached states, and long-press drag success/cancellation.
+- `docs/MOT0.3B_MANUAL_VALIDATION.md` records the remaining device/accessibility review. Its checks are all NOT TESTED until completed on the designated emulator/device.
+- Automated CI does not establish TalkBack, focus appearance, visual contrast, RTL rendering, large font scale, dynamic reduced-motion behavior, haptic output, or physical-device interaction.
 
 ## Exit criteria
 
 1. Keep CI passing on any subsequent code or documentation commit.
 2. Review confirms that host progress never commits navigation state and cannot move the indicator for invalid/non-adjacent endpoints.
-3. Add Compose UI tests for controlled tab callbacks, roving focus, action semantics, and adjacent-tab hit testing while the connector is attached/detached.
-4. Manual review exercises forward/reverse swipes, rapid retargeting, drag release/cancel, edge auto-scroll, both styles, reduced motion, RTL, and narrow widths.
-5. Only after these checks should the public toolbar API and its module-owned UI tests be designed.
+3. Compose UI tests cover controlled tab callbacks, roving focus, action semantics, adjacent-tab pointer hit-testing, and drag release/cancel.
+4. Manual review exercises forward/reverse swipes, rapid retargeting, drag release/cancel, edge auto-scroll, both styles, reduced motion, RTL, narrow widths, TalkBack, and font scaling using `docs/MOT0.3B_MANUAL_VALIDATION.md`.
+5. Only after the manual checks should the public toolbar API and its module-owned UI tests be designed.
 
 Do not treat a green CI run as proof of visual, accessibility, haptic, or physical-device validation.

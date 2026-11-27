@@ -56,16 +56,18 @@ This file is the working handoff for the next development session. Keep it align
 - [x] Historical checkpoint: Spotless, Core tests/build, Motion UI tests/build, Motion Lab tests, and Motion Lab debug build passed on PR #26 head `75b6c9d` (CI #197).
 - [x] Implement the contextual-action connector morph, edge auto-scroll, and strict roving keyboard focus in the Motion Lab spike.
 - [ ] Perform manual emulator/device, TalkBack, focus appearance, contrast, RTL, font-scale, live reduced-motion preference, contextual-action hit-testing, and haptic checks.
-- [x] Add focused Compose UI tests for callback/semantics, LTR/RTL roving focus, and physical pointer hit-testing near the contextual action in both attached and detached states.
+- [x] Add focused Compose UI tests for callback/semantics, LTR/RTL roving focus, physical pointer hit-testing near the contextual action in attached/detached states, and long-press drag completion/cancellation.
+- [ ] Complete [manual validation record](docs/MOT0.3B_MANUAL_VALIDATION.md) on the designated emulator/device; every item remains NOT TESTED until recorded.
 - [ ] Decide the smallest public Motion UI API only after the manual review.
 
 ## Next steps
 
-1. Review and manually exercise the latest prototype on an emulator/device, especially TalkBack, visible focus, RTL, narrow layouts, connector hit targets, and rapid interruption.
-2. Add focused Compose UI tests for contextual-action semantics, adjacent-tab hit testing, and focus traversal.
-3. Keep PR #26 open against `main` until exact-head CI and the manual validation checklist pass; then review the prototype before designing a public API.
-4. After manual interaction/accessibility review, design the public toolbar API in `:motion-ui`.
-5. Deliver reusable cards/surfaces only after the toolbar contract and prototype are established.
+1. Verify both CI jobs on the exact latest PR #26 head, including API 35 Compose UI instrumentation.
+2. Run the [manual validation record](docs/MOT0.3B_MANUAL_VALIDATION.md) on the designated emulator/device and record failures with the tested commit SHA.
+3. Fix any automated/manual findings; repeat exact-head CI and the affected manual checks.
+4. Keep PR #26 open until its CI and manual review criteria are satisfied; then review the prototype before designing a public API.
+5. Design the smallest public toolbar API in `:motion-ui` only after the manual interaction/accessibility review.
+6. Deliver reusable cards/surfaces only after the toolbar contract and prototype are established.
 
 ## Deferred validation
 
