@@ -32,6 +32,7 @@ import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasRole
+import androidx.compose.ui.test.isSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodes
 import androidx.compose.ui.test.onNode
@@ -83,6 +84,7 @@ class ToolbarPrototypeUiTest {
         composeRule.waitForIdle()
 
         composeRule.onAllNodes(hasRole(Role.Tab)).assertCountEquals(4)
+        composeRule.onAllNodes(hasRole(Role.Tab) and isSelected()).assertCountEquals(1)
         composeRule.onNode(
             hasRole(Role.Tab) and hasContentDescription("Overview destination")
         ).assertIsSelected()
@@ -100,6 +102,7 @@ class ToolbarPrototypeUiTest {
         composeRule.onNode(
             hasRole(Role.Tab) and hasContentDescription("Saved items destination")
         ).assertIsNotSelected()
+        composeRule.onAllNodes(hasRole(Role.Tab) and isSelected()).assertCountEquals(1)
     }
 
     @Test
