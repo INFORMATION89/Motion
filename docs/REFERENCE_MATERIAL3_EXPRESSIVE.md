@@ -172,3 +172,29 @@ Reference implementation:
 ## Verification boundary
 
 This is a source-code and documentation review only. No Motion implementation was changed as a result of this study, no Android build was run, no manual device validation was performed, and no CI workflow was triggered.
+
+
+## 8. MaterialShapes and the geometry contract behind Morph
+
+Material 3's expressive shape catalog is built on `RoundedPolygon` rather than arbitrary Compose `Path` values. The catalog lazily constructs and normalizes its predefined polygons, and exposes conversion helpers to Compose paths and shapes.
+
+The underlying AndroidX Graphics Shapes `Morph` implementation documents why this restriction matters:
+
+- arbitrary paths can contain multiple disconnected contours and do not have an obvious point-to-point correspondence;
+- rounded polygons provide a contiguous perimeter represented by cubic curves;
+- the morph algorithm matches curves using proximity, vertex distance, and concavity;
+- when the curve counts or placements differ, curves are split to create corresponding pairs;
+- after the correspondence is prepared, each frame interpolates the paired cubic control points.
+
+The implementation also exposes two evaluation paths:
+- `asCubics(progress)` creates a new list and cubic objects;
+- `forEachCubic(progress, mutableCubic, callback)` reuses a mutable cubic and is documented as faster with less allocation.
+
+It also provides maximum rotational bounds, not just static bounds, for shapes that rotate inside a fixed container.
+
+**Implication for Motion:** if Motion's morph system needs expressive shape transitions, use an explicit geometry model and establish correspondence once when endpoints are registered. Avoid rebuilding curve correspondence on every frame. Prefer reusable buffers/path objects in hot rendering paths, and include bounds/rotation in layout validation. Do not promise arbitrary `Path`-to-`Path` morphing without a defined contour and correspondence model.
+
+Sources:
+- https://github.com/androidx/androidx/blob/androidx-main/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/MaterialShapes.kt
+- https://github.com/androidx/androidx/blob/androidx-main/graphics/graphics-shapes/src/commonMain/kotlin/androidx/graphics/shapes/Morph.kt
+- https://github.com/androidx/androidx/blob/androidx-main/graphics/graphics-shapes/src/commonMain/kotlin/androidx/graphics/shapes/RoundedPolygon.kt
