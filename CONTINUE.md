@@ -83,3 +83,10 @@ This file is the working handoff for the next development session. Keep it align
 Emulator/physical-device behavior, TalkBack traversal, real focus appearance, contrast, RTL rendering, large font scaling, dynamic reduced-motion preference changes, contextual-action hit testing, and physical haptics remain NOT TESTED until actually run and recorded.
 
 Do not merge, release, publish, tag, or update a consumer's pinned Motion commit without explicit owner approval.
+
+
+## Material 3 Expressive reference study — 2026-11-27
+
+- Added [docs/REFERENCE_MATERIAL3_EXPRESSIVE.md](docs/REFERENCE_MATERIAL3_EXPRESSIVE.md), an implementation-focused study of MotionScheme, ToggleButton shape state, ButtonGroup interaction/layout negotiation, FloatingToolbar accessibility/scroll behavior, LoadingIndicator polygon morphing, and the Graphics Shapes `Morph` geometry/performance contract.
+- The study compares those patterns with the MOT0.3B toolbar spike and records adoption boundaries for Motion Core and Motion UI.
+- This is documentation-only research. No production behavior was changed, no Android build or manual validation was run, and no CI workflow was triggered.
