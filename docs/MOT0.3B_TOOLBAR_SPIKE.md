@@ -32,7 +32,7 @@ The pager and destination data belong to Motion Lab. The prototype does not make
 
 ## Known limitations to resolve during review
 
-- The connector morph and single-target structure are implemented in the sample, but attached/detached hit-target behavior and its transition timing still need Compose UI and device validation.
+- The connector morph and single-target structure are implemented in the sample. Automated tests exercise pointer input at the trailing edge of the adjacent final tab and direct pointer activation of the action in both attached and detached states; transition timing and device-level hit-target behavior still need manual validation.
 - Edge auto-scroll uses a quadratic velocity ramp in a 48 dp edge zone, is capped at 900 dp/s, clamps frame delta to 50 ms, and mirrors scroll direction in RTL. Narrow viewport behavior and gesture competition still require manual review.
 - The tabs use strict single-tab-stop focus with directional arrow navigation and a visible outline. TalkBack traversal, focus appearance, keyboard hardware behavior, and focus recovery while tabs are reordered/removed still require manual validation.
 
@@ -42,8 +42,9 @@ The pager and destination data belong to Motion Lab. The prototype does not make
 
 ## Verification
 
-- Required CI run #197 passed on exact implementation head `75b6c9dacfb5079fc12dbcc36e0f4789f8d97b40`.
-- The run passed Spotless, Core unit tests/release build, Motion UI unit tests/release build, Motion Lab unit tests, and Motion Lab debug assembly.
+- Historical CI run #197 passed on implementation head `75b6c9dacfb5079fc12dbcc36e0f4789f8d97b40`, before the current Compose UI coverage and CI optimization work.
+- The current PR workflow splits fast formatting/unit/release checks from the API 35 emulator suite. The latest exact-head result must be recorded after both jobs complete.
+- Compose UI tests cover tab semantics, host-progress invariants, LTR/RTL keyboard focus, single contextual-action semantics, and pointer hit-testing in attached/detached states.
 - This confirms formatting, compilation, and automated tests only; it does not establish TalkBack, focus appearance, visual contrast, RTL rendering, large font scale, haptic output, or physical-device interaction.
 
 ## Exit criteria

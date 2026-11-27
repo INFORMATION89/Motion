@@ -19,6 +19,7 @@ package io.github.information89.motion.lab
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -39,6 +40,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -98,7 +100,11 @@ class ToolbarPrototypeUiTest {
 
     @Test
     fun hostProgressChangesVisualPreviewWithoutCommittingTabSelection() {
-        setToolbar(hostProgress = ToolbarHostProgress("overview", "saved", 0.75f))
+        val requested = AtomicReference<String?>(null)
+        setToolbar(
+            hostProgress = ToolbarHostProgress("overview", "saved", 0.75f),
+            onSelectionRequest = requested::set
+        )
 
         composeRule.waitForIdle()
 
@@ -114,6 +120,7 @@ class ToolbarPrototypeUiTest {
             SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab) and
                 isSelected()
         ).assertCountEquals(1)
+        assertEquals(null, requested.get())
     }
 
     @Test
@@ -273,21 +280,32 @@ class ToolbarPrototypeUiTest {
         )
 
         composeRule.waitForIdle()
+
         composeRule.onAllNodes(
             SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button)
         ).assertCountEquals(1)
+
+        composeRule.onNodeWithContentDescription("Settings destination").performTouchInput {
+            click(
+                Offset(
+                    x = size.width.toFloat() - 8f,
+                    y = size.height.toFloat() / 2f
+                )
+            )
+        }
+        composeRule.waitForIdle()
+
+        assertEquals("settings", requested.get())
+        assertEquals(0, actionClicks.get())
+
         composeRule.onNode(
             SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button)
-        ).performClick()
+        ).performTouchInput {
+            click()
+        }
         composeRule.waitForIdle()
 
-        assertEquals(1, actionClicks.get())
-        assertEquals(null, requested.get())
-
-        composeRule.onNodeWithContentDescription("Discover destination").performClick()
-        composeRule.waitForIdle()
-
-        assertEquals("discover", requested.get())
+        assertEquals("settings", requested.get())
         assertEquals(1, actionClicks.get())
     }
 

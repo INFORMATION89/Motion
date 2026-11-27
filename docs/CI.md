@@ -13,7 +13,7 @@ The fast job has a 20-minute timeout. The emulator job has a 35-minute timeout t
 
 ## Gradle performance settings
 
-The root `gradle.properties` enables:
+The root `gradle.properties` enables these settings, and CI must exercise them on every run:
 
 - `org.gradle.parallel=true`: independent subproject tasks can execute concurrently.
 - `org.gradle.caching=true`: Gradle can reuse cacheable task outputs.
@@ -21,7 +21,7 @@ The root `gradle.properties` enables:
 
 `gradle/actions/setup-gradle` manages the Gradle User Home cache, including downloaded dependencies and the local build cache. Keep this as the single Gradle cache owner; do not add a second overlapping cache for the same Gradle directories.
 
-The Configuration Cache lives in the build workspace under `.gradle/configuration-cache`. GitHub-hosted jobs use separate ephemeral workspaces, so this workflow does not claim to reuse Configuration Cache entries between jobs or separate workflow runs. The setting is still valuable as a strict compatibility gate and enables Gradle's parallel task execution within a build invocation. Local development builds can reuse the configuration entry while their workspace remains available.
+The Configuration Cache lives in the build workspace under `.gradle/configuration-cache`. GitHub-hosted jobs use separate ephemeral workspaces, so this workflow does not claim to reuse Configuration Cache entries between jobs or separate workflow runs. In CI it is a strict compatibility gate; local development builds can reuse the configuration entry while their workspace remains available. Gradle's parallel project execution is separately enabled through `org.gradle.parallel=true`.
 
 Configuration-on-demand is intentionally not enabled: the required CI task sets involve all three modules, so it does not avoid configuring projects in this workflow. Avoid enabling incubating configuration optimizations without measuring a real benefit.
 

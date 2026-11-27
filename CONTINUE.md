@@ -26,15 +26,15 @@ This file is the working handoff for the next development session. Keep it align
 
 - MOT0.1 and MOT0.2 are complete.
 - MOT0.3A introduces the optional `:motion-ui` Android library and the initial configurable theme/token API.
-- PR #13 is open and ready for review, not merged. CI #176 passed on its exact head `1c87bfd23c8b8cbd63145d38d1dd613fd01d7ec7`.
-- PR #25 contains the MOT0.3B toolbar contract, remains a draft, and is stacked on the MOT0.3A branch. CI #178 passed on its exact head `98886cc2f5a21cacd9d9ce0ca66a4ef992c69afa`.
+- PR #13 (MOT0.3A) merged into `main` on 2026-11-27; merge commit `2887d8aec1e06cfe8a747d20b0f1b32ee826e6ea`.
+- PR #25 (MOT0.3B toolbar contract) merged into `main` after PR #13 on 2026-11-27; merge commit `51420fdbb117ddfb8738263cf428b85e197a7719`.
 - The toolbar contract uses stable endpoint IDs for host progress and explicitly separates local drag ownership from consumer-controlled selection.
-- A separate branch, `feat/mot03b-toolbar-prototype`, carries the internal Motion Lab spike. It is not a public API and remains stacked on PR #25.
-- PR #26 is open as a draft. CI #197 passed on exact implementation head `75b6c9dacfb5079fc12dbcc36e0f4789f8d97b40`.
+- Branch `feat/mot03b-toolbar-prototype` carries the internal Motion Lab spike. It is not a public API.
+- PR #26 is open, targets `main`, and is not a draft. CI #197 is a historical checkpoint, not verification of the current head.
 - The prototype includes stable-ID host progress, variable-width geometry, drag preview/cancel, RTL-aware edge auto-scroll, a retracting contextual-action connector with one semantic button target, two visual profiles, and strict single-tab-stop keyboard navigation with an RTL-aware focus ring.
 - The Lab has 15 pure unit tests covering host-progress validation, geometry interpolation/fallback, drag-target resolution, keyboard navigation/wrap-around, edge-scroll acceleration, and LTR/RTL coordinate conversion. Required CI includes `:motion-lab:testDebugUnitTest`.
 - Motion Lab Compose UI tests now cover tab semantics, host-progress selection invariants, LTR/RTL focus navigation, one contextual-action target, and adjacent-tab interaction with attached/detached action profiles.
-- CI runs fast formatting/unit/release checks and API 35 emulator tests in parallel jobs. Gradle parallel execution, build caching, and strict Configuration Cache compatibility checks are enabled; see [CI design](docs/CI.md).
+- CI runs fast formatting/unit/release checks and API 35 emulator tests in parallel jobs. Gradle parallel execution, build caching, and strict Configuration Cache compatibility checks are enabled in `gradle.properties`; see [CI design](docs/CI.md).
 - The obsolete, unbuilt prototype directory was removed after provenance/license review; no implementation was copied from it.
 
 ## MOT0.3A acceptance
@@ -53,17 +53,17 @@ This file is the working handoff for the next development session. Keep it align
 - [x] Internal Motion Lab spike added on a separate stacked branch.
 - [x] Pure progress/geometry tests added and included in required CI.
 - [x] Review the complete spike diff for the implemented interaction paths.
-- [x] Spotless, Core tests/build, Motion UI tests/build, Motion Lab tests, and Motion Lab debug build pass on the exact PR #26 head (CI #197).
+- [x] Historical checkpoint: Spotless, Core tests/build, Motion UI tests/build, Motion Lab tests, and Motion Lab debug build passed on PR #26 head `75b6c9d` (CI #197).
 - [x] Implement the contextual-action connector morph, edge auto-scroll, and strict roving keyboard focus in the Motion Lab spike.
 - [ ] Perform manual emulator/device, TalkBack, focus appearance, contrast, RTL, font-scale, live reduced-motion preference, contextual-action hit-testing, and haptic checks.
-- [ ] Add focused Compose UI tests for callback/semantics and interaction hit-testing before promoting the design to a public API.
+- [x] Add focused Compose UI tests for callback/semantics, LTR/RTL roving focus, and physical pointer hit-testing near the contextual action in both attached and detached states.
 - [ ] Decide the smallest public Motion UI API only after the manual review.
 
 ## Next steps
 
 1. Review and manually exercise the latest prototype on an emulator/device, especially TalkBack, visible focus, RTL, narrow layouts, connector hit targets, and rapid interruption.
 2. Add focused Compose UI tests for contextual-action semantics, adjacent-tab hit testing, and focus traversal.
-3. Keep PR #26 stacked on PR #25 until the contract and MOT0.3A foundation are accepted in order.
+3. Keep PR #26 open against `main` until exact-head CI and the manual validation checklist pass; then review the prototype before designing a public API.
 4. After manual interaction/accessibility review, design the public toolbar API in `:motion-ui`.
 5. Deliver reusable cards/surfaces only after the toolbar contract and prototype are established.
 
