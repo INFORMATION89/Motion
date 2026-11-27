@@ -1,6 +1,6 @@
 # Motion Lab
 
-A standalone Android sample app for exploring the public Motion API. It is intentionally independent of Solstice and does not define the planned `:motion-ui` component library.
+A standalone Android sample app for exploring the public Motion API. It is a standalone consumer of Motion Core and does not define the optional `:motion-ui` component library.
 
 ## Build and install
 

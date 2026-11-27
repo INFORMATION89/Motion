@@ -1,13 +1,13 @@
 # Repository instructions for AI agents
 
-Read this file and [project rules](docs/RULES.md) before making changes. Then read [README.md](README.md), [the framework overview](docs/FRAMEWORK_OVERVIEW.md), [platform support](docs/PLATFORM_SUPPORT.md), [the Solstice adoption guide](docs/AI_SOLSTICE_ADOPTION.md), [motion principles](docs/MOTION.md), and the relevant implementation or design documents under `docs/`.
+Read this file and [project rules](docs/RULES.md) before making changes. Then read [README.md](README.md), [the framework overview](docs/FRAMEWORK_OVERVIEW.md), [platform support](docs/PLATFORM_SUPPORT.md), [the consumer adoption guide](docs/AI_CONSUMER_ADOPTION.md), [legacy prototype disposition](docs/LEGACY_PROTOTYPE_DISPOSITION.md), [motion principles](docs/MOTION.md), and the relevant implementation or design documents under `docs/`.
 
 ## Project boundaries
 
-- This repository contains the reusable Motion framework. It is independent of Solstice and must remain useful to unrelated apps.
+- This repository contains the reusable Motion framework. It is independent of the consuming application and must remain useful to unrelated apps.
 - The current library artifact is an Android library for Jetpack Compose. Do not claim iOS, Windows, macOS, or Linux support until corresponding Gradle targets, platform implementations, tests, and CI exist.
-- Never add Solstice, weather-domain, or other consumer-app dependencies, source code, assets, or assumptions to Motion.
-- Motion Core (`:motion`) owns reusable motion and interaction behavior. The planned Motion UI (`:motion-ui`) layer may own configurable, cross-app component building blocks, but not a complete application framework, product screens, visual brand, navigation policy, or domain logic. Motion UI depends on Core; Core never depends on Motion UI. Follow [the framework overview](docs/FRAMEWORK_OVERVIEW.md) when deciding where code belongs.
+- Never add consumer-specific domain dependencies, source code, assets, or assumptions to Motion.
+- Motion Core (`:motion`) owns reusable motion and interaction behavior. The optional Motion UI (`:motion-ui`) layer owns configurable, cross-app component building blocks, but not a complete application framework, product screens, visual brand, navigation policy, or domain logic. Motion UI depends on Core; Core never depends on Motion UI. Follow [the framework overview](docs/FRAMEWORK_OVERVIEW.md) when deciding where code belongs.
 - Compose remains the animation, rendering, and interaction foundation. Use Compose primitives such as `Animatable`, `spring`, and gesture APIs; do not invent a second general-purpose animation engine.
 - Motion-specific behavior and interaction decisions must follow `docs/MOTION.md`. Do not change agreed, user-visible motion behavior without documenting the trade-off and obtaining the owner's agreement.
 - Keep the library API small and intentional. Do not add public inspection hooks, configuration knobs, dependencies, or abstractions solely to simplify one test.
@@ -16,18 +16,17 @@ Read this file and [project rules](docs/RULES.md) before making changes. Then re
 
 MOT0.1 is complete and merged into `main`.
 
-MOT0.2 (standalone Motion Lab) is complete and merged into `main`. The delivered `:motion-lab` Android app, Components / Interactions tabs, and automatic system appearance are documented in [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md). Treat that plan as historical acceptance evidence, not an active implementation queue.
+MOT0.2 (standalone Motion Lab) is complete and merged into `main`. The delivered `:motion-lab` Android app, Components / Interactions tabs, and automatic system appearance are documented in [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md). Treat that plan as historical acceptance evidence, not an active implementation queue. The former unbuilt `lab/` prototype was removed after a provenance and license review; see [the disposition record](docs/LEGACY_PROTOTYPE_DISPOSITION.md).
 
 The following remain outside the completed MOT0.2 scope and require separate planning/review:
 - Changes to Motion Core physics or existing user-visible motion contracts.
 - New public Core APIs without a separately reviewed reusable capability gap.
-- The planned `:motion-ui` component library.
-- Solstice-specific UI, consumer migrations, or submodule updates.
+- New Motion UI components beyond the MOT0.3A theme/token foundation; each requires a scoped contract and review.
+- Consumer-specific UI, consumer migrations, or dependency-pin updates.
 - Kotlin Multiplatform, iOS, desktop, web, or platform expansion.
 - Benchmarks or performance dashboards.
 - Broad refactors unrelated to making the standalone Lab work.
 
-The old `lab/` source tree is a prototype, not a Gradle module. Do not move or mechanically rename it into the new app: its code contains Solstice/Breezy app dependencies, packages, resources, theme classes, and LGPL notices. Reimplement generic demonstrations against the public Motion API and Compose/Material 3. Preserve notices and verify provenance/license compatibility before reusing any legacy implementation code.
 
 ## Motion Lab product and UI rules
 
@@ -55,7 +54,7 @@ The old `lab/` source tree is a prototype, not a Gradle module. Do not move or m
 ## AI-assisted planning and implementation
 
 - Verify the current branch, submodule commit (when relevant), open PRs, source tree, and latest CI before relying on earlier plans or chat context.
-- For Solstice adoption work, follow [docs/AI_SOLSTICE_ADOPTION.md](docs/AI_SOLSTICE_ADOPTION.md). The first deliverable is an evidence-based migration plan in Solstice, not an automatic code migration or submodule bump.
+- For consumer adoption work, follow [docs/AI_CONSUMER_ADOPTION.md](docs/AI_CONSUMER_ADOPTION.md). The first deliverable is an evidence-based migration plan in the consumer repository, not an automatic code migration or dependency-pin update.
 - MOT0.2 is complete; use [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md) as historical acceptance evidence. Keep Motion Lab as a consumer of Motion's public API; do not let the sample app dictate or leak app-only requirements into Core.
 - Inspect existing APIs before proposing new ones. Classify each candidate as direct reuse, app-side composition, a reusable Motion gap, or app-specific behavior.
 - Prefer adapting existing components and libraries over rebuilding equivalents. Avoid duplicating spring constants, gesture physics, or component implementations in consuming apps.

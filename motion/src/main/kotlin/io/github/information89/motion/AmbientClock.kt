@@ -31,8 +31,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 
 /**
- * The clock for ambient animation (F4, agreed 2026-11-21): a slow drift, twinkling, weather effects,
- * anything that just keeps moving rather than responding to a gesture. Any app's ambient animation
+ * The clock for ambient animation (F4, agreed 2026-11-21): a slow drift, twinkling, or background
+ * ambience—anything that keeps moving rather than responding to a gesture. Any app's ambient animation
  * needs the same rules, so they live here:
  * - **capped frames per second** ([fps]): ambient motion doesn't need the display's full rate, and
  *   every frame of a full-screen shader costs battery;

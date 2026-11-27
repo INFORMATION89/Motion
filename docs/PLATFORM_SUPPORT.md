@@ -85,7 +85,7 @@ The app's CI must check out submodules. For GitHub Actions:
     submodules: recursive
 ```
 
-Solstice already has the composite-build substitution in `settings.gradle.kts` and initializes submodules in its build workflow. Its current `.gitmodules` URL uses the former repository name; new integrations should use the canonical `Motion-UI` URL shown above.
+Consumer repositories can integrate Motion through Gradle composite-build substitution and a pinned source dependency. New integrations should use the canonical `Motion-UI` repository URL shown above.
 
 ### Windows development note
 

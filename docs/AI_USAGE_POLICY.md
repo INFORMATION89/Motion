@@ -1,7 +1,7 @@
 # AI Usage and Cost Policy
 
 **Status:** Project policy  
-**Applies to:** Motion, Solstice, Meridian-Engine, and related development workflows  
+**Applies to:** Motion and related consumer-repository development workflows  
 **Primary assistants:** ChatGPT (including Work/Codex where available) and Claude (including Claude Code)  
 **Last reviewed:** 2026-11-26
 

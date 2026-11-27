@@ -31,4 +31,6 @@ jobs:
             spotlessCheck \
             :motion:testDebugUnitTest \
             :motion:assembleRelease \
+            :motion-ui:testDebugUnitTest \
+            :motion-ui:assembleRelease \
             :motion-lab:assembleDebug

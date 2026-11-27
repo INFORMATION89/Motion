@@ -14,10 +14,10 @@ The rules protect Motion's independence, reusable API, interaction quality, priv
 
 ## 2. Motion stays independent
 
-1. Motion is an independent, reusable framework. It must remain useful to apps other than Solstice.
-2. Motion must never depend on, import, embed, or assume Solstice or another consuming application's source, assets, theme, domain models, navigation, screens, or business rules.
+1. Motion is an independent, reusable framework. It must remain useful to apps other than the consuming application.
+2. Motion must never depend on, import, embed, or assume any consuming application's source, assets, theme, domain models, navigation, screens, or business rules.
 3. Motion Core (`:motion`) owns reusable motion and interaction behavior. It is not an application framework or a general-purpose component catalog.
-4. The planned Motion UI (`:motion-ui`) layer may provide configurable, reusable UI building blocks. It must remain optional and depend on Core; Core must never depend on Motion UI. Do not claim the planned module exists until it is implemented.
+4. Motion UI (`:motion-ui`) is the optional layer for configurable, reusable UI building blocks. It must remain optional and depend on Core; Core must never depend on Motion UI. The theme/token foundation is under review in MOT0.3A; do not claim the module or its APIs are available from `main` or a released artifact until the change is accepted and delivered.
 5. A consuming app owns its content, domain state, brand, theme values, screen composition, routing, and product decisions. Motion exposes reusable behavior and configurable contracts.
 6. Keep the current platform truth accurate: Android with Jetpack Compose is supported. Windows, macOS, Linux, iOS, and other targets remain unsupported until their implementations, tests, integration documentation, and CI exist.
 7. A consuming app pins and validates a Motion commit before updating its dependency. Never make an app consume an unreviewed branch tip.
@@ -36,7 +36,7 @@ Do not create competing animation engines, standard buttons or fields, navigatio
 
 ## 4. Motion and interaction contracts
 
-1. Follow [Motion principles](MOTION.md) and the public API documentation. They describe reusable behavior, not a requirement to copy Solstice's visual style.
+1. Follow [Motion principles](MOTION.md) and the public API documentation. They describe reusable behavior, not a requirement to copy the consuming application's visual style.
 2. Motion is interruptible: new input must not be swallowed while an animation runs. Retarget from the current animated state and preserve velocity where the API contract requires it.
 3. Gestures must have explicit ownership and a predictable handoff to release/spring behavior. Avoid stale coroutine continuations overriding newer user intent.
 4. Use shared spring tokens and existing physics helpers. Do not introduce unexplained one-off spring constants, timing curves, thresholds, or duplicated gesture physics.
@@ -77,7 +77,7 @@ These rules apply to Motion and its future modules.
 
 ## 8. Motion Lab and examples
 
-1. Motion Lab is a standalone development and demonstration app. It must not become coupled to Solstice or another consumer app.
+1. Motion Lab is a standalone development and demonstration app. It must not become coupled to the consuming application or another consumer app.
 2. The Lab has two conceptual areas: **Components** demonstrates reusable component structures and their context; **Interactions** demonstrates input, actions, navigation, and motion mechanisms. Keep the distinction clear as the catalog grows.
 3. Prefer standard Material 3 navigation and controls over custom replacements.
 4. Follow system light/dark appearance by default. Any optional appearance such as pure-black/AMOLED must remain explicit and must not replace automatic system behavior.

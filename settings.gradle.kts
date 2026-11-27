@@ -17,4 +17,4 @@ dependencyResolutionManagement {
 // Not "Motion": a root named like its :motion project clashes in apps that include this build
 // (Gradle generates the same `projects.motion` accessor for both).
 rootProject.name = "MotionFramework"
-include(":motion", ":motion-lab")
+include(":motion", ":motion-ui", ":motion-lab")

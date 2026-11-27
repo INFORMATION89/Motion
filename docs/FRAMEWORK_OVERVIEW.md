@@ -17,19 +17,20 @@ Motion Core is the reusable motion and interaction engine for Compose apps. It o
 
 Compose remains the animation, rendering, and input foundation. Motion Core must not introduce a second animation engine.
 
-### Motion UI — planned `:motion-ui`
+### Motion UI — `:motion-ui`
 
-Motion UI is a planned, optional Compose component layer built on Motion Core. It should provide reusable building blocks that combine common UI structure with Motion interactions, using neutral defaults and app-supplied theme values.
+Motion UI is an optional Compose component layer built on Motion Core. Its first delivered stage (MOT0.3A) provides an app-configurable Material 3 theme entry point and semantic shape, spacing, and surface-material tokens. Further reusable building blocks are staged separately.
 
 The initial intended scope is:
 
 - reusable page frame/scaffold and header-action slots;
 - configurable card and sheet building blocks;
-- reusable toolbar/header action and message/feedback surfaces;
+- a first-class, fully customisable animated toolbar with advanced tab morphing, gesture-driven selection, contextual action/bud transitions, and app-provided actions;
+- reusable message/feedback surfaces;
 - shared component contracts and theme/token names for typography, shape, spacing, materials, and motion;
 - optional glass/material wrappers only where a focused rendering dependency is justified and platform fallbacks are explicit.
 
-Motion UI is **not** meant to replace Material 3 or become a complete application framework. It should not clone standard controls that Compose or Material already provide. The module does not exist in the current build yet; this is a planned layer, not a currently consumable artifact.
+Motion UI is **not** meant to replace Material 3 or become a complete application framework. It should not clone standard controls that Compose or Material already provide. The module is now included in the Gradle build and required CI. Its current public API is limited to the theme and token foundation; card, page, sheet, and glass components are not yet delivered.
 
 Motion UI depends on Motion Core. Motion Core must never depend on Motion UI.
 
@@ -37,9 +38,9 @@ Motion UI depends on Motion Core. Motion Core must never depend on Motion UI.
 
 Think of an app as these cooperating layers:
 
-1. **Application and domain** — weather data, forecasts, business rules, screen state, navigation destinations, and product-specific decisions.
+1. **Application and domain** — domain data, model outputs, business rules, screen state, navigation destinations, and product-specific decisions.
 2. **App theme and product design** — brand colors, visual identity, product-specific typography choices, content, and screen composition.
-3. **Motion UI (future, optional)** — reusable component building blocks such as page frames, cards, sheets, header actions, and message surfaces, with configurable defaults.
+3. **Motion UI (optional)** — reusable component building blocks such as page frames, cards, sheets, header actions, and message surfaces, with configurable defaults.
 4. **UI component libraries** — standard buttons, switches, sliders, text fields, dialogs, navigation controls, semantics, and accessibility behavior. Prefer Material 3 or another focused library instead of cloning these.
 5. **Motion Core** — reusable movement and interaction behavior used by components: spring state, gesture tracking, interruption, retargeting, velocity handoff, morph mechanics, and motion feedback.
 6. **Compose and the platform** — rendering, layout, pointer input, animation primitives, windowing, OS services, and hardware capabilities.
@@ -69,6 +70,9 @@ Good candidates include configurable page frames, card/sheet containers, header-
 
 Motion UI should:
 
+- separate component behaviour and interaction mechanics from visual styling and app configuration;
+- allow the same component (especially the animated toolbar) to use different style profiles, including a Material 3 Expressive-like profile or an app-defined profile;
+- keep a consumer's distinctive palette, material treatment, iconography, domain context, and product branding in the consuming application; a consumer may recreate that look through its own style configuration without importing consumer code or assets;
 - expose slots and configuration rather than hardcode a consuming app's content;
 - provide neutral defaults that apps can override;
 - use Motion Core for movement and interaction mechanics;
@@ -76,7 +80,7 @@ Motion UI should:
 - depend on focused libraries such as Haze for specialized rendering instead of reimplementing them;
 - remain optional, so an app can use Motion Core without adopting Motion UI.
 
-It must not contain Solstice screens, weather models, forecasts, navigation policy, sky rendering, weather icons, or a fixed Solstice brand palette.
+It must not contain consumer screens, domain models, navigation policy, domain visualizations, domain icons, or a fixed brand palette.
 
 ## What belongs in other UI libraries
 
@@ -84,13 +88,13 @@ It must not contain Solstice screens, weather models, forecasts, navigation poli
 |---|---|---|
 | Layout, measurement, drawing, pointer input, and animation runtime | Jetpack Compose UI, Foundation, and Animation | Use these primitives; do not reimplement them. |
 | Standard buttons, switches, sliders, text fields, dialogs, navigation bars, and accessibility semantics | Material 3 or another component library | Motion UI may compose these; it should not create competing replacements. |
-| Shared reusable page frames, configurable cards/sheets, header-action slots, and message surfaces | Planned Motion UI, when generic | Provide configurable building blocks, not app-specific screens. |
+| Shared reusable page frames, configurable cards/sheets, header-action slots, and message surfaces | Motion UI, as each component is designed and delivered | Provide configurable building blocks, not app-specific screens. |
 | Shared visual language: colors, typography, shape, spacing, component variants | The app's design system/theme, with neutral Motion UI token contracts where useful | The app supplies its values; Motion must not define an app's brand. |
 | Navigation routes, back stack, deep links, screen lifecycle | Navigation library or application architecture | Motion may animate transitions but does not own routing or navigation policy. |
 | Blur and advanced backdrop rendering | Haze or another specialized rendering library | Motion UI may wrap a dependency behind a configurable surface; it should not implement a competing blur engine. |
-| Images, maps, charts, weather icons, media, and domain widgets | Specialized libraries and app modules | Motion may animate their containers or interactions; it does not implement their domain content. |
+| Images, maps, charts, media, and domain widgets | Specialized libraries and app modules | Motion may animate their containers or interactions; it does not implement their domain content. |
 | Window management, platform sensors, OS-specific input, and hardware APIs | Platform libraries or narrow platform adapters | Motion may expose a stable abstraction only where the capability is genuinely part of motion feedback. |
-| Screens, weather cards, forecasts, sky rendering, and Solstice-specific glass/sky styling | Solstice | Keep product-specific content and visual treatment in the app. |
+| Screens, domain-specific cards and visualizations, and consumer-specific visual styling | the consuming application | Keep product-specific content and visual treatment in the app. |
 
 Use an existing UI library when it already solves the structural, semantic, or visual problem. Do not create a second Button, TextField, navigation system, or theme layer just to attach an animation.
 
@@ -114,8 +118,8 @@ Ask these questions before adding code:
 - Prefer existing tokens and APIs over app-local spring constants, duplicate physics, or one-off gesture engines.
 - Propose a new public API only when a reusable capability is missing; describe its contract and tests before implementing it.
 
-For Solstice, Motion Core should own generic motion mechanics; Motion UI may later own neutral reusable frames, cards, sheets, and header building blocks; Solstice remains responsible for the weather experience, navigation policy, and its glass/sky identity.
+A consuming application owns its product experience, navigation policy, domain logic, and visual identity; Motion provides only generic reusable motion and configurable UI building blocks.
 
 ## Platform boundary
 
-The current implementation targets Android and Jetpack Compose only. The planned UI layer is also initially Android/Compose-oriented unless a separate multiplatform design is approved. Shared design principles do not mean iOS or desktop targets are currently supported. See [Platform support](PLATFORM_SUPPORT.md).
+The current implementation targets Android and Jetpack Compose only. Motion UI is also Android/Compose-oriented. Shared design principles do not mean iOS or desktop targets are currently supported. See [Platform support](PLATFORM_SUPPORT.md).

@@ -90,6 +90,10 @@ import io.github.information89.motion.rememberDialState
 import io.github.information89.motion.rememberMotionValue
 import io.github.information89.motion.reveal
 import io.github.information89.motion.springToPage
+import io.github.information89.motion.ui.MotionUiMaterials
+import io.github.information89.motion.ui.MotionUiTheme
+import io.github.information89.motion.ui.MotionUiThemeTokens
+import io.github.information89.motion.ui.MotionUiTokens
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -184,6 +188,7 @@ private fun MotionLabApp() {
                     style = MaterialTheme.typography.bodyLarge
                 )
                 SlowMotionControl(slowMotion) { slowMotion = it }
+                MotionUiTokensPreview()
                 LabPage.entries.filter { it.section == section }.forEach { item ->
                     Card(
                         modifier = Modifier
@@ -222,6 +227,40 @@ private fun MotionLabApp() {
                     LabPage.EDGE_BLUR -> EdgeBlurDemo()
                     null -> Unit
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MotionUiTokensPreview() {
+    val tokens = MotionUiThemeTokens.current
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = tokens.shapes.card,
+        colors = CardDefaults.cardColors(containerColor = tokens.materials.cardContainer),
+        elevation = CardDefaults.cardElevation(defaultElevation = tokens.materials.cardElevation)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(tokens.spacing.medium),
+            verticalArrangement = Arrangement.spacedBy(tokens.spacing.compact)
+        ) {
+            Text("Motion UI theme", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "This preview reads the app-provided shape, spacing, surface, and elevation tokens.",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Surface(
+                color = tokens.materials.glassContainer,
+                shape = RoundedCornerShape(tokens.spacing.compact)
+            ) {
+                Text(
+                    "Configurable surface role",
+                    modifier = Modifier.padding(tokens.spacing.compact),
+                    style = MaterialTheme.typography.labelMedium
+                )
             }
         }
     }
@@ -815,5 +854,14 @@ private fun MotionLabTheme(content: @Composable () -> Unit) {
             tertiary = Color(0xFF805B45)
         )
     }
-    MaterialTheme(colorScheme = colors, content = content)
+    MotionUiTheme(
+        colorScheme = colors,
+        tokens = MotionUiTokens(
+            materials = MotionUiMaterials(
+                cardContainer = colors.surfaceContainer,
+                glassContainer = colors.surface.copy(alpha = 0.86f)
+            )
+        ),
+        content = content
+    )
 }

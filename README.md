@@ -4,7 +4,7 @@ An independent motion and interaction framework for Jetpack Compose apps.
 
 Motion provides reusable motion behavior: spring-driven state, interruptible animations, gesture-to-animation handoff, elastic boundaries, morphing surfaces, and interaction primitives. It is designed to be used by different apps without depending on their screens, themes, or business logic.
 
-Motion is organized around two layers: **Motion Core** (`:motion`) owns reusable motion and interaction behavior; **Motion UI** (`:motion-ui`) is a planned, optional component layer for configurable page frames, cards, sheets, header actions, and message surfaces. Motion UI will build on Core, not replace Material 3 or specialized UI libraries. The `:motion-ui` module does not exist yet.
+Motion is organized around two layers: **Motion Core** (`:motion`) owns reusable motion and interaction behavior; **Motion UI** (`:motion-ui`) is an optional component layer for configurable page frames, cards, sheets, header actions, and message surfaces. Motion UI builds on Core, not replace Material 3 or specialized UI libraries. The initial MOT0.3A theme/token foundation is implemented; component surfaces are delivered in subsequent stages.
 
 ## What Motion covers
 
@@ -13,7 +13,7 @@ Motion is organized around two layers: **Motion Core** (`:motion`) owns reusable
 - **Reusable interactions** — morphing surfaces, page movement, dials, reveal choreography, and related interaction state.
 - **Motion-related feedback** — semantic haptic primitives, ambient motion scheduling, and reduced-motion support.
 
-See [the framework overview](docs/FRAMEWORK_OVERVIEW.md) for the responsibilities of Motion Core, the planned Motion UI layer, Compose, other UI libraries, and app code.
+See [the framework overview](docs/FRAMEWORK_OVERVIEW.md) for the responsibilities of Motion Core, Motion UI, Compose, other UI libraries, and app code.
 
 ## Platform support
 
@@ -72,6 +72,8 @@ Run from the repository root:
 ./gradlew spotlessCheck
 ./gradlew :motion:testDebugUnitTest
 ./gradlew :motion:assembleRelease
+./gradlew :motion-ui:testDebugUnitTest
+./gradlew :motion-ui:assembleRelease
 ./gradlew :motion-lab:assembleDebug
 ```
 
@@ -83,7 +85,7 @@ On Windows, use `gradlew.bat` instead of `./gradlew`.
 
 - [Framework scope and responsibilities](docs/FRAMEWORK_OVERVIEW.md)
 - [Platform support and integration](docs/PLATFORM_SUPPORT.md)
-- [AI guide for planning Motion adoption in Solstice](docs/AI_SOLSTICE_ADOPTION.md)
+- [AI guide for planning Motion adoption in a consuming application](docs/AI_CONSUMER_ADOPTION.md)
 - [Library API and usage](motion/README.md)
 - [Motion principles](docs/MOTION.md)
 - [Morph design study](docs/MORPH_STUDY.md)
@@ -91,11 +93,14 @@ On Windows, use `gradlew.bat` instead of `./gradlew`.
 - [Repository instructions for AI agents](AGENTS.md)
 - [AI usage and cost policy](docs/AI_USAGE_POLICY.md)
 - [MOT0.2 standalone Motion Lab plan](docs/MOT0.2_PLAN.md)
+- [MOT0.3A Motion UI foundation](docs/MOT0.3A_PLAN.md)
+- [Legacy prototype disposition](docs/LEGACY_PROTOTYPE_DISPOSITION.md)
+- [Motion UI theme and token API](motion-ui/README.md)
 - [Motion Lab app and build guide](motion-lab/README.md)
 
 ## Project status
 
-The `:motion` Android library and the standalone `:motion-lab` sample app are Gradle modules. Motion Lab currently includes a generic gallery organized into Components and Interactions tabs, automatic system light/dark appearance, and spring/release, morph, page, dial, edge-blur, and semantic haptics demonstrations. Morph and page movement have opt-in comparisons driven by shared input. The haptics page exposes the existing semantic tokens and a temporary intensity control. CI passed on the final PR head; emulator/physical-device behavior, TalkBack, contrast, and real vibration remain unverified. The old `lab/` directory remains an unbuilt Solstice-era prototype and is not part of the new app.
+The `:motion` Android library, optional `:motion-ui` Android library, and standalone `:motion-lab` sample app are Gradle modules. Motion Lab currently includes a generic gallery organized into Components and Interactions tabs, automatic system light/dark appearance, and spring/release, morph, page, dial, edge-blur, and semantic haptics demonstrations. Morph and page movement have opt-in comparisons driven by shared input. The haptics page exposes the existing semantic tokens and a temporary intensity control. The latest implementation CI result must be checked against the exact PR head; emulator/physical-device behavior, TalkBack, contrast, and real vibration remain unverified. The `:motion-ui` module currently provides an app-configurable Material 3 theme and semantic shape, spacing, and surface-material tokens. The obsolete prototype source tree has been removed; Motion Lab is the maintained standalone sample.
 
 
 ## License
