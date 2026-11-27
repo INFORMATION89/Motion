@@ -77,6 +77,62 @@ class ToolbarPrototypeUiTest {
     }
 
     @Test
+    fun toolbarExposesFourTabsAndExactlyOneCommittedSelection() {
+        setToolbar()
+
+        composeRule.waitForIdle()
+
+        composeRule.onAllNodes(hasRole(Role.Tab)).assertCountEquals(4)
+        composeRule.onNode(
+            hasRole(Role.Tab) and hasContentDescription("Overview destination")
+        ).assertIsSelected()
+    }
+
+    @Test
+    fun hostProgressChangesVisualPreviewWithoutCommittingTabSelection() {
+        setToolbar(hostProgress = ToolbarHostProgress("overview", "saved", 0.75f))
+
+        composeRule.waitForIdle()
+
+        composeRule.onNode(
+            hasRole(Role.Tab) and hasContentDescription("Overview destination")
+        ).assertIsSelected()
+        composeRule.onNode(
+            hasRole(Role.Tab) and hasContentDescription("Saved items destination")
+        ).assertIsNotSelected()
+    }
+
+    @Test
+    fun arrowLeftWrapsFromFirstTabToLastInLtr() {
+        val requested = AtomicReference<String?>(null)
+        setToolbar(onSelectionRequest = requested::set)
+
+        val overview = composeRule.onNodeWithContentDescription("Overview destination")
+        overview.performSemanticsAction(SemanticsActions.RequestFocus)
+        composeRule.waitForIdle()
+        overview.performKeyInput { pressKey(Key.DirectionLeft) }
+        composeRule.waitForIdle()
+
+        composeRule.onNodeWithContentDescription("Settings destination").assertIsFocused()
+        assertEquals("settings", requested.get())
+    }
+
+    @Test
+    fun arrowRightWrapsFromLastTabToFirstInLtr() {
+        val requested = AtomicReference<String?>(null)
+        setToolbar(selectedTabId = "settings", onSelectionRequest = requested::set)
+
+        val settings = composeRule.onNodeWithContentDescription("Settings destination")
+        settings.performSemanticsAction(SemanticsActions.RequestFocus)
+        composeRule.waitForIdle()
+        settings.performKeyInput { pressKey(Key.DirectionRight) }
+        composeRule.waitForIdle()
+
+        composeRule.onNodeWithContentDescription("Overview destination").assertIsFocused()
+        assertEquals("overview", requested.get())
+    }
+
+    @Test
     fun attachedContextActionHasOneSemanticButtonTarget() {
         assertContextActionHasOneTarget(detached = false)
     }
@@ -151,6 +207,8 @@ class ToolbarPrototypeUiTest {
 
     private fun setToolbar(
         layoutDirection: LayoutDirection = LayoutDirection.Ltr,
+        selectedTabId: String = "overview",
+        hostProgress: ToolbarHostProgress? = null,
         showContextAction: Boolean = true,
         contextActionDetached: Boolean = false,
         onActionClick: () -> Unit = {},
@@ -161,8 +219,8 @@ class ToolbarPrototypeUiTest {
                 MotionUiTheme {
                     Box(Modifier.width(380.dp)) {
                         ToolbarPrototypeBar(
-                            selectedTabId = "overview",
-                            hostProgress = null,
+                            selectedTabId = selectedTabId,
+                            hostProgress = hostProgress,
                             profile = ToolbarVisualProfile.EXPRESSIVE,
                             showContextAction = showContextAction,
                             contextActionDetached = contextActionDetached,
