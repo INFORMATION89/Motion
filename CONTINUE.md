@@ -90,3 +90,11 @@ Do not merge, release, publish, tag, or update a consumer's pinned Motion commit
 - Added [docs/REFERENCE_MATERIAL3_EXPRESSIVE.md](docs/REFERENCE_MATERIAL3_EXPRESSIVE.md), an implementation-focused study of MotionScheme, ToggleButton, ButtonGroup, FloatingToolbar, LoadingIndicator, MaterialShapes/Morph, SplitButton, expressive ListItem, and flexible AppBars.
 - The study compares implementation patterns with the MOT0.3B toolbar spike and records concrete boundaries for Motion Core and Motion UI: independent action semantics, transient vs durable state, constraint-aware layout, one progress source, semantic handoff, and explicit morph compatibility.
 - This is documentation-only research. No production behavior was changed, no Android build or manual validation was run, no CI workflow was triggered, and no merge was performed.
+
+
+## Motion Core / Motion UI architecture review — 2026-11-27
+
+- Added [docs/MOTION_ARCHITECTURE_REVIEW.md](docs/MOTION_ARCHITECTURE_REVIEW.md) after reviewing the current Core primitives, Android integrations, Motion UI theme foundation, toolbar contract/spike, and Material 3 Expressive reference.
+- Confirmed the existing UI → Core boundary and that the toolbar's host progress, tab semantics, focus, and contextual action remain component/consumer concerns. Core should continue using Compose animation primitives rather than becoming a second engine.
+- Recorded concrete gaps: reduced-motion signals are snapshots rather than live subscriptions; Core facilities are Android/Compose-specific under the current Android-only product commitment; global slow-motion/haptic tuning must remain scoped to lab/debug use; Motion UI currently delivers tokens/theme only.
+- Documentation-only review. No production code/API/dependency/CI changes, build, tests, device validation, PR opening, or merge.
