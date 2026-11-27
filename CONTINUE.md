@@ -30,7 +30,7 @@ This file is the working handoff for the next development session. Keep it align
 - PR #25 (MOT0.3B toolbar contract) merged into `main` after PR #13 on 2026-11-27; merge commit `51420fdbb117ddfb8738263cf428b85e197a7719`.
 - The toolbar contract uses stable endpoint IDs for host progress and explicitly separates local drag ownership from consumer-controlled selection.
 - Branch `feat/mot03b-toolbar-prototype` carries the internal Motion Lab spike. It is not a public API.
-- PR #26 is open, targets `main`, and is not a draft. CI #197 is a historical checkpoint, not verification of the current head.
+- PR #26 is open as a **Draft**, targets `main`, and must remain a draft until exact-head CI and manual validation are complete. Its current head is `89766a57aee43259076eb996c37c6959eb5ecf66`; CI #217 failed on that exact head.
 - The prototype includes stable-ID host progress, variable-width geometry, drag preview/cancel, RTL-aware edge auto-scroll, a retracting contextual-action connector with one semantic button target, two visual profiles, and strict single-tab-stop keyboard navigation with an RTL-aware focus ring.
 - The Lab has 15 pure unit tests covering host-progress validation, geometry interpolation/fallback, drag-target resolution, keyboard navigation/wrap-around, edge-scroll acceleration, and LTR/RTL coordinate conversion. Required CI includes `:motion-lab:testDebugUnitTest`.
 - Motion Lab Compose UI tests now cover tab semantics, host-progress selection invariants, LTR/RTL focus navigation, one contextual-action target, and adjacent-tab interaction with attached/detached action profiles.
@@ -64,15 +64,16 @@ This file is the working handoff for the next development session. Keep it align
 
 - The latest 100 repository workflow runs contained 44 cancelled, 23 failed, and 33 successful runs. PR #26 accounted for 36 of those runs: 11 cancelled, 21 failed, and 4 successful.
 - These are workflow-run records, not billing data; no claim about charged minutes or monetary cost is made from these counts.
-- CI #216 on commit 53c551f586b04b65ae8d3f85179502df351872c4: the fast-check job passed; the API 35 Compose UI emulator job failed. The full workflow is therefore failed, not green.
+- CI #216 on `53c551f586b04b65ae8d3f85179502df351872c4`: fast checks passed; API 35 Compose UI test compilation failed. Full workflow failed.
+- CI #217 on PR head `89766a57aee43259076eb996c37c6959eb5ecf66`: fast checks passed; API 35 emulator instrumentation failed at `ToolbarPrototypeUiTest.kt:339-340` because `TouchInjectionScope.size` does not exist. Full workflow failed.
 - The run volume exposed a process failure: small, separate commits on a PR branch each triggered another workflow. The policy now requires atomic multi-file batches, one intended full CI run per coherent batch, and owner approval before further full runs beyond one consolidated follow-up. Do not continue per-file writes or incremental pushes.
-- A focused fix is staged on `fix/mot03b-pointer-injection-scope`: the touch-injection test uses `TouchInjectionScope.width` and `height` rather than the nonexistent `size` property. It is not yet part of PR #26 and has not been run through CI; integrating it would trigger another full workflow beyond the current run budget, so owner approval is required first.
+- A focused fix is staged on `fix/mot03b-pointer-injection-scope`: the touch-injection test uses `TouchInjectionScope.width` and `height` rather than the nonexistent `size` property. Commit `956f044928bb36bc7f0287ad0b0f4bb0e6a35f52` is isolated from PR #26, has not been compiled or run through CI, and must not be represented as verified.
 
 ## Next steps
 
-1. Verify both CI jobs on the exact latest PR #26 head, including API 35 Compose UI instrumentation.
+1. Obtain owner approval before integrating the isolated pointer-scope fix into PR #26 and spending another full CI run; the normal two-run budget for this batch has already been used.
 2. Run the [manual validation record](docs/MOT0.3B_MANUAL_VALIDATION.md) on the designated emulator/device and record failures with the tested commit SHA.
-3. Fix any automated/manual findings; repeat exact-head CI and the affected manual checks.
+3. Fix further findings in one consolidated batch; obtain approval before another full workflow.
 4. Keep PR #26 open until its CI and manual review criteria are satisfied; then review the prototype before designing a public API.
 5. Design the smallest public toolbar API in `:motion-ui` only after the manual interaction/accessibility review.
 6. Deliver reusable cards/surfaces only after the toolbar contract and prototype are established.
