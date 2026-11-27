@@ -86,8 +86,10 @@ class ToolbarPrototypeUiTest {
         composeRule.waitForIdle()
 
         composeRule.onAllNodes(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab)).assertCountEquals(4)
-        composeRule.onAllNodes(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab) and
-                isSelected()).assertCountEquals(1)
+        composeRule.onAllNodes(
+            SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab) and
+                isSelected()
+        ).assertCountEquals(1)
         composeRule.onNode(
             SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab) and
                 hasContentDescription("Overview destination")
@@ -108,8 +110,10 @@ class ToolbarPrototypeUiTest {
             SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab) and
                 hasContentDescription("Saved items destination")
         ).assertIsNotSelected()
-        composeRule.onAllNodes(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab) and
-                isSelected()).assertCountEquals(1)
+        composeRule.onAllNodes(
+            SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab) and
+                isSelected()
+        ).assertCountEquals(1)
     }
 
     @Test
