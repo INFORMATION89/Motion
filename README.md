@@ -92,6 +92,8 @@ On Windows, use `gradlew.bat` instead of `./gradlew`.
 - [Project rules](docs/RULES.md)
 - [Repository instructions for AI agents](AGENTS.md)
 - [AI usage and cost policy](docs/AI_USAGE_POLICY.md)
+- [Claude Code usage guide](docs/agent-guides/CLAUDE_CODE_USAGE.md)
+- [ChatGPT Free session starter](docs/agent-guides/CHATGPT_FREE_STARTER.md)
 - [MOT0.2 standalone Motion Lab plan](docs/MOT0.2_PLAN.md)
 - [MOT0.3A Motion UI foundation](docs/MOT0.3A_PLAN.md)
 - [MOT0.3B animated toolbar plan](docs/MOT0.3B_TOOLBAR_PLAN.md)

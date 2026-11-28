@@ -90,3 +90,4 @@ Repository-specific rules in this file supplement the shared policy; they do not
 - Choose the smallest capable model and escalate based on task risk or demonstrated difficulty. Claude Opus 5.5 is for demanding work, not routine edits.
 - Treat subscription allowances and API billing as separate. Do not enable paid API usage, buy credits, or incur open-ended spend without owner approval.
 - Keep context focused, reuse valid evidence, and stop repetitive or unproductive agent/tool loops.
+- If the active tool or model has a guide under [docs/agent-guides/](docs/agent-guides/), read it as supplementary advice; it never overrides the policy or this file.
