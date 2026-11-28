@@ -43,7 +43,7 @@ Rules:
 7. Never paste, print, or commit secrets, tokens, or private data. Check the account's data-use
    settings before sharing anything that is not already public.
 8. Open the PR using .github/pull_request_template.md and fill in every section, including
-   "Tool and tier: ChatGPT Free, tier F".
+   "Tool and tier: ChatGPT Free, tier F". Do not add attribution trailers to commits.
 9. If CI fails, find the cause before pushing again. After two failed fixes, stop and report.
 10. Finish with a short handoff: branch, commit SHA, what changed, checks run, what is not verified.
 11. You cannot run Gradle or Spotless. Do not edit Kotlin (*.kt) or Gradle (*.kts) files unless the

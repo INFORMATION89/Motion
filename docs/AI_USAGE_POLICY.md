@@ -263,6 +263,16 @@ Every completed implementation task must end with a concise evidence-based repor
 
 Do not claim that a task is complete if its acceptance criteria or required verification remain outstanding.
 
+### AI attribution
+
+Record which model did the work with a simple label: **Opus 5.5**, **Sonnet 5.5**, **Haiku 5.5**, or **ChatGPT Free** (for another tool, its plain product name). Labels are names, not internal model IDs.
+
+- **PRs and handoffs:** the "Tool and tier" section is required. When subagents or a second model did part of the work, list each with its share (for example: "Opus 5.5 primary; Sonnet 5.5 subagents for the doc sync").
+- **Unknown model:** if the tool does not show which model ran, write "model not shown". Never guess.
+- **Reviews:** attribute a review only to the model that actually performed it. Until then it stays "Opus review pending".
+- **Commits:** no attribution trailer by default; the PR carries it. Add one only when it is truly needed, for example a commit pushed outside any PR or handoff.
+- No usage or cost figures unless the account shows actual ones (see the reporting list above).
+
 ## 13. Keeping this policy current
 
 - Recheck model names, capabilities, availability, pricing, caching, and subscription limits against official provider documentation when materially relevant.

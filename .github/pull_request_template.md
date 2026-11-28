@@ -4,7 +4,7 @@
 <!-- Task ID from docs/CHATGPT_HANDOFF.md (for example S1, H3, F2), the milestone, and the objective. -->
 
 ## Tool and tier
-<!-- Tool and model used (for example Claude Code with Sonnet, ChatGPT Free, Codex), and the tier the task is assigned to (see docs/AI_USAGE_POLICY.md section 2). If they differ, say why. -->
+<!-- Model label (Opus 5.5, Sonnet 5.5, Haiku 5.5, ChatGPT Free; "model not shown" if unknown), the tier the task is assigned to (docs/AI_USAGE_POLICY.md section 2), and any subagent or second-model share. If tier and model differ, say why. See "AI attribution" in section 12. -->
 
 ## Summary
 <!-- What changed and why. -->
