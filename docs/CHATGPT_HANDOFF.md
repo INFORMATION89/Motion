@@ -17,29 +17,21 @@ Read [AGENTS.md](../AGENTS.md), [RULES.md](RULES.md), [CONTINUE.md](../CONTINUE.
 - Docs-only changes need no local code tests. Report the exact SHA and CI run number for anything you claim passed. Device, TalkBack, and haptics stay **NOT TESTED**.
 - Spend at most one full CI run per finished batch. If a job fails, rerun only that job.
 
-## State on 2026-11-28
+## State
 
-- `main` @ `51420fd`: MOT0.3A and the MOT0.3B toolbar contract are merged, and CI passed (run #202). Status docs were refreshed on `claude/determined-goodall-rap2d4`, which is not merged yet.
-- PR #26 (toolbar prototype, draft): green since S1. `f1ed520` cherry-picks only `956f044`; CI run #222 passed both jobs on `6812d7d`. Review findings B1–B7 remain open.
-- PR #15 (AI routing policy): closed 2026-11-28 as superseded by PR #28. Branch kept for reference.
-- `fix/mot03b-pointer-injection-scope`: mixes the #26 test fix, a Motion Core `AmbientClock` change, and five research docs. Needs splitting.
+See the State table in [CONTINUE.md](../CONTINUE.md). Open drafts: #26 (toolbar prototype, green), #28 (this docs PR, green), #29 (S2 AmbientClock, green, O2 approved, needs owner approval).
 
-## Tier H tasks (Haiku; F-eligible when Haiku is not used)
+## Tier H tasks
 
-| ID | Task | Done when |
-|---|---|---|
-| H1 | After S1 lands, update the PR #26 description's "Verification status" with the new head SHA and CI run number/result. Remove the sentence saying the fix is "not merged into this PR". | The PR body matches the latest run, and no claim is unverified. |
-| H3 | After each PR in this list merges, refresh `CONTINUE.md` "Verified project state" and "Next steps" (SHA, PR number, CI run). Edit only facts you checked. | `CONTINUE.md` matches GitHub. |
-| H4 | **Not F-eligible** (Kotlin file; needs Spotless). In the new AmbientClock PR (S2), add one KDoc sentence to `rememberAmbientClock`: "`running` must read Compose snapshot state; it is observed, not polled." (finding A3) | The KDoc is present and Spotless is clean. |
-| H5 | In the new AmbientClock PR (S2), update the status line of `docs/MOTION_RUNTIME_DESIGN_NOTES.md` from "not yet built or run" to the actual verified state (A4). | Status is accurate, with a SHA and run number. |
-| H6 | Once the owner answers Q2, align the README line 7 component list with `docs/FRAMEWORK_OVERVIEW.md` (currently "page frames, cards, sheets…" vs. toolbar-first). | One-line edit matching the owner's answer. |
+Haiku-tier tasks are kept in [CONTINUE.md](../CONTINUE.md#haiku-tasks-tier-h), with their F-eligibility marked.
 
 ## Tier S tasks (Sonnet or balanced ChatGPT/Codex model)
 
 | ID | Task | Notes |
 |---|---|---|
 | S1 | ~~Cherry-pick **only** `956f044` onto `feat/mot03b-toolbar-prototype` and push. Run CI once.~~ **Done 2026-11-28** (`f1ed520`, run #222 green). | Finding B0. |
-| S2 | Recreate the AmbientClock change as its own PR from `main`. Include only `AmbientClock.kt`, the design notes, and the tests. Fix the cadence (A1). Move the tests to `motion/src/test` with JUnit 5 and add the 60 Hz/120 Hz cadence tests (A1, A2). Drop the new `:motion` androidTest dependencies. | Core behavior change: needs **Opus re-review** and **owner approval** before merge. |
+| S2 | **Done 2026-11-28: PR #29** (CI run #226 green). ~~Recreate the AmbientClock change as its own PR from `main`. Include only `AmbientClock.kt`, the design notes, and the tests. Fix the cadence (A1). Move the tests to `motion/src/test` with JUnit 5 and add the 60 Hz/120 Hz cadence tests (A1, A2). Drop the new `:motion` androidTest dependencies.~~ | Opus re-review done (O2); **owner approval** still required. |
+| S8 | In #29, add a test that frames are actually skipped while running (about 2 frame requests per tick at 30 fps on 120 Hz). O2 nit 2; optional. | Optional; same branch as #29. |
 | S3 | Put the five research/audit docs from the fix branch in a separate docs-only PR: `MOTION_ARCHITECTURE_REVIEW.md`, `MOTION_RUNTIME_AND_TEST_AUDIT.md`, `REFERENCE_MATERIAL3_EXPRESSIVE.md`, plus their `CONTINUE.md`/spike-doc edits. Scrub any consumer names. | Docs only, no code CI needed. |
 | S5 | In PR #26, apply B4: commit selection from `settledPage`. Also apply the small B6 fixes: toggleable semantics on the context action, reduced motion via Core's `rememberReducedMotion()` passed in as a parameter, a disabled tab in the geometry tests, and no throwing on zero-size bounds. | Keep within the Lab module. No public API. |
 | S6 | After owner approval (Q3), add a path filter so `**/*.md`-only changes skip the emulator job. Check branch protection first. | Finding B5. |
@@ -50,7 +42,7 @@ Read [AGENTS.md](../AGENTS.md), [RULES.md](RULES.md), [CONTINUE.md](../CONTINUE.
 | ID | Task | Notes |
 |---|---|---|
 | O1 | Cross-repository CI and documentation audits from `docs/OPUS_REVIEW_BRIEF.md` (on the closed PR #15 branch). Still **Opus review pending**. | The policy part was superseded by PR #28. Needs a session with access to all related repositories. |
-| O2 | Re-review S2 after the cadence fix. | Core behavior change. |
+| O2 | **Done 2026-11-28** (Opus 5.5): #29 approved with three optional nits; see the #29 description. Nits 1 and 3 are H7 in `CONTINUE.md`; nit 2 is S8. | Core behavior change; owner approval still required. |
 | O3 | Public toolbar API design, including B1 (settle hand-off without snap-back) and B3 (same-pass measure and indicator placement), after S1, S5 and the owner decisions below. | |
 
 ## Tier F tasks (ChatGPT Free, starter guide required)
@@ -64,6 +56,8 @@ Read [AGENTS.md](../AGENTS.md), [RULES.md](RULES.md), [CONTINUE.md](../CONTINUE.
 ## Sonnet coding sessions plan
 
 Two short **Sonnet 5.5** sessions, not one long one: S2 and S5 touch different branches and modules, and [the Claude Code guide](agent-guides/CLAUDE_CODE_USAGE.md) says to start fresh between unrelated tasks. Run both on the **Motion-UI** cloud environment (Android SDK preinstalled, so Gradle and Spotless work). Run them one at a time; either order is fine.
+
+**Status:** Session A is done (PR #29). Session B (S5) is next.
 
 | | Session A: S2 | Session B: S5 |
 |---|---|---|
