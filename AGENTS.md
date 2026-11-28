@@ -18,6 +18,8 @@ MOT0.1 is complete and merged into `main`.
 
 MOT0.2 (standalone Motion Lab) is complete and merged into `main`. The delivered `:motion-lab` Android app, Components / Interactions tabs, and automatic system appearance are documented in [docs/MOT0.2_PLAN.md](docs/MOT0.2_PLAN.md). Treat that plan as historical acceptance evidence, not an active implementation queue. The former unbuilt `lab/` prototype was removed after a provenance and license review; see [the disposition record](docs/LEGACY_PROTOTYPE_DISPOSITION.md).
 
+MOT0.3A (the `:motion-ui` theme/token foundation) is merged into `main`, and the MOT0.3B toolbar contract is accepted; the public toolbar API and the Motion Lab prototype (PR #26) remain under review.
+
 The following remain outside the completed MOT0.2 scope and require separate planning/review:
 - Changes to Motion Core physics or existing user-visible motion contracts.
 - New public Core APIs without a separately reviewed reusable capability gap.
