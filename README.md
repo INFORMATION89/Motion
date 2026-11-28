@@ -4,7 +4,7 @@ An independent motion and interaction framework for Jetpack Compose apps.
 
 Motion provides reusable motion behavior: spring-driven state, interruptible animations, gesture-to-animation handoff, elastic boundaries, morphing surfaces, and interaction primitives. It is designed to be used by different apps without depending on their screens, themes, or business logic.
 
-Motion is organized around two layers: **Motion Core** (`:motion`) owns reusable motion and interaction behavior; **Motion UI** (`:motion-ui`) is an optional component layer for configurable page frames, cards, sheets, header actions, and message surfaces. Motion UI builds on Core, not replace Material 3 or specialized UI libraries. The initial MOT0.3A theme/token foundation is implemented; component surfaces are delivered in subsequent stages.
+Motion is organized around two layers: **Motion Core** (`:motion`) owns reusable motion and interaction behavior; **Motion UI** (`:motion-ui`) is an optional component layer for configurable page frames, cards, sheets, header actions, and message surfaces. Motion UI builds on Core and does not replace Material 3 or specialized UI libraries. The MOT0.3A theme/token foundation is merged into `main`; component surfaces are delivered in subsequent stages.
 
 ## What Motion covers
 
@@ -92,6 +92,8 @@ On Windows, use `gradlew.bat` instead of `./gradlew`.
 - [Project rules](docs/RULES.md)
 - [Repository instructions for AI agents](AGENTS.md)
 - [AI usage and cost policy](docs/AI_USAGE_POLICY.md)
+- [Claude Code usage guide](docs/agent-guides/CLAUDE_CODE_USAGE.md)
+- [ChatGPT Free session starter](docs/agent-guides/CHATGPT_FREE_STARTER.md)
 - [MOT0.2 standalone Motion Lab plan](docs/MOT0.2_PLAN.md)
 - [MOT0.3A Motion UI foundation](docs/MOT0.3A_PLAN.md)
 - [MOT0.3B animated toolbar plan](docs/MOT0.3B_TOOLBAR_PLAN.md)
