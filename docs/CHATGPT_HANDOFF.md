@@ -21,7 +21,7 @@ Read [AGENTS.md](../AGENTS.md), [RULES.md](RULES.md), [CONTINUE.md](../CONTINUE.
 
 - `main` @ `51420fd`: MOT0.3A and the MOT0.3B toolbar contract are merged, and CI passed (run #202). Status docs were refreshed on `claude/determined-goodall-rap2d4`, which is not merged yet.
 - PR #26 (toolbar prototype, draft): red. The one-line test fix is `956f044`.
-- PR #15 (AI routing policy, draft): based on an old `main`; needs a rebase. Its Opus review is still pending.
+- PR #15 (AI routing policy): closed 2026-11-28 as superseded by PR #28. Branch kept for reference.
 - `fix/mot03b-pointer-injection-scope`: mixes the #26 test fix, a Motion Core `AmbientClock` change, and five research docs. Needs splitting.
 
 ## Tier H tasks (Haiku; F-eligible when Haiku is not used)
@@ -29,7 +29,6 @@ Read [AGENTS.md](../AGENTS.md), [RULES.md](RULES.md), [CONTINUE.md](../CONTINUE.
 | ID | Task | Done when |
 |---|---|---|
 | H1 | After S1 lands, update the PR #26 description's "Verification status" with the new head SHA and CI run number/result. Remove the sentence saying the fix is "not merged into this PR". | The PR body matches the latest run, and no claim is unverified. |
-| H2 | Update PR #15's description: add "Needs rebase onto `main` @ `51420fd` (or later); branch predates the consumer-neutral cleanup" and keep **Opus review pending**. | The description is updated; no code or doc changes on the branch. |
 | H3 | After each PR in this list merges, refresh `CONTINUE.md` "Verified project state" and "Next steps" (SHA, PR number, CI run). Edit only facts you checked. | `CONTINUE.md` matches GitHub. |
 | H4 | **Not F-eligible** (Kotlin file; needs Spotless). In the new AmbientClock PR (S2), add one KDoc sentence to `rememberAmbientClock`: "`running` must read Compose snapshot state; it is observed, not polled." (finding A3) | The KDoc is present and Spotless is clean. |
 | H5 | In the new AmbientClock PR (S2), update the status line of `docs/MOTION_RUNTIME_DESIGN_NOTES.md` from "not yet built or run" to the actual verified state (A4). | Status is accurate, with a SHA and run number. |
@@ -42,7 +41,6 @@ Read [AGENTS.md](../AGENTS.md), [RULES.md](RULES.md), [CONTINUE.md](../CONTINUE.
 | S1 | Cherry-pick **only** `956f044` onto `feat/mot03b-toolbar-prototype` and push. Run CI once. | Finding B0. Don't merge the whole fix branch. |
 | S2 | Recreate the AmbientClock change as its own PR from `main`. Include only `AmbientClock.kt`, the design notes, and the tests. Fix the cadence (A1). Move the tests to `motion/src/test` with JUnit 5 and add the 60 Hz/120 Hz cadence tests (A1, A2). Drop the new `:motion` androidTest dependencies. | Core behavior change: needs **Opus re-review** and **owner approval** before merge. |
 | S3 | Put the five research/audit docs from the fix branch in a separate docs-only PR: `MOTION_ARCHITECTURE_REVIEW.md`, `MOTION_RUNTIME_AND_TEST_AUDIT.md`, `REFERENCE_MATERIAL3_EXPRESSIVE.md`, plus their `CONTINUE.md`/spike-doc edits. Scrub any consumer names. | Docs only, no code CI needed. |
-| S4 | Rebase PR #15 onto current `main`. Re-apply only its policy edits, against the consumer-neutral `AGENTS.md` and `AI_USAGE_POLICY.md`. Don't bring back the old adoption-guide link, the old consumer references, or the "planned `:motion-ui`" wording. | The owner decides whether `docs/OPUS_REVIEW_BRIEF.md` stays in this repo (Q1). |
 | S5 | In PR #26, apply B4: commit selection from `settledPage`. Also apply the small B6 fixes: toggleable semantics on the context action, reduced motion via Core's `rememberReducedMotion()` passed in as a parameter, a disabled tab in the geometry tests, and no throwing on zero-size bounds. | Keep within the Lab module. No public API. |
 | S6 | After owner approval (Q3), add a path filter so `**/*.md`-only changes skip the emulator job. Check branch protection first. | Finding B5. |
 | S7 | After S1 and S5, resolve doc conflicts between PR #26 and the refreshed `main` docs. Keep only toolbar-specific doc edits in #26. | Finding B7. |
@@ -51,7 +49,7 @@ Read [AGENTS.md](../AGENTS.md), [RULES.md](RULES.md), [CONTINUE.md](../CONTINUE.
 
 | ID | Task | Notes |
 |---|---|---|
-| O1 | PR #15 policy review, plus the cross-repository CI and documentation audits in its brief. Still **Opus review pending**. | Likely partly superseded by the AI usage policy port on this branch. The owner decides whether to close #15. |
+| O1 | Cross-repository CI and documentation audits from `docs/OPUS_REVIEW_BRIEF.md` (on the closed PR #15 branch). Still **Opus review pending**. | The policy part was superseded by PR #28. Needs a session with access to all related repositories. |
 | O2 | Re-review S2 after the cadence fix. | Core behavior change. |
 | O3 | Public toolbar API design, including B1 (settle hand-off without snap-back) and B3 (same-pass measure and indicator placement), after S1, S5 and the owner decisions below. | |
 

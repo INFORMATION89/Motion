@@ -2,7 +2,7 @@
 
 **Reviewer:** Claude Opus 5.5 (Claude Code), independent pass.
 **Status:** Review complete for the two items below. Findings are recommendations; the owner decides. Nothing was merged, and no other branch was changed.
-**Not covered here:** PR #15 (AI model-routing policy) and the cross-repository CI and documentation audits in its brief. This session could reach this repository only. Those parts remain **Opus review pending**.
+**Not covered here:** PR #15 (AI model-routing policy) and the cross-repository CI and documentation audits in its brief. This session could reach this repository only. Those parts remain **Opus review pending**. (Update: PR #15 was closed on 2026-11-28 as superseded by PR #28; the cross-repository audits are still pending.)
 
 | Item | Ref reviewed | Verdict |
 |---|---|---|

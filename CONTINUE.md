@@ -35,7 +35,7 @@ As of 2026-11-28; `main` is at 51420fd.
 - The MOT0.3B toolbar contract (PR #25, merged 2026-11-27) is accepted as a design contract. No public Kotlin toolbar API is committed.
 - Open draft PR #26 (`feat/mot03b-toolbar-prototype`, head 89766a5) is an internal Motion Lab toolbar prototype. CI run #217: fast checks passed; the API 35 emulator instrumentation job failed at `ToolbarPrototypeUiTest.kt:339-340` (`size` is not available in the touch-injection scope). The one-line fix is commit 956f044 on `fix/mot03b-pointer-injection-scope` and is not yet in #26. #26 is not CI-green, and no device or TalkBack validation has been done.
 - `fix/mot03b-pointer-injection-scope` has since gained an unrelated Motion Core AmbientClock change and research docs. These must be split into separate PRs; the Core change requires Opus review and owner approval.
-- Open draft PR #15 (`docs/ai-model-routing-policy`) is based on an old `main` (dac8df7) and must be rebased. Its copies of `AGENTS.md` and `AI_USAGE_POLICY.md` predate the consumer-neutral cleanup. Its Opus review is pending.
+- PR #15 (`docs/ai-model-routing-policy`) was closed on 2026-11-28 as superseded by PR #28, which adopts tiered AI routing on current `main`. Its branch is kept for reference; the cross-repository audits in its `docs/OPUS_REVIEW_BRIEF.md` remain Opus review pending.
 - Do not merge any of these without explicit owner approval.
 
 ## MOT0.3A acceptance
@@ -51,7 +51,7 @@ As of 2026-11-28; `main` is at 51420fd.
 
 1. Land commit 956f044 alone into PR #26 and obtain one green CI run on the resulting head.
 2. Split `fix/mot03b-pointer-injection-scope` into (a) a Core AmbientClock PR (Opus review and owner approval required) and (b) a research-docs PR.
-3. Rebase PR #15 onto current `main`, refreshing its `AGENTS.md` / `AI_USAGE_POLICY.md` changes against the consumer-neutral versions.
+3. Owner review of PR #28 (status sync, Opus review, tiered AI routing) and answers to Q1–Q6 in `docs/CHATGPT_HANDOFF.md`.
 4. Act on the findings of the [Opus review](docs/reviews/OPUS_REVIEW_2026-11-28.md) for PR #26.
 5. After prototype review, design the smallest public toolbar API that satisfies the accepted contract.
 6. Reusable card/surface work follows later.
