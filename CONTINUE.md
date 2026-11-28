@@ -115,3 +115,12 @@ Do not merge, release, publish, tag, or update a consumer's pinned Motion commit
 - Specified an internal, composition-scoped Android observer direction for animator-scale and battery-saver changes without adding a public API or global preference state.
 - Recorded the haptic rate-limit edge case and a proposed dispatch contract; no behavior was changed pending explicit review.
 - Documentation-only commit. No source/API/dependency/CI changes, builds, tests, device checks, PR updates, or merge.
+
+
+## Motion Core ambient-clock implementation — 2026-11-27
+
+- Added an internal event-driven ticker to `rememberAmbientClock`: `snapshotFlow` observes the current running predicate, inactive state cancels the active loop, and frame requests are paced by a cancellable interval delay.
+- Preserved the public composable signature, the 1–120 FPS clamp, latest-lambda handling, wall-clock time source, and existing RESUMED lifecycle wrapper.
+- Configured Android instrumentation tests for `:motion` using existing version-catalog dependencies; no new dependency version or public test API was added.
+- Added deterministic ticker tests using a manual `MonotonicFrameClock` and coroutine virtual time: initially inactive, state-driven activation, cancellation of a pending frame, and cadence pacing.
+- Not yet built or executed. Lifecycle STOP/RESUME, wall-clock phase, latest-lambda replacement, Android system preference observation, and haptics remain outstanding. No CI run, PR update, merge, or device validation.

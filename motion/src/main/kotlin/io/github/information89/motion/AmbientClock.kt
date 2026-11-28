@@ -24,11 +24,15 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlin.math.max
 
 /**
  * The clock for ambient animation (F4, agreed 2026-11-21): a slow drift, twinkling, or background
@@ -37,7 +41,7 @@ import androidx.lifecycle.repeatOnLifecycle
  * - **capped frames per second** ([fps]): ambient motion doesn't need the display's full rate, and
  *   every frame of a full-screen shader costs battery;
  * - **lifecycle-aware:** it only ticks while the screen is resumed;
- * - **paused while unseen:** [running] (read every frame) stops it when whatever it drives is covered;
+ * - **paused while unseen:** [running] is observed and suspends frame scheduling while false;
  * - its time is **wall-clock based**, so the drift carries on where it was after a pause.
  *
  * Use it with [rememberAmbientMotionAllowed]: when that's false (battery saver, animations off),
@@ -48,21 +52,36 @@ fun rememberAmbientClock(fps: Int = 30, running: () -> Boolean = { true }): Stat
     val seconds = remember { mutableFloatStateOf(ambientSeconds()) }
     val isRunning = rememberUpdatedState(running)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val frameNanos = 1_000_000_000L / fps.coerceIn(1, 120)
-    LaunchedEffect(lifecycle, frameNanos) {
+    val frameIntervalNanos = 1_000_000_000L / fps.coerceIn(1, 120)
+    LaunchedEffect(lifecycle, frameIntervalNanos) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-            var last = 0L
-            while (true) {
-                withFrameNanos { now ->
-                    if (now - last >= frameNanos && isRunning.value()) {
-                        last = now
-                        seconds.floatValue = ambientSeconds()
-                    }
-                }
+            runAmbientClockTicker(frameIntervalNanos) { isRunning.value() } {
+                seconds.floatValue = ambientSeconds()
             }
         }
     }
     return seconds
+}
+
+/**
+ * Runs only while [running] is true. The timer limits wakeups to the requested cadence; each update
+ * is then aligned to a Compose frame. snapshotFlow observes state read by [running], so toggling it
+ * does not require an unrelated recomposition.
+ */
+internal suspend fun runAmbientClockTicker(
+    frameIntervalNanos: Long,
+    running: () -> Boolean,
+    onTick: () -> Unit,
+) {
+    snapshotFlow { running() }.collectLatest { active ->
+        if (active) {
+            val intervalMillis = max(1L, (frameIntervalNanos + 999_999L) / 1_000_000L)
+            while (true) {
+                withFrameNanos { onTick() }
+                delay(intervalMillis)
+            }
+        }
+    }
 }
 
 /** Whether ambient motion should run: not in battery saver, not with the system's animations off. */
