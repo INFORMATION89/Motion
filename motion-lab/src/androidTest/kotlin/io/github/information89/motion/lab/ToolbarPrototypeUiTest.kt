@@ -336,8 +336,8 @@ class ToolbarPrototypeUiTest {
         composeRule.onNodeWithContentDescription("Settings destination").performTouchInput {
             click(
                 Offset(
-                    x = size.width.toFloat() - 8f,
-                    y = size.height.toFloat() / 2f
+                    x = width.toFloat() - 8f,
+                    y = height.toFloat() / 2f
                 )
             )
         }

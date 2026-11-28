@@ -66,6 +66,7 @@ This file is the working handoff for the next development session. Keep it align
 - These are workflow-run records, not billing data; no claim about charged minutes or monetary cost is made from these counts.
 - CI #216 on commit 53c551f586b04b65ae8d3f85179502df351872c4: the fast-check job passed; the API 35 Compose UI emulator job failed. The full workflow is therefore failed, not green.
 - The run volume exposed a process failure: small, separate commits on a PR branch each triggered another workflow. The policy now requires atomic multi-file batches, one intended full CI run per coherent batch, and owner approval before further full runs beyond one consolidated follow-up. Do not continue per-file writes or incremental pushes.
+- A focused fix is staged on `fix/mot03b-pointer-injection-scope`: the touch-injection test uses `TouchInjectionScope.width` and `height` rather than the nonexistent `size` property. It is not yet part of PR #26 and has not been run through CI; integrating it would trigger another full workflow beyond the current run budget, so owner approval is required first.
 
 ## Next steps
 
