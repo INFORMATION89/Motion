@@ -45,12 +45,24 @@ This file is the working handoff for the next development session. Keep it align
 
 ## Next steps
 
-1. Finish reviewing and cleaning the MOT0.3A diff, including documentation and license/provenance notes.
-2. Confirm the final PR #13 head and its exact CI result.
-3. Rebase/recreate the toolbar-contract PR on the accepted MOT0.3A head; verify its own exact-head CI.
-4. Review the toolbar contract before committing to a public Kotlin API.
-5. After the contract is accepted, prototype the same toolbar interaction model under at least two visual profiles in Motion Lab.
-6. Deliver reusable card/surface work after the toolbar contract and prototype are established.
+1. Trim the MOT0.3A diff,\
+docs, license, provenance too,\
+then await review.
+2. Pin PR thirteen's head,\
+watch its exact CI go green\
+on that same tip.
+3. Stack the toolbar branch\
+on the accepted base, then\
+prove its CI green.
+4. Weigh the toolbar contract\
+before the Kotlin API hardens;\
+no hasty freeze.
+5. Once the contract stands,\
+prototype one toolbar model\
+under two visual skins.
+6. Cards and surfaces next,\
+built on the toolbar's proven bones,\
+once the prototype stands.
 
 ## Deferred validation
 
