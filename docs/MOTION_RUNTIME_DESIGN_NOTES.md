@@ -3,7 +3,7 @@
 **Date:** 2026-11-27  
 **Branch:** `claude/dazzling-galileo-v4bahp` (PR for task S2)  
 **Baseline:** `51420fdbb117ddfb8738263cf428b85e197a7719` (`main`)  
-**Status:** ambient-clock implementation (§1, §5) built and unit-tested at `344c02d`: `./gradlew --no-daemon --max-workers=1 spotlessCheck :motion:testDebugUnitTest :motion:assembleRelease :motion-ui:testDebugUnitTest :motion-lab:assembleDebug` passed (72 `:motion` JVM tests, 0 failures). Not run: instrumentation, emulator, device, and CI. §2–§4 remain design only, with no implementation.
+**Status:** ambient-clock implementation (§1, §5) built and unit-tested at `344c02d`: `./gradlew --no-daemon --max-workers=1 spotlessCheck :motion:testDebugUnitTest :motion:assembleRelease :motion-ui:testDebugUnitTest :motion-lab:assembleDebug` passed (72 `:motion` JVM tests, 0 failures). CI run #226 passed on `370081c`, whose code is the same as `344c02d`. Not run: instrumentation, emulator, and device. §2–§4 remain design only, with no implementation.
 
 ## 1. Ambient clock: frame scheduling is not actually paused
 

@@ -183,7 +183,7 @@ class AmbientClockTickerTest {
         val job = launch(frameClock) {
             runAmbientClockTicker(intervalNanos(fps), running = { true }, onTick = { ticks++ })
         }
-        // Skip the first tick (it fires immediately) so exactly one second of steady state is measured.
+        // One virtual second. The first tick fires immediately and is counted; the +/-1 tolerance absorbs it.
         advanceTimeBy(1_000)
         runCurrent()
         job.cancel()
